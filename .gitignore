@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Secrets — never commit keys
+.env
+*.key
+
+# Papers: manifest and notes are committed, the PDFs and extracted text are not
+papers/pdf/
+
+# Raw run outputs: big simulation files and scratch
+experiments/*/runs/*/raw/
+*.lhe
+*.lhe.gz
+*.hepmc
+*.hepmc.gz
+*.root
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code local-only settings
+.claude/settings.local.json

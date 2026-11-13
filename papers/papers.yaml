@@ -1,0 +1,107 @@
+# Reference papers. PDFs are fetched into papers/pdf/ (git-ignored) by scripts/fetch_papers.py.
+# priority: core = read closely · related = read for positioning · background = skim
+# notes: path to our reading note in papers/notes/, once written
+
+papers:
+  # --- The 8 foundation papers ---
+  - id: collider-bench
+    title: "Collider-Bench"
+    arxiv: "2605.13950"
+    priority: core
+    why: "The problem and the test bed: names all three gaps; we measure on it. Read Sec. 3-4, App. B-C and the normalization appendix closely"
+    notes: null
+  - id: ai-agents-can-already
+    title: "AI Agents Can Already Autonomously Perform Experimental HEP"
+    arxiv: "2603.20179"
+    priority: core
+    why: "The 'why now': agents already run full analyses on open data"
+    notes: null
+  - id: agentrivet
+    title: "AgentRivet"
+    arxiv: "2606.13535"
+    priority: related
+    why: "Paper-to-Rivet-code agent; a likely user of a trust layer"
+    notes: null
+  - id: fermiacc
+    title: "FERMIACC"
+    arxiv: "2603.22538"
+    priority: related
+    why: "Adversarial agents checking each other; pattern for the second-opinion part"
+    notes: null
+  - id: ai-native-whitepaper
+    title: "AI-native Research Ecosystem whitepaper"
+    arxiv: "2602.17582"
+    priority: background
+    why: "Community roadmap; motivation and outreach list"
+    notes: null
+  - id: reinterpretation-lhc
+    title: "Reinterpretation of LHC Results"
+    arxiv: "2003.07868"
+    priority: background
+    why: "Why recasting is hard (introduction only); sub-gap 3a"
+    notes: null
+  - id: lhc-olympics-2020
+    title: "LHC Olympics 2020"
+    arxiv: "2101.08320"
+    priority: background
+    why: "Optional; anomaly-detection extension later"
+    notes: null
+  - id: physics-reasoning-small-lms
+    title: "Physics reasoning in small language models"
+    arxiv: "2505.20707"
+    priority: related
+    why: "Unit errors persist in strong models; suggests rule-based unit checkers (1a)"
+    notes: null
+
+  # --- Closest neighbours (novelty claim) ---
+  - id: madagents-v3
+    title: "MadAgents.v3"
+    arxiv: "2607.22813"
+    priority: core
+    why: "Closest idea: in-agent sanity checks. Read in full before making the novelty claim"
+    notes: null
+  - id: reining-in-agentic-harness
+    title: "Reining in an Agentic Harness for HEP"
+    arxiv: "2609.00107"
+    priority: core
+    why: "Machine-readable scientific contracts, as a design; ours is a working, measured example"
+    notes: null
+  - id: heptabench
+    title: "HEPTABench"
+    arxiv: "2610.18454"
+    priority: related
+    why: "Possible second test bed for the preprint"
+    notes: null
+  - id: physvec
+    title: "PhysVEC"
+    arxiv: "2604.00149"
+    priority: related
+    why: "Self-verifying AI physicist in another field; supports the all-of-science vision"
+    notes: null
+  - id: collideragent
+    title: "ColliderAgent"
+    arxiv: "2603.14553"
+    priority: related
+    why: "End-to-end collider phenomenology agent; a likely user of a trust layer"
+    notes: null
+
+  # --- Related agent systems (not yet read) ---
+  - {id: rooagent, title: "RooAgent", arxiv: "2605.17318", priority: background, why: "LLM agent for ROOT analysis", notes: null}
+  - {id: grace, title: "GRACE", arxiv: "2602.15039", priority: background, why: "Agentic AI for experiment design and simulation", notes: null}
+  - {id: automating-hep-llm-agents, title: "Automating HEP Data Analysis with LLM-Powered Agents", arxiv: "2512.07785", priority: background, why: "Agent-based analysis automation", notes: null}
+  - {id: heptapod, title: "HEPTAPOD", arxiv: "2512.15867", priority: background, why: "Orchestrating physics workflows", notes: null}
+  - {id: madagents, title: "MadAgents", arxiv: "2601.21015", priority: background, why: "Agents around MadGraph", notes: null}
+  - {id: drsai, title: "Dr.Sai", arxiv: "2604.22541", priority: background, why: "Agentic AI for BESIII analyses", notes: null}
+  - {id: agentic-ai-physicist-lep, title: "Agentic AI-Physicist Collaboration (LEP open data)", arxiv: "2603.05735", priority: background, why: "Human + agent measurement", notes: null}
+  - {id: agents-of-discovery, title: "Agents of Discovery", arxiv: "2509.08535", priority: background, why: "Agents for physics discovery", notes: null}
+
+  # --- Task papers (CMS searches used by the Collider-Bench tasks). Add arXiv ids once confirmed ---
+  - {id: cms-sus-16-034, title: "CMS SUS-16-034 (TChiWZ)", arxiv: null, priority: core, why: "Task paper for sus-16-034", notes: null}
+  - {id: cms-sus-16-046, title: "CMS SUS-16-046 (T5Wg)", arxiv: null, priority: core, why: "Task paper for sus-16-046", notes: null}
+  - {id: cms-sus-16-051, title: "CMS SUS-16-051 (T2tt)", arxiv: null, priority: core, why: "Task paper for sus-16-051", notes: null}
+
+# Non-paper references
+links:
+  - {id: ariadne, title: "Ariadne (Upadhyay & Shih, Rutgers) talk", url: "https://indico.global/event/15240/contributions/165303/", why: "Same group as Collider-Bench; scoop risk"}
+  - {id: ravel, title: "Ravel (GitHub)", url: "https://github.com/ammarphp/ravel", why: "Governed HEP research harness; design without measurement"}
+  - {id: collider-bench-repo, title: "Collider-Bench repo", url: "https://github.com/dfaroughy/Collider-Bench", why: "Submodule at external/collider-bench"}

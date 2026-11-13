@@ -1,0 +1,5 @@
+# Normalize line endings so Windows (dev) and Linux (runner) never fight over them
+* text=auto eol=lf
+*.bat text eol=crlf
+*.pdf binary
+*.png binary

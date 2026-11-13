@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(python -m pytest*)",
+      "Bash(pytest*)",
+      "Bash(ruff check*)",
+      "Bash(ruff format*)",
+      "Bash(mypy*)"
+    ],
+    "deny": [
+      "Edit(external/**)",
+      "Write(external/**)",
+      "Edit(docs/artifacts/**)",
+      "Write(docs/artifacts/**)"
+    ]
+  }
+}

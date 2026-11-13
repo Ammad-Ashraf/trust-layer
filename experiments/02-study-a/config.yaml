@@ -1,0 +1,7 @@
+# Configuration for 02-study-a. Recorded into every run's manifest.
+experiment: 02-study-a
+tasks: []
+model: null
+n_runs: null
+collider_bench_commit: null
+container_digest: null

@@ -1,0 +1,24 @@
+# Correct normalization record for sus-16-046, filled by hand from PUBLIC sources only
+# (the paper, HEPData, Prospino). Effectively an answer key: never give this file to the test-subject agent.
+schema_version: 1
+task: sus-16-046
+signal_model: null        # process and mass point(s) the task asks for
+quantities:
+  cross_section:          # NLO(+NLL) value, e.g. from Prospino or the paper
+    value: null
+    unit: null            # pb or fb
+    source: null          # exact table / tool + version
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: "CMS 2016 dataset, as stated in the paper"
+  branching_fraction:
+    value: null
+    unit: dimensionless
+    source: null          # or 1 with a reason
+  efficiency:
+    value: null
+    unit: dimensionless
+    source: null
+expected_events: null     # product of the above, unit-free
+notes: ""

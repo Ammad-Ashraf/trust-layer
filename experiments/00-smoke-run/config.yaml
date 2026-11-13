@@ -1,0 +1,7 @@
+# Configuration for 00-smoke-run. Recorded into every run's manifest.
+experiment: 00-smoke-run
+tasks: []
+model: null
+n_runs: null
+collider_bench_commit: null
+container_digest: null

@@ -1,0 +1,3 @@
+[submodule "external/collider-bench"]
+	path = external/collider-bench
+	url = https://github.com/dfaroughy/Collider-Bench
