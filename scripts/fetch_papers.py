@@ -11,6 +11,7 @@ Skips files that already exist. PDFs are data: never executed, never committed.
 from __future__ import annotations
 
 import argparse
+import logging
 import sys
 import time
 import urllib.request
@@ -37,8 +38,9 @@ def download(arxiv_id: str, dest: Path) -> None:
 def extract_text(pdf: Path) -> None:
     from pypdf import PdfReader
 
+    logging.getLogger("pypdf").setLevel(logging.ERROR)  # font warnings are noise here
     text = "\n\n".join(page.extract_text() or "" for page in PdfReader(pdf).pages)
-    pdf.with_suffix(".txt").write_text(text, encoding="utf-8")
+    pdf.with_suffix(".txt").write_text(text, encoding="utf-8", errors="replace")
 
 
 def main() -> int:
