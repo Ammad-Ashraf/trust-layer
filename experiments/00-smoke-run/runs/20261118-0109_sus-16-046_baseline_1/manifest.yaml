@@ -1,0 +1,32 @@
+schema_version: 1
+experiment: 00-smoke-run
+task: sus-16-046           # Collider-Bench task id: sus-16-046_sim-T5Wg (T5Wg_1750_1700)
+arm: baseline                 # baseline | checker
+model_snapshot: claude-sonnet-4-6   # from the transcript's init event; Claude Code 2.1.326 (host binary, bind-mounted)
+collider_bench_commit: 2986d8b270ae49e0d6e8c95bbf95ef1159f16d7c
+container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f   # ghcr.io/dfaroughy/lhc-bench:latest, image created 2026-05-03
+machine: runner-laptop-24c # deneb-OMEN, i9-13900HX, 24 cores / 32 threads, 30 GB RAM, Ubuntu 26.04, rootless Podman 5.7.0
+cores: 32                  # nproc inside the container
+n_gen: 10000               # chosen by the agent (MadGraph LO, pp > go go)
+wall_clock_hours: 0.463    # 1668 s agent time (01:10:09 -> 01:37:57 +05:00); harness walltime cap 2.5 h
+tokens:
+  input: 106
+  output: 95839
+  cache_read: 9826267
+  cache_creation: 190794
+  billed_total: 286739     # harness's tokens_total_billed
+  turns: 107
+api_cost_usd: 5.68         # API-equivalent from the harness pricing table; actually billed to Ammad's Claude Max 5x subscription (auth: oauth)
+bounces: null              # checker arm only
+outcome: scored            # 4/4 bins filled, exit 0
+score:
+  delta_norm: 0.980        # |Y_hat - Y*| / Y*; agent total 1.10 events vs reference ~54.8 (back-computed from Delta)
+  norm_relative_l2: 0.995
+  shape_relative_l2: 0.920
+  shape_jensen_shannon: 0.399
+  pass: false              # relative L2 >= 0.33
+notes: >-
+  Plumbing test, not a measured run. Config = Collider-Bench configs/claude.yaml with model
+  claude-sonnet-4-6 and auth oauth (see harness-config.yaml); effort max (31,999 thinking tokens).
+  Host Mattermost MCP and claude.ai connectors were disabled for the run and restored after;
+  the init event showed mcp_servers=[]. Details: notes.md and attachment-points-observed.md.

@@ -1,0 +1,10 @@
+# Smoke run (experiment 00-smoke-run): Collider-Bench plumbing test.
+# Same as external/collider-bench/configs/claude.yaml except model and auth.
+agent:    simple
+task:     sus-16-046_sim-T5Wg
+runner:   claude
+auth:     oauth                   # Ammad's Claude subscription login on this host
+model:    claude-sonnet-4-6
+effort:   max                     # shipped default; maps to --max-thinking-tokens 31999
+sandbox:  podman
+compute:  local

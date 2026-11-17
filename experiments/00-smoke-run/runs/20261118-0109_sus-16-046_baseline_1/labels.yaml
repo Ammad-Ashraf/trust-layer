@@ -1,0 +1,19 @@
+# Every mistake found in this run, with its sub-gap code (1a-1e, 2a-2e, 3a-3f).
+# DRAFT by Claude (runner session, 2026-11-18) from a partial read of the transcript.
+# Not a full M3 read: Ammad confirms or replaces these codes after reading session.jsonl.
+schema_version: 1
+labels:
+  - code: 3c               # proposed; alternative 3d. Not a Gap-1 normalization-formula error
+    status: draft
+    where: "analysis.py weights (w = sigma*L/N_gen) and report.md section 4"
+    what: >-
+      Signal-region efficiency 93/10000 = 0.93% vs ~38.6% implied by the reference
+      (54.8 events / (3.96 fb x 35.9 fb^-1 = 142 produced)). Yield is ~50x low and the S_T
+      distribution falls where CMS rises. The agent reported the 0.93% acceptance without
+      questioning it (no sanity check against expected acceptance for a 1750/1700 compressed
+      spectrum with a hard photon + MET). Root cause in the sim chain not yet found.
+    checked_ok: >-
+      sigma = 3.96 fb is Prospino NLO (0.00396 pb, converted correctly to fb): no 1a/1b.
+      L = 35.9 fb^-1 correct. Gluino BRs sum to 1 and chi10 -> gamma G~ at 100%: no 1c seen.
+      Mass point 1750/1700 matches the task target: no 1d. Submitted yields match the
+      agent's reported analysis output (report.md table): no 1e seen.
