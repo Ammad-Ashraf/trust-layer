@@ -26,7 +26,7 @@
 - **The failure was ε, not σ, L or units.**
   - The agent got σ (3.96 fb from Prospino), L (35.9 fb⁻¹) and the mass point right.
   - The signal-region efficiency was 0.93%, against about 38.6% in the reference.
-  - Checks C1–C5 would have passed this run (see decision [0013](../../docs/decisions/0013-baseline-failure-mix.md)).
+  - Checks C1–C5 would have passed this run. That is expected: it was a selection mistake, which is out of Phase 1 scope. The paper shows such runs are the exception (decision [0014](../../docs/decisions/0014-drop-failure-mix-runs.md)).
   - Suspected cause, not yet verified: photon–jet overlap removal in Delphes. Draft labels are 3b and 3c.
 - **All four attachment points are mapped** → [`integration/attachment-points.md`](../../integration/attachment-points.md). A Stop hook fires inside the container and its rejection reaches the agent.
 - **Setup problems hit:**

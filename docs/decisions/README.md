@@ -18,4 +18,5 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0010](0010-subject-isolation.md) | Isolating the test-subject agent's settings | decided |
 | [0011](0011-auth-for-measured-runs.md) | Auth for measured runs | decided |
 | [0012](0012-commit-transcripts.md) | Commit run transcripts? | decided |
-| [0013](0013-baseline-failure-mix.md) | Check the baseline failure mix before fixing Study B tasks | decided |
+| [0013](0013-baseline-failure-mix.md) | Check the baseline failure mix before fixing Study B tasks | superseded by 0014 |
+| [0014](0014-drop-failure-mix-runs.md) | Drop the extra failure-mix runs; choose Study B tasks from the paper's tables | decided |

@@ -1,6 +1,6 @@
 # 0013 — Check the baseline failure mix before fixing Study B tasks
 
-- **Status:** decided
+- **Status:** superseded by 0014
 - **Date:** 2026-11-18
 - **Decide by:** before M6 task selection
 

@@ -40,14 +40,13 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 - [x] Smoke run → `experiments/00-smoke-run/` (T5Wg, Sonnet 4.6, OAuth; δ_norm 0.98, failed on ε)
 - [x] Map the four attachment points → `integration/attachment-points.md`
 - [ ] Send the two compute emails (supervisor, NCP) — bonus track
-- [ ] Read the paper's per-task tables; note where each model failed normalization
+- [x] Read the paper's per-task tables; note where each model failed normalization (→ 0014: T2tt_SRG shows no counting gap; lean swap to T2tt_comp)
 
 ## Next (from 18 Nov)
 
 - [x] Decide 0008–0013 (Claude, delegated by Ammad on 18 Nov)
 - [ ] Ammad: ask Israr for OK to add a `tlsubject` user on his laptop (0010)
 - [ ] Runner: commit the smoke run's `session.jsonl.gz`, `analysis.py` and `report.md` (0012); check the photon–jet guess
-- [ ] Runner: 3 baseline runs on 3 tasks, on the subscription (0013) → labels
 - [ ] Windows: fork Collider-Bench and add the `simple-ledger` agent folder (0008)
 - [ ] M2: fill `tasks/sus-16-034/ledger.yaml` by hand
 

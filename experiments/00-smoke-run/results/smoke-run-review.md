@@ -36,24 +36,17 @@ The first three are **looked up**. The last one, ε, is **built** by the AI: it 
 
 ## What this means for our project
 
-**What our checker checks.** It is like a **spell-checker for the formula's arithmetic**. It asks:
+**Our checker is like a spell-checker for the formula's arithmetic.** This run's arithmetic was fine. Its mistake was in the net, which is a different kind of error (a "judgment" error, codes 3b/3c). Our checker was never meant to catch that.
 
-1. Does every number have a unit, and are pb and fb converted correctly?
-2. Did σ come from the right source?
-3. Are all four factors there?
-4. Do they belong to the right particle?
-5. Was the final number actually used?
+**Does this one run cast doubt on our focus? No.**
+- It was one short run of one task.
+- The Collider-Bench paper measured hundreds of runs. Its tables show that the AI usually gets the shape right but the total wrong.
+  - In the analogy, the net is usually fine; the counting is off.
+  - That is exactly our Gap 1.
+- This run was the unusual case: both the shape and the total were off.
+- So it doesn't change the plan. Details: [decision 0014](../../../docs/decisions/0014-drop-failure-mix-runs.md).
 
-**This run's mistake was in ε, the net.** The arithmetic was fine, so our checker would have said "all good". That isn't a bug in our checker: it was never meant to catch net holes.
-
-**The real question this raises: how often are the AI's mistakes arithmetic, and how often are they net holes?**
-
-- **Mostly arithmetic:** our checker has plenty to catch in Study B, the head-to-head test.
-- **Mostly net holes:** Study B would show little difference, like testing a spell-checker on essays whose only errors are wrong facts.
-
-**What the Collider-Bench paper says.** Arithmetic mistakes happen often (wrong particle, mixed units, forgetting to use the number), and the authors even suggest a checking module like ours. But they give no counts. One run of ours is a single hint, not proof.
-
-**Study A, our main claim, is unaffected.** There we plant arithmetic mistakes ourselves and measure how many the checker finds.
+**One useful thing did come out of re-reading the tables.** One of our three planned tasks (sus-16-051 T2tt_SRG) is the exception: the AI's mistakes there are in the net, not in the counting. Its sister task T2tt_comp, from the same paper, shows counting mistakes. So it's a better pick for Study B.
 
 ## How the checker plugs into the benchmark
 
@@ -77,14 +70,14 @@ The first three are **looked up**. The last one, ε, is **built** by the AI: it 
 | [0010](../../../docs/decisions/0010-subject-isolation.md) | How do we keep the AI's room clean? | A separate user account on Israr's laptop just for the test AI | Clean by design, so nobody has to remember to tidy up |
 | [0011](../../../docs/decisions/0011-auth-for-measured-runs.md) | Subscription or API key? | Subscription for practice runs, API key for Study B | Practice is free; Study B needs long runs that don't stop |
 | [0012](../../../docs/decisions/0012-commit-transcripts.md) | Save the AI's transcripts in the repo? | Yes, compressed (about 0.3 MB each) | They are the evidence behind every mistake we label |
-| [0013](../../../docs/decisions/0013-baseline-failure-mix.md) | Count mistake types before Study B? | Yes: about 3 practice runs on 3 tasks, on the subscription | A cheap way to learn early whether the checker will have anything to catch |
+| [0014](../../../docs/decisions/0014-drop-failure-mix-runs.md) | Count mistake types before Study B? | No (replaces 0013) | The paper's tables already answer it; one run can't outweigh hundreds |
 
 Still with Ammad, because they set how much money we spend:
 - 0005 (which model);
 - 0006 (budget);
 - 0007 (Haiku arm).
 
-They are easier to decide after the 0013 runs.
+They can be decided now, using the paper's tables.
 
 ## Small fixes still to do
 
