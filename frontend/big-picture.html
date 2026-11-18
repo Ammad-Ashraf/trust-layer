@@ -1,0 +1,791 @@
+<title>From Collisions to One Number</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="What a Collider-Bench task asks, why it uses simulation instead of real data, and where the trust-layer checker fits.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column (~68ch) with wide interactive panels; a detector
+   "event display" in the hero; particle colours are the semantic palette. */
+:root {
+  --bg: #f2f5f8;
+  --surface: #ffffff;
+  --sunk: #e7edf2;
+  --ink: #132331;
+  --muted: #566878;
+  --line: #d2dce4;
+  --beam: #2350c8;
+  --beam-soft: #dfe7fb;
+  --lepton: #c8324f;
+  --photon: #b07f00;
+  --jet: #0b7f74;
+  --invisible: #6a58b8;
+  --ok: #1f7a46;
+  --ok-soft: #dcf0e3;
+  --bad: #b3261e;
+  --bad-soft: #fbe2df;
+  --warn: #8a5a00;
+  --warn-soft: #f7ecd2;
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d151d; --surface: #142029; --sunk: #0f1a22; --ink: #e5edf3; --muted: #94a6b5;
+    --line: #253644; --beam: #86a7ff; --beam-soft: #1c2b4d; --lepton: #ff7a93; --photon: #f0c44a;
+    --jet: #45c9b8; --invisible: #b2a4ff; --ok: #5fd08f; --ok-soft: #133524; --bad: #ff8a80;
+    --bad-soft: #3d1a18; --warn: #f0bf5a; --warn-soft: #3a2d12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d151d; --surface: #142029; --sunk: #0f1a22; --ink: #e5edf3; --muted: #94a6b5;
+  --line: #253644; --beam: #86a7ff; --beam-soft: #1c2b4d; --lepton: #ff7a93; --photon: #f0c44a;
+  --jet: #45c9b8; --invisible: #b2a4ff; --ok: #5fd08f; --ok-soft: #133524; --bad: #ff8a80;
+  --bad-soft: #3d1a18; --warn: #f0bf5a; --warn-soft: #3a2d12; color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body);
+  font-size: 16px; line-height: 1.6; margin: 0;
+}
+table { font-size: inherit; }
+.wrap {
+  max-width: 1080px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.12; margin: 0; }
+h1 { font-size: clamp(2.2rem, 5.2vw, 3.6rem); font-weight: 800; font-stretch: 112%; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 750; font-stretch: 108%; }
+h3 { font-size: 1.15rem; font-weight: 700; font-stretch: 104%; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow {
+  font-family: var(--font-data); font-size: 0.78rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+}
+.lede { font-size: 1.12rem; color: var(--ink); }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+a { color: var(--beam); }
+:focus-visible { outline: 3px solid var(--beam); outline-offset: 2px; border-radius: 4px; }
+
+/* Sticky section nav */
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+}
+.nav .wrap { display: flex; gap: 6px; overflow-x: auto; padding-block: 10px; scrollbar-width: none; }
+.nav a {
+  flex: none; text-decoration: none; color: var(--muted); font-size: 0.88rem;
+  padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+}
+.nav a:hover { color: var(--ink); background: var(--sunk); }
+
+section { padding-block: 56px; border-bottom: 1px solid var(--line); }
+section > .wrap { display: grid; gap: 20px; }
+.section-head { display: grid; gap: 10px; }
+
+/* Hero */
+.hero { padding-block: 48px 56px; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 40px; align-items: center; }
+.hero-copy { display: grid; gap: 18px; min-width: 0; }
+.formula {
+  font-family: var(--font-data); font-size: clamp(1rem, 2.4vw, 1.3rem);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px 16px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline;
+}
+.formula .f { display: inline-grid; justify-items: center; line-height: 1.2; }
+.formula .f small { font-family: var(--font-body); font-size: 0.68rem; color: var(--muted); }
+.formula .op { color: var(--muted); }
+.display-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  padding: 14px; display: grid; gap: 10px; min-width: 0;
+}
+.display-card canvas { width: 100%; aspect-ratio: 1; display: block; max-width: min(100%, 460px); margin-inline: auto; }
+.display-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.8rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.display-caption { font-size: 0.86rem; color: var(--muted); }
+
+button {
+  font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); padding: 7px 12px; font-size: 0.9rem;
+}
+button:hover { border-color: var(--beam); }
+button.primary { background: var(--beam); border-color: var(--beam); color: var(--surface); }
+button[aria-pressed="true"], button[aria-selected="true"] {
+  background: var(--beam-soft); border-color: var(--beam); color: var(--ink);
+}
+
+/* Timeline */
+.timeline { overflow-x: auto; }
+.tl {
+  min-width: 640px; display: grid; grid-template-columns: repeat(17, 1fr); gap: 3px;
+  font-size: 0.78rem;
+}
+.tl-year { text-align: center; color: var(--muted); font-family: var(--font-data); padding-top: 6px; }
+.tl-bar {
+  border-radius: 6px; padding: 8px 10px; font-weight: 600; font-size: 0.82rem;
+  background: var(--sunk); color: var(--ink); border: 1px solid var(--line); overflow: hidden; white-space: nowrap;
+}
+.tl-bar.run { background: var(--beam-soft); border-color: var(--beam); }
+.tl-bar.off { background: transparent; border-style: dashed; color: var(--muted); font-weight: 500; }
+.tl-mark {
+  grid-row: 1; border-radius: 6px; background: var(--beam); color: var(--surface);
+  padding: 4px 6px; text-align: center; font-family: var(--font-data); font-size: 0.72rem; font-weight: 500;
+}
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 6px; align-content: start; }
+.fact .big { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; font-stretch: 110%; line-height: 1; }
+
+/* Real vs simulated */
+.switch { display: inline-flex; gap: 4px; background: var(--sunk); padding: 4px; border-radius: 10px; flex-wrap: wrap; }
+.switch button { border-color: transparent; background: transparent; }
+.split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.step-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px; display: grid; gap: 8px; align-content: start; min-width: 0;
+}
+.step-card .n { font-family: var(--font-data); font-size: 0.8rem; color: var(--beam); }
+.analogy {
+  background: var(--sunk); border-radius: var(--radius); padding: 16px 18px; display: grid; gap: 6px;
+}
+.analogy strong { font-family: var(--font-display); font-stretch: 105%; }
+
+/* Task cards */
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.tabs button { display: grid; text-align: left; gap: 2px; padding: 10px 14px; }
+.tabs button .mono { font-size: 0.78rem; color: var(--muted); }
+.task {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px 28px;
+}
+.task-main { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.task-side { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.decode { display: flex; flex-wrap: wrap; gap: 6px; }
+.decode span {
+  font-family: var(--font-data); font-size: 0.85rem; border: 1px solid var(--line);
+  border-radius: 6px; padding: 4px 8px; display: grid; line-height: 1.25;
+}
+.decode span small { font-family: var(--font-body); color: var(--muted); font-size: 0.7rem; }
+.chain { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 3px 10px;
+  font-size: 0.85rem; border: 1px solid var(--line); background: var(--bg);
+}
+.chip i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.arrow { color: var(--muted); }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; font-size: 0.93rem; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; }
+.status {
+  font-size: 0.88rem; border-radius: 8px; padding: 10px 12px; background: var(--beam-soft);
+  border: 1px solid var(--beam);
+}
+
+/* Pipeline stepper */
+.pipe { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+.pipe button {
+  display: grid; gap: 2px; text-align: left; padding: 10px; min-height: 72px; align-content: start;
+  font-size: 0.82rem; min-width: 0;
+}
+.pipe button .k { font-family: var(--font-data); font-size: 0.72rem; color: var(--muted); }
+.pipe button.ours { border-color: var(--ok); }
+.pipe-detail {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px;
+  display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 18px 28px;
+}
+.pipe-detail > div { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.tag { display: inline-block; font-size: 0.78rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+.tag.ok { background: var(--ok-soft); color: var(--ok); }
+.tag.warn { background: var(--warn-soft); color: var(--warn); }
+.tag.none { background: var(--sunk); color: var(--muted); }
+.pipe-nav { display: flex; gap: 8px; }
+
+/* Ledger / mistake lab */
+.lab { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 18px; align-items: start; }
+.scenarios { display: grid; gap: 6px; }
+.scenarios button { text-align: left; display: grid; grid-template-columns: 3.2em minmax(0, 1fr); gap: 8px; align-items: baseline; padding: 10px 12px; }
+.scenarios button .code { font-family: var(--font-data); font-weight: 500; }
+.ledger { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.ledger-head { padding: 14px 18px; border-bottom: 1px solid var(--line); display: grid; gap: 4px; }
+.ledger-scroll { overflow-x: auto; }
+.ledger table { width: 100%; border-collapse: collapse; min-width: 520px; }
+.ledger th, .ledger td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.ledger th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.ledger td.v { font-family: var(--font-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ledger tr.changed td { background: var(--warn-soft); }
+.ledger-foot { padding: 16px 18px; display: grid; gap: 12px; }
+.result { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: baseline; }
+.result .big { font-family: var(--font-display); font-weight: 800; font-size: 2rem; font-stretch: 110%; line-height: 1; }
+.checks { display: flex; flex-wrap: wrap; gap: 6px; }
+.check { font-family: var(--font-data); font-size: 0.8rem; padding: 3px 9px; border-radius: 6px; border: 1px solid transparent; }
+.check.pass { background: var(--ok-soft); color: var(--ok); }
+.check.fail { background: var(--bad-soft); color: var(--bad); border-color: var(--bad); font-weight: 500; }
+.verdict { border-radius: 10px; padding: 12px 14px; font-size: 0.93rem; }
+.verdict.caught { background: var(--ok-soft); }
+.verdict.missed { background: var(--warn-soft); }
+.verdict.clean { background: var(--sunk); }
+
+/* Stages */
+.stages { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.stages button { display: grid; gap: 4px; text-align: left; padding: 10px; min-height: 84px; align-content: start; font-size: 0.85rem; min-width: 0; }
+.stages button .k { font-family: var(--font-data); font-size: 0.72rem; color: var(--muted); }
+.stages .band { grid-column: 2 / span 4; font-size: 0.78rem; text-align: center; border-top: 2px solid var(--beam); color: var(--beam); padding-top: 4px; }
+.stage-detail { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 10px; }
+
+footer { padding-block: 40px 60px; }
+footer .wrap { display: grid; gap: 10px; font-size: 0.88rem; color: var(--muted); }
+footer ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+
+@media (max-width: 860px) {
+  .hero .wrap, .task, .pipe-detail, .lab { grid-template-columns: minmax(0, 1fr); }
+  .pipe { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stages { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stages .band { display: none; }
+  .split, .facts { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  .pipe, .stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  section { padding-block: 40px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<nav class="nav" aria-label="Sections">
+  <div class="wrap">
+    <a href="#question">The question</a>
+    <a href="#year-2016">Why 2016</a>
+    <a href="#real-vs-sim">Real data vs simulation</a>
+    <a href="#tasks">The three tasks</a>
+    <a href="#pipeline">One task, step by step</a>
+    <a href="#lab">What the checker catches</a>
+    <a href="#journey">Where we fit</a>
+  </div>
+</nav>
+
+<header class="hero" id="question">
+  <div class="wrap">
+    <div class="hero-copy">
+      <span class="eyebrow">Trust Layer · Phase 1 · big picture</span>
+      <h1>If this particle existed, how many would CMS have counted?</h1>
+      <p class="lede">Every Collider-Bench task comes down to that one number. An AI agent answers it by simulating collisions on a computer. Our checker makes sure the arithmetic behind the number is right.</p>
+      <div class="formula" aria-label="expected events equals sigma times L times BR times epsilon">
+        <span class="f">events<small>the answer</small></span><span class="op">=</span>
+        <span class="f">σ<small>how common</small></span><span class="op">×</span>
+        <span class="f">L<small>how much data</small></span><span class="op">×</span>
+        <span class="f">BR<small>right kind</small></span><span class="op">×</span>
+        <span class="f">ε<small>kept by filters</small></span>
+      </div>
+      <p class="muted">In the fishing picture: how common the fish is, times how much water you swept, times the share that are the right species, times how many the net keeps.</p>
+    </div>
+    <figure class="display-card" style="margin:0">
+      <div class="display-bar">
+        <span class="eyebrow" id="display-title">Simulated collision · T5Wg</span>
+        <button id="new-collision" type="button">New collision</button>
+      </div>
+      <canvas id="event-display" role="img" aria-label="A drawing of a simulated collision seen end-on through the detector layers"></canvas>
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:var(--lepton)"></i>lepton (electron, muon)</span>
+        <span><i style="background:var(--photon)"></i>photon</span>
+        <span><i style="background:var(--jet)"></i>jet</span>
+        <span><i style="background:var(--invisible)"></i>missing energy</span>
+      </div>
+      <figcaption class="display-caption" id="display-caption">Looking down the beam pipe. Rings are detector layers: tracker, calorimeters, muon chambers. The dashed arrow is energy that something invisible carried away.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<section id="year-2016">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Why "in 2016"</span>
+      <h2>The LHC runs in multi-year runs. Our tasks use one year of Run 2.</h2>
+      <p>The LHC collects data in long periods called runs, with the machine settings kept steady. In 2016 the beams collided at 13 TeV, and CMS recorded 35.9 fb⁻¹ of good data. All three of our tasks are CMS searches that used exactly that dataset. That is why every task says "35.9 fb⁻¹".</p>
+    </div>
+    <div class="timeline" role="img" aria-label="Timeline: Run 1 2010 to 2012, Run 2 2015 to 2018 with 2016 highlighted, Run 3 2022 to June 2026, then a shutdown until the High-Luminosity LHC around 2030">
+      <div class="tl">
+        <div class="tl-mark" style="grid-column: 7 / span 1;">2016</div>
+        <div class="tl-bar run" style="grid-column: 1 / span 3; grid-row: 2;">Run 1</div>
+        <div class="tl-bar off" style="grid-column: 4 / span 2; grid-row: 2;">pause</div>
+        <div class="tl-bar run" style="grid-column: 6 / span 4; grid-row: 2;">Run 2 · 13 TeV</div>
+        <div class="tl-bar off" style="grid-column: 10 / span 3; grid-row: 2;">pause</div>
+        <div class="tl-bar run" style="grid-column: 13 / span 5; grid-row: 2;">Run 3 · ends June 2026</div>
+        <div class="tl-year" style="grid-column: 1; grid-row: 3;">2010</div>
+        <div class="tl-year" style="grid-column: 6; grid-row: 3;">2015</div>
+        <div class="tl-year" style="grid-column: 9; grid-row: 3;">2018</div>
+        <div class="tl-year" style="grid-column: 13; grid-row: 3;">2022</div>
+        <div class="tl-year" style="grid-column: 17; grid-row: 3;">2026</div>
+      </div>
+    </div>
+    <div class="facts">
+      <div class="fact">
+        <span class="eyebrow">CMS, 2016</span>
+        <span class="big mono">35.9 fb⁻¹</span>
+        <p class="muted">How much data. Think of it as how much rain fell per square metre: the more rain, the more drops land in any bucket.</p>
+      </div>
+      <div class="fact">
+        <span class="eyebrow">How to read it</span>
+        <span class="big mono">1 fb × 1 fb⁻¹ = 1</span>
+        <p class="muted">A process with a 1 fb cross-section happens about once per 1 fb⁻¹ of data. In 35.9 fb⁻¹ it happens about 36 times, before any filters.</p>
+      </div>
+      <div class="fact">
+        <span class="eyebrow">Reading a task name</span>
+        <span class="big mono">SUS-16-034</span>
+        <p class="muted">The CMS supersymmetry group, 2016 data, analysis number 34.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="real-vs-sim">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Real data vs simulation</span>
+      <h2>CMS looked at real collisions. The AI only ever simulates.</h2>
+      <p>Each search has two sides. Switch between them to see who does what.</p>
+    </div>
+    <div class="switch" role="tablist" aria-label="Choose a side">
+      <button type="button" role="tab" id="side-cms" aria-selected="true" aria-controls="side-panel">What CMS did (2016–2017)</button>
+      <button type="button" role="tab" id="side-ai" aria-selected="false" aria-controls="side-panel">What the AI does (Collider-Bench)</button>
+    </div>
+    <div class="split" id="side-panel" role="tabpanel"></div>
+    <div class="analogy">
+      <strong>The fishing contest</strong>
+      <p>CMS fished the 2016 lake and caught nothing unusual. To say "species X does not live here", they first worked out how many X they would have caught if it did. If that number is big and they caught none, X is ruled out. Collider-Bench asks the AI to redo that "how many would we have caught" calculation with public tools. CMS's own number is the answer key, and the AI never sees it.</p>
+    </div>
+  </div>
+</section>
+
+<section id="tasks">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">The three tasks</span>
+      <h2>Three searches, three imagined particles</h2>
+      <p>The particles are not real (as far as anyone knows). They come from supersymmetry, a popular idea that every known particle has a heavier partner. Each task fixes one "benchmark": exact particles and exact masses. Pick a task, and the collision drawing at the top changes to what that particle would leave in the detector.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Tasks" id="task-tabs"></div>
+    <article class="task" id="task-panel" role="tabpanel" aria-live="polite"></article>
+  </div>
+</section>
+
+<section id="pipeline">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">One task, step by step</span>
+      <h2>From the paper to a score in about half an hour</h2>
+      <p>This is what the AI did in our smoke run on 18 Nov. Click a step, or use the arrows.</p>
+    </div>
+    <div class="pipe" id="pipe" role="tablist" aria-label="Pipeline steps"></div>
+    <div class="pipe-detail" id="pipe-detail" role="tabpanel" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="lab">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">What the checker catches</span>
+      <h2>Plant a mistake and watch the ledger</h2>
+      <p>The ledger is the AI's notebook: every factor of the formula, with a unit and a source. The checker reads it before the AI may hand in. Real numbers from the T5Wg task; the ones marked "illustrative" only show the idea. This is a preview of Study A, where we plant mistakes on purpose and count how many the checker finds.</p>
+    </div>
+    <div class="lab">
+      <div class="scenarios" id="scenarios" role="group" aria-label="Mistakes to plant"></div>
+      <div class="ledger">
+        <div class="ledger-head">
+          <span class="eyebrow">Ledger · sus-16-046 · T5Wg_1750_1700</span>
+          <strong id="scenario-title"></strong>
+        </div>
+        <div class="ledger-scroll">
+          <table>
+            <thead><tr><th>Factor</th><th>Value</th><th>Source written down</th></tr></thead>
+            <tbody id="ledger-rows"></tbody>
+          </table>
+        </div>
+        <div class="ledger-foot">
+          <div class="result">
+            <div><div class="eyebrow">AI hands in</div><div class="big mono" id="r-ai"></div></div>
+            <div><div class="eyebrow">Right answer</div><div class="big mono" id="r-true">54.8</div></div>
+            <div><div class="eyebrow">Off by</div><div class="big mono" id="r-off"></div></div>
+          </div>
+          <div class="checks" id="checks" aria-label="Checker results"></div>
+          <div class="verdict" id="verdict"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="journey">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Where we fit</span>
+      <h2>The seven stages of a real LHC result</h2>
+      <p>A real result takes years. Collider-Bench tests AI on stages 2 to 5, using simulation. Our Phase 1 checker sits at normalization, the end of stage 3. Click a stage.</p>
+    </div>
+    <div class="stages" id="stages" role="tablist" aria-label="Analysis stages"></div>
+    <div class="stage-detail" id="stage-detail" role="tabpanel" aria-live="polite"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <strong style="color:var(--ink)">Sources</strong>
+    <ul>
+      <li>Collider-Bench paper (arXiv 2605.13950) and its task cards, pinned commit <span class="mono">2986d8b</span>.</li>
+      <li>Smoke run, 18 Nov 2026: <span class="mono">experiments/00-smoke-run/</span> in the repo.</li>
+      <li>"How an LHC Analysis Works, and Where Our Work Fits" (Ammad's doc, 11 Nov 2026): stages, film and unit analogies.</li>
+      <li>Run dates: CERN and CMS announcements on the end of Run 3 (June 2026).</li>
+    </ul>
+    <p>Lives in the repo at <span class="mono">frontend/big-picture.html</span>. Open it in a browser; no install needed.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s) => document.querySelector(s);
+  const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- Event display ---------- */
+  const SIGNATURES = {
+    T5Wg: { title: "T5Wg (photons)", caption: "Gluinos decay to quarks (jets) and a partner that turns into a photon plus an invisible particle. The detector sees hard photons, jets and missing energy.",
+            leptons: [0, 0], photons: [1, 2], jets: [2, 4] },
+    TChiWZ: { title: "TChiWZ (three leptons)", caption: "The W and Z decay to electrons or muons, and two invisible neutralinos fly off. The detector sees three leptons and missing energy.",
+              leptons: [3, 3], photons: [0, 0], jets: [0, 1] },
+    T2tt: { title: "T2tt (one lepton)", caption: "Each top squark decays to a top quark and an invisible neutralino. The tops make jets and one lepton. The detector sees one lepton, four or more jets and missing energy.",
+            leptons: [1, 1], photons: [0, 0], jets: [4, 5] },
+  };
+  let signature = "T5Wg";
+  let seed = 7;
+  const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const between = (a, b) => a + Math.floor(rand() * (b - a + 1));
+  const canvas = $("#event-display");
+  const ctx = canvas.getContext("2d");
+  let progress = 1, raf = 0, event = null;
+
+  function makeEvent() {
+    const sig = SIGNATURES[signature];
+    const items = [];
+    const n = { l: between(...sig.leptons), p: between(...sig.photons), j: between(...sig.jets) };
+    let px = 0, py = 0;
+    const add = (type, r, w) => {
+      const a = rand() * Math.PI * 2;
+      const e = 0.5 + rand() * 0.5;
+      px += Math.cos(a) * e; py += Math.sin(a) * e;
+      items.push({ type, a, r, w, bend: (rand() - 0.5) * 0.9 });
+    };
+    for (let i = 0; i < n.l; i++) add("lepton", 0.97, 2.6);
+    for (let i = 0; i < n.p; i++) add("photon", 0.62, 2.6);
+    for (let i = 0; i < n.j; i++) add("jet", 0.78, 0);
+    for (let i = 0; i < 14; i++) items.push({ type: "soft", a: rand() * Math.PI * 2, r: 0.18 + rand() * 0.2, w: 1, bend: (rand() - 0.5) * 2 });
+    const met = Math.atan2(-py, -px);
+    return { items, met };
+  }
+
+  function draw() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const size = canvas.clientWidth;
+    if (canvas.width !== Math.round(size * dpr)) { canvas.width = Math.round(size * dpr); canvas.height = Math.round(size * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const c = size / 2, R = size * 0.46;
+    ctx.clearRect(0, 0, size, size);
+    const line = css("--line"), muted = css("--muted");
+    const rings = [[0.24, "tracker"], [0.48, "ECAL"], [0.66, "HCAL"], [0.82, "magnet"], [0.98, "muon chambers"]];
+    ctx.lineWidth = 1;
+    rings.forEach(([r]) => { ctx.strokeStyle = line; ctx.beginPath(); ctx.arc(c, c, R * r, 0, Math.PI * 2); ctx.stroke(); });
+    ctx.fillStyle = css("--sunk");
+    ctx.beginPath(); ctx.arc(c, c, R * 0.48, 0, Math.PI * 2); ctx.arc(c, c, R * 0.24, 0, Math.PI * 2, true); ctx.fill("evenodd");
+    ctx.fillStyle = muted; ctx.font = `${Math.max(9, size * 0.024)}px ${css("--font-data")}`;
+    ctx.fillText("tracker", c + 4, c - R * 0.24 + 12);
+    ctx.fillText("calorimeters", c + 4, c - R * 0.66 + 12);
+    ctx.fillText("muon chambers", c + 4, c - R * 0.98 + 12);
+    if (!event) return;
+    const t = progress;
+    for (const it of event.items) {
+      const len = R * it.r * t;
+      const ex = c + Math.cos(it.a) * len, ey = c + Math.sin(it.a) * len;
+      if (it.type === "jet") {
+        const spread = 0.16;
+        ctx.fillStyle = css("--jet"); ctx.globalAlpha = 0.28;
+        ctx.beginPath(); ctx.moveTo(c, c);
+        ctx.arc(c, c, len, it.a - spread, it.a + spread); ctx.closePath(); ctx.fill();
+        ctx.globalAlpha = 1; ctx.strokeStyle = css("--jet"); ctx.lineWidth = 1.5; ctx.stroke();
+        continue;
+      }
+      const color = it.type === "lepton" ? css("--lepton") : it.type === "photon" ? css("--photon") : muted;
+      ctx.strokeStyle = color; ctx.lineWidth = it.w; ctx.globalAlpha = it.type === "soft" ? 0.45 : 1;
+      ctx.setLineDash(it.type === "photon" ? [6, 4] : []);
+      ctx.beginPath(); ctx.moveTo(c, c);
+      if (it.type === "photon") ctx.lineTo(ex, ey);
+      else {
+        const mx = c + Math.cos(it.a + it.bend * 0.5) * len * 0.5, my = c + Math.sin(it.a + it.bend * 0.5) * len * 0.5;
+        ctx.quadraticCurveTo(mx, my, ex, ey);
+      }
+      ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    }
+    // missing energy
+    const mlen = R * 0.9 * t;
+    const mx = c + Math.cos(event.met) * mlen, my = c + Math.sin(event.met) * mlen;
+    ctx.strokeStyle = css("--invisible"); ctx.lineWidth = 3; ctx.setLineDash([10, 6]);
+    ctx.beginPath(); ctx.moveTo(c, c); ctx.lineTo(mx, my); ctx.stroke(); ctx.setLineDash([]);
+    if (t > 0.95) {
+      const h = 12, a = event.met;
+      ctx.fillStyle = css("--invisible"); ctx.beginPath(); ctx.moveTo(mx, my);
+      ctx.lineTo(mx - h * Math.cos(a - 0.4), my - h * Math.sin(a - 0.4));
+      ctx.lineTo(mx - h * Math.cos(a + 0.4), my - h * Math.sin(a + 0.4)); ctx.closePath(); ctx.fill();
+    }
+    ctx.fillStyle = css("--ink"); ctx.beginPath(); ctx.arc(c, c, 3, 0, Math.PI * 2); ctx.fill();
+  }
+
+  function collide(animate) {
+    event = makeEvent();
+    cancelAnimationFrame(raf);
+    if (!animate || reduceMotion) { progress = 1; draw(); return; }
+    const start = performance.now();
+    const step = (now) => {
+      progress = Math.min(1, (now - start) / 700);
+      progress = 1 - Math.pow(1 - progress, 3);
+      draw();
+      if (progress < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  }
+  function setSignature(name, animate) {
+    signature = name;
+    $("#display-title").textContent = "Simulated collision · " + SIGNATURES[name].title;
+    $("#display-caption").textContent = SIGNATURES[name].caption;
+    collide(animate);
+  }
+  $("#new-collision").addEventListener("click", () => collide(true));
+  window.addEventListener("resize", draw);
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  /* ---------- Real vs simulated ---------- */
+  const SIDES = {
+    cms: [
+      ["1", "Record real collisions", "In 2016 CMS recorded billions of real proton collisions: 35.9 fb⁻¹ of good data."],
+      ["2", "Filter and count", "They kept only events that look like the new particle (the signal region) and counted them. Then they predicted how many ordinary look-alike events (background) to expect."],
+      ["3", "Compare, then rule out", "They saw no extra events. Using their own detailed simulation, they predicted how many events each imagined particle would add. Where that prediction is bigger than the data allows, the particle is ruled out. Those predictions were published with the paper."],
+    ],
+    ai: [
+      ["1", "Never touches real data", "The AI gets the published paper and an empty results table. No real collisions at all."],
+      ["2", "Simulate one imagined particle", "It uses public simulation tools (MadGraph, Pythia, Delphes) to make about 10,000 fake collisions for one benchmark particle, then applies the paper's filters."],
+      ["3", "Predict, then get scored", "It turns the survivors into an expected count for 35.9 fb⁻¹, using σ × L × BR × ε. Collider-Bench compares that with CMS's published prediction, which stays hidden from the AI."],
+    ],
+  };
+  function showSide(key) {
+    ["cms", "ai"].forEach((k) => $("#side-" + k).setAttribute("aria-selected", String(k === key)));
+    $("#side-panel").innerHTML = SIDES[key].map(([n, h, p]) =>
+      `<div class="step-card"><span class="n">Step ${n}</span><h3>${h}</h3><p class="muted">${p}</p></div>`).join("");
+  }
+  $("#side-cms").addEventListener("click", () => showSide("cms"));
+  $("#side-ai").addEventListener("click", () => showSide("ai"));
+
+  /* ---------- Task cards ---------- */
+  const P = (type, label) => `<span class="chip"><i style="background:var(--${type})"></i>${label}</span>`;
+  const A = '<span class="arrow" aria-hidden="true">→</span>';
+  const TASKS = [
+    {
+      id: "TChiWZ", paper: "sus-16-034", bench: "TChiWZ_550_200", short: "Three leptons",
+      decode: [["T", "topology"], ["Chi", "chargino + neutralino"], ["WZ", "decay via W and Z"], ["550", "partner mass, GeV"], ["200", "invisible LSP, GeV"]],
+      made: "A chargino and a neutralino, both 550 GeV, made together.",
+      chain: [P("ink", "chargino 550") + A + P("ink", "W") + " + " + P("invisible", "neutralino 200"),
+              P("ink", "neutralino 550") + A + P("ink", "Z") + " + " + P("invisible", "neutralino 200"),
+              P("ink", "W, Z") + A + P("lepton", "3 leptons")],
+      sees: "Three leptons (two from the Z, one from the W) and missing energy from the two invisible neutralinos.",
+      counted: "Missing energy (E_T^miss), in the WZ/ZZ signal region.",
+      analogy: "Two cars crash and two of the passengers are invisible. You can only tell they were there because the wreckage is lopsided.",
+      status: "M2, now: you fill this task's ledger by hand.",
+    },
+    {
+      id: "T5Wg", paper: "sus-16-046", bench: "T5Wg_1750_1700", short: "Photons",
+      decode: [["T5", "topology, gluino pair"], ["W", "via W"], ["g", "or photon (γ)"], ["1750", "gluino mass, GeV"], ["1700", "partner mass, GeV"]],
+      made: "A pair of gluinos, 1750 GeV each: very heavy, so very rare.",
+      chain: [P("ink", "gluino 1750") + A + P("jet", "quark jets") + " + " + P("ink", "partner 1700"),
+              P("ink", "partner 1700") + A + P("photon", "photon") + " or " + P("ink", "W") + " + " + P("invisible", "gravitino (invisible)")],
+      sees: "Hard photons and missing energy, often with jets.",
+      counted: "S_T^γ: missing energy plus the photons' momentum.",
+      analogy: "A camera flash in the dark: the photon is the flash, and the invisible gravitino is the person who took the photo and walked away.",
+      status: "Smoke run, 18 Nov: the AI got σ, L and the units right but kept 1 in 100 events instead of about 39 in 100.",
+    },
+    {
+      id: "T2tt", paper: "sus-16-051", bench: "T2tt_1000_50", short: "One lepton",
+      decode: [["T2", "topology, squark pair"], ["tt", "decays to top quarks"], ["1000", "top squark mass, GeV"], ["50", "invisible LSP, GeV"]],
+      made: "A pair of top squarks, 1000 GeV each.",
+      chain: [P("ink", "top squark 1000") + A + P("ink", "top quark") + " + " + P("invisible", "neutralino 50"),
+              P("ink", "2 top quarks") + A + P("jet", "4+ jets") + " + " + P("lepton", "1 lepton")],
+      sees: "One lepton, four or more jets (some from b quarks) and missing energy.",
+      counted: "Missing energy (E_T^miss), in signal region SR-G.",
+      analogy: "Two parcels each hide a heavy brick (the top quark) and a ghost (the neutralino). The bricks break into pieces you can see; the ghosts leave without a trace.",
+      status: "Study B: the paper's tables show the AI's mistakes here are mostly in the filters, not the counting. Lean: swap to its sister task T2tt_comp (800/400). See decision 0014.",
+    },
+  ];
+  function showTask(i, animate) {
+    const t = TASKS[i];
+    document.querySelectorAll("#task-tabs button").forEach((b, j) => b.setAttribute("aria-selected", String(i === j)));
+    $("#task-panel").innerHTML = `
+      <div class="task-main">
+        <div><span class="eyebrow">${t.paper.toUpperCase()} · benchmark</span><h3 class="mono" style="font-family:var(--font-data);font-size:1.25rem">${t.bench}</h3></div>
+        <div class="decode">${t.decode.map(([k, v]) => `<span>${k}<small>${v}</small></span>`).join("")}</div>
+        <p>${t.made}</p>
+        <div style="display:grid;gap:8px">${t.chain.map((c) => `<div class="chain">${c}</div>`).join("")}</div>
+      </div>
+      <div class="task-side">
+        <dl class="kv">
+          <dt>Detector sees</dt><dd>${t.sees}</dd>
+          <dt>Counted in</dt><dd>${t.counted}</dd>
+          <dt>Data</dt><dd>CMS 2016, 35.9 fb⁻¹, 13 TeV</dd>
+        </dl>
+        <div class="analogy"><strong>Picture it</strong><p>${t.analogy}</p></div>
+        <div class="status">${t.status}</div>
+      </div>`;
+    setSignature(t.id, animate);
+  }
+  $("#task-tabs").innerHTML = TASKS.map((t, i) =>
+    `<button type="button" role="tab" aria-selected="false" aria-controls="task-panel" data-i="${i}"><strong>${t.short}</strong><span class="mono">${t.paper} · ${t.id}</span></button>`).join("");
+  $("#task-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showTask(+b.dataset.i, true); });
+
+  /* ---------- Pipeline ---------- */
+  const STEPS = [
+    { k: "read", name: "Read the paper", tool: "the AI itself",
+      what: "Works out what the search did: which particle, which filters, which signal region.",
+      analogy: "Reading the recipe before cooking.", risk: "Paper leaves details out, so the AI guesses (3a).", watch: "none" },
+    { k: "make", name: "Make collisions", tool: "MadGraph",
+      what: "Writes the hard collision: two protons make the imagined particles. About 10,000 fake events.",
+      analogy: "Writing a film script and getting thousands of takes.", risk: "Wrong particle or mass (1d). MadGraph also prints a rough σ, which is the wrong one to use (1b).", watch: "warn" },
+    { k: "shower", name: "Decay and shower", tool: "Pythia",
+      what: "Lets the particles decay and spray into the pieces nature would make.",
+      analogy: "The script plays out the way nature would.", risk: "Decay shares set wrong (1c).", watch: "none" },
+    { k: "detect", name: "Fake detector", tool: "Delphes",
+      what: "A simplified CMS that turns particles into what a detector would record.",
+      analogy: "Seeing the scene through a slightly blurry camera.", risk: "Choosing how a photon or jet is defined (3b). The smoke run's hole was probably here.", watch: "none" },
+    { k: "select", name: "Apply filters", tool: "AI's own code",
+      what: "Keeps only events that pass the paper's cuts. The share that survives is ε.",
+      analogy: "The fishing net. A hole here loses fish.", risk: "Wrong or missing cut (3a, 3b). The checker does not judge cuts.", watch: "none" },
+    { k: "norm", name: "Normalize", tool: "σ × L × BR × ε",
+      what: "Turns 10,000 simulated events into a real expected count for 35.9 fb⁻¹, using σ from Prospino.",
+      analogy: "Scaling a recipe from a test batch to the real order.", risk: "Units (1a), source (1b), missing factor (1c), wrong mass point (1d). Gap 1 lives here.", watch: "ok", note: "The AI writes each factor in the ledger with record-quantity." },
+    { k: "submit", name: "Hand in", tool: "results YAML",
+      what: "Fills the empty results table with predicted counts per bin.",
+      analogy: "Handing the exam to the proctor at the door.", risk: "Right number computed, never used (1e).", watch: "ok", note: "The gate (a Stop hook) runs checks C1–C5 and can send the AI back, up to 3 times." },
+    { k: "score", name: "Score", tool: "Collider-Bench",
+      what: "Compares the table with CMS's hidden prediction. The smoke run scored δ_norm = 0.98: about 50× too low.",
+      analogy: "The teacher marks the exam against the answer key.", risk: "None for the AI; this is the referee.", watch: "none" },
+  ];
+  let stepIdx = 5;
+  const WATCH = { ok: '<span class="tag ok">Checker watches this</span>', warn: '<span class="tag warn">Checker sees the result</span>', none: '<span class="tag none">Outside the checker</span>' };
+  $("#pipe").innerHTML = STEPS.map((s, i) =>
+    `<button type="button" role="tab" aria-selected="false" aria-controls="pipe-detail" data-i="${i}" class="${s.watch === "ok" ? "ours" : ""}"><span class="k">${i + 1} · ${s.tool}</span>${s.name}</button>`).join("");
+  function showStep(i) {
+    stepIdx = (i + STEPS.length) % STEPS.length;
+    const s = STEPS[stepIdx];
+    document.querySelectorAll("#pipe button").forEach((b, j) => b.setAttribute("aria-selected", String(j === stepIdx)));
+    $("#pipe-detail").innerHTML = `
+      <div>
+        <span class="eyebrow">Step ${stepIdx + 1} of ${STEPS.length} · ${s.tool}</span>
+        <h3>${s.name}</h3>
+        <p>${s.what}</p>
+        <p class="muted"><strong style="color:var(--ink)">Like:</strong> ${s.analogy}</p>
+      </div>
+      <div>
+        ${WATCH[s.watch]}
+        <p><strong>What can go wrong:</strong> ${s.risk}</p>
+        ${s.note ? `<p class="muted">${s.note}</p>` : ""}
+        <div class="pipe-nav"><button type="button" data-d="-1" aria-label="Previous step">← Previous</button><button type="button" class="primary" data-d="1" aria-label="Next step">Next →</button></div>
+      </div>`;
+  }
+  $("#pipe").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showStep(+b.dataset.i); });
+  $("#pipe-detail").addEventListener("click", (e) => { const b = e.target.closest("button[data-d]"); if (b) showStep(stepIdx + +b.dataset.d); });
+
+  /* ---------- Mistake lab ---------- */
+  const L = 35.9;
+  const TRUE = { sigma: 3.96, sUnit: "fb", sSrc: "Prospino, NLO, m(gluino) = 1750 GeV", br: 1, brSrc: "Every partner decays to photon or W (task card)", eps: 0.3855, epsSrc: "Simulation: share of events passing the filters", submit: null };
+  const SCEN = [
+    { code: "OK", label: "No mistake", title: "A correct ledger", patch: {}, fail: [], kind: "clean",
+      text: "Every factor has a unit and a source, and the hand-in matches the ledger. All five checks pass." },
+    { code: "1a", label: "Wrong unit: fb written as pb", title: "1a · 3.96 written as pb, not fb", patch: { sUnit: "pb" }, changed: ["sigma"], fail: ["C1"], kind: "caught",
+      text: "1 pb is 1,000 fb, so the count is 1,000× too big. C1 (units) catches it: Prospino's value is 0.00396 pb, and 3.96 pb does not match its source." },
+    { code: "1b", label: "Wrong source: rough σ from MadGraph", title: "1b · MadGraph's rough σ used", patch: { sigma: 1.453, sSrc: "MadGraph LO printout" }, changed: ["sigma"], fail: ["C2"], kind: "caught",
+      text: "MadGraph's rough (LO) value is 2.7× too small. Real number from the smoke run. C2 (source) catches it: σ must come from Prospino or the paper." },
+    { code: "1c", label: "Missing factor: decay share forgotten", title: "1c · decay share left out (illustrative)", patch: { br: null, brSrc: "(not recorded)", trueBr: 0.5 }, changed: ["br"], fail: ["C3"], kind: "caught", illustrative: true,
+      text: "Suppose the search only counted half the decays. Forgetting that share doubles the count. C3 (complete formula) catches the empty row: every factor must be filled in, or marked = 1 with a reason." },
+    { code: "1d", label: "Wrong match: σ for another mass", title: "1d · σ for a lighter gluino (illustrative)", patch: { sigma: 15.8, sSrc: "Prospino, NLO, m(gluino) = 1500 GeV" }, changed: ["sigma"], fail: ["C4"], kind: "caught", illustrative: true,
+      text: "A lighter particle is made more often, so the count comes out about 4× too big. C4 (match) catches it: the mass in σ's source is not the task's 1750 GeV." },
+    { code: "1e", label: "Lost on the way: raw count handed in", title: "1e · raw simulated count handed in", patch: { submit: 3855 }, changed: [], fail: ["C5"], kind: "caught",
+      text: "The ledger is right, but the AI hands in the raw number of surviving simulated events (3,855 of 10,000) instead of the scaled count. C5 (carried through) catches it: the hand-in does not match σ × L × BR × ε." },
+    { code: "ε", label: "Hole in the net (the smoke run)", title: "Net hole · what really happened on 18 Nov", patch: { eps: 0.0077, epsSrc: "Simulation: 93 of 10,000 passed, after corrections" }, changed: ["eps"], fail: [], kind: "missed",
+      text: "The arithmetic is perfect, so all five checks pass, yet the answer is about 50× too low. This is a judgment mistake in the filters (3b, 3c), outside Phase 1 by design. The paper's tables show it is the less common kind; counting mistakes dominate." },
+  ];
+  $("#scenarios").innerHTML = SCEN.map((s, i) =>
+    `<button type="button" aria-pressed="false" data-i="${i}"><span class="code">${s.code}</span><span>${s.label}${s.illustrative ? ' <span class="muted">(illustrative)</span>' : ""}</span></button>`).join("");
+  const fmt = (x) => x >= 1000 ? Math.round(x).toLocaleString("en-US") : x >= 10 ? x.toFixed(1) : x.toFixed(2);
+  function showScenario(i) {
+    const s = SCEN[i];
+    document.querySelectorAll("#scenarios button").forEach((b, j) => b.setAttribute("aria-pressed", String(i === j)));
+    const v = { ...TRUE, ...s.patch };
+    const ch = new Set(s.changed || []);
+    const brText = v.br == null ? "—" : v.br.toString();
+    $("#scenario-title").textContent = s.title;
+    $("#ledger-rows").innerHTML = [
+      ["sigma", "σ cross section", `${v.sigma} ${v.sUnit}`, v.sSrc],
+      ["L", "L luminosity", `${L} fb⁻¹`, "CMS 2016 dataset, as stated in the paper"],
+      ["br", "BR decay share", brText, v.brSrc],
+      ["eps", "ε kept by filters", `${(v.eps * 100).toFixed(v.eps < 0.01 ? 2 : 1)}%`, v.epsSrc],
+    ].map(([k, f, val, src]) => `<tr class="${ch.has(k) ? "changed" : ""}"><td>${f}</td><td class="v">${val}</td><td>${src}</td></tr>`).join("");
+    const sigmaFb = v.sigma * (v.sUnit === "pb" ? 1000 : 1);
+    const aiBr = v.br == null ? 1 : v.br;
+    const ai = v.submit != null ? v.submit : sigmaFb * L * aiBr * v.eps;
+    const truth = 3.96 * L * (s.patch.trueBr ?? 1) * TRUE.eps;
+    $("#r-ai").textContent = fmt(ai);
+    $("#r-true").textContent = fmt(truth);
+    const ratio = ai / truth;
+    $("#r-off").textContent = Math.abs(ratio - 1) < 0.02 ? "—" : ratio > 1 ? `${fmt(ratio)}× high` : `${fmt(1 / ratio)}× low`;
+    $("#checks").innerHTML = ["C1 units", "C2 source", "C3 complete", "C4 match", "C5 carried"].map((c) =>
+      `<span class="check ${s.fail.includes(c.slice(0, 2)) ? "fail" : "pass"}">${s.fail.includes(c.slice(0, 2)) ? "✗" : "✓"} ${c}</span>`).join("");
+    const head = s.kind === "caught" ? "Caught. The gate sends the AI back to fix it." : s.kind === "missed" ? "Not caught, and not meant to be." : "Passes.";
+    $("#verdict").className = "verdict " + s.kind;
+    $("#verdict").innerHTML = `<strong>${head}</strong> ${s.text}`;
+  }
+  $("#scenarios").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showScenario(+b.dataset.i); });
+
+  /* ---------- Seven stages ---------- */
+  const STAGES = [
+    ["Collect data", "Collisions are recorded in runs lasting years.", "A CCTV camera filming a busy road for years. Millions of cars pass; only a few moments matter.", "Not tested by Collider-Bench."],
+    ["Calibrate and reconstruct", "Make the detector read true, and turn raw signals into particles.", "Zeroing a scale, then reading footprints to tell which animal walked by.", "Delphes stands in for this. Gaps 3b, 3e. Human escalation (later phase)."],
+    ["Select events", "Filter years of data down to the events one search needs.", "Searching years of footage for only red cars turning left.", "The AI writes these filters. Gaps 3a, 3b. Normalization sits at the end of this stage: Gap 1, our Phase 1."],
+    ["Estimate background", "Predict how many ordinary look-alike events to expect.", "Guessing how many people wear green anyway, before counting fans of the green team.", "Collider-Bench's tasks skip this: they ask only for the signal."],
+    ["Statistics, blinded", "Part of the data stays hidden until the method is approved.", "A teacher grading exams with the names covered.", "Typed-in numbers, fake simulators, copying the paper (2a–2e). Provenance check (likely Phase 2)."],
+    ["Internal review", "Results go to bigger and bigger groups inside the collaboration.", "Defending a thesis to your lab, then your department, then the university.", "\"Does this number make sense?\" (3c, 3d). Our ledger could give reviewers a trail of every number."],
+    ["Publish", "The paper goes to a journal; the numbers go public on HEPData.", "Releasing the recipe and the exact measurements so anyone can cook it again.", "The published numbers become Collider-Bench's hidden answers."],
+  ];
+  $("#stages").innerHTML = STAGES.map((s, i) =>
+    `<button type="button" role="tab" aria-selected="false" aria-controls="stage-detail" data-i="${i}" class="${i === 2 ? "ours" : ""}" style="${i === 2 ? "border-color:var(--ok)" : ""}"><span class="k">Stage ${i + 1}</span>${s[0]}</button>`).join("") +
+    '<div class="band">Collider-Bench tests stages 2–5, with simulation</div>';
+  function showStage(i) {
+    const s = STAGES[i];
+    document.querySelectorAll("#stages button").forEach((b, j) => b.setAttribute("aria-selected", String(j === i)));
+    $("#stage-detail").innerHTML = `<span class="eyebrow">Stage ${i + 1} of 7</span><h3>${s[0]}</h3><p>${s[1]}</p>
+      <div class="analogy"><strong>Like</strong><p>${s[2]}</p></div><p class="muted"><strong style="color:var(--ink)">For AI and for us:</strong> ${s[3]}</p>`;
+  }
+  $("#stages").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showStage(+b.dataset.i); });
+
+  /* ---------- Initial state ---------- */
+  showSide("cms");
+  showTask(1, false);
+  showStep(5);
+  showScenario(1);
+  showStage(2);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+})();
+</script>

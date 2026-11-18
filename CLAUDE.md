@@ -21,6 +21,7 @@ Read first: [`docs/project-summary.md`](docs/project-summary.md) (the whole proj
 | `integration/` | How the checker bolts into Collider-Bench (hook config, container mount, attachment points) |
 | `tasks/<task-id>/` | Per-task reference material and hand-filled correct ledgers (public sources only) |
 | `experiments/NN-name/` | One folder per experiment: README, config, `runs/`, `results/` |
+| `frontend/` | Plain-HTML explainers and (later) results pages; open in a browser, no build |
 | `scripts/` | Helper scripts (fetch papers, create a run folder) |
 
 The claude.ai docs listed in `docs/INDEX.md` are Claude Docs and can be read directly with the Claude Docs connector, even when they haven't been exported.
