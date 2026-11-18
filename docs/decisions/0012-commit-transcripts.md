@@ -1,6 +1,6 @@
 # 0012 — Commit run transcripts?
 
-- **Status:** open
+- **Status:** decided
 - **Date:** 2026-11-18
 - **Decide by:** before M3
 
@@ -21,6 +21,6 @@ Never committed in either case: `workspace/sims`, `workspace/data` (1.35 GB) and
 
 A. The labels are the result; the transcript is their evidence.
 
-## Decision (Ammad)
+## Decision
 
-—
+A, commit `session.jsonl.gz`, `analysis.py` and `report.md` for every run. Decided by Claude (delegated): the transcript is the evidence behind each label, and it is small (about 0.3 MB gzipped).

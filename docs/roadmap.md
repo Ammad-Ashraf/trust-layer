@@ -44,10 +44,12 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 
 ## Next (from 18 Nov)
 
-- [ ] Ammad decides 0008–0013 (agent folder, pint, subject isolation, auth, transcripts, failure mix)
+- [x] Decide 0008–0013 (Claude, delegated by Ammad on 18 Nov)
+- [ ] Ammad: ask Israr for OK to add a `tlsubject` user on his laptop (0010)
+- [ ] Runner: commit the smoke run's `session.jsonl.gz`, `analysis.py` and `report.md` (0012); check the photon–jet guess
+- [ ] Runner: 3 baseline runs on 3 tasks, on the subscription (0013) → labels
+- [ ] Windows: fork Collider-Bench and add the `simple-ledger` agent folder (0008)
 - [ ] M2: fill `tasks/sus-16-034/ledger.yaml` by hand
-- [ ] On the runner: commit the smoke run's `session.jsonl.gz` and `analysis.py` (if 0012 = A), then check the photon–jet overlap hypothesis
-- [ ] Set up the dedicated subject user on the runner (if 0010 = A)
 
 ## Parking lot (not Phase 1)
 

@@ -1,6 +1,6 @@
 # 0009 — `pint` inside the container
 
-- **Status:** open
+- **Status:** decided
 - **Date:** 2026-11-18
 - **Decide by:** start of M4
 
@@ -19,6 +19,6 @@ The image's `lhc_analysis` env has `pyyaml` but not `pint`. How does the in-cont
 
 A. The normalization formula only needs a handful of units. `pint` can stay for host-side tools if needed.
 
-## Decision (Ammad)
+## Decision
 
-—
+A, drop `pint` inside the container and use a small fixed unit table. Decided by Claude (delegated): we only need four units, and fewer parts means fewer things that can break inside the sandbox.

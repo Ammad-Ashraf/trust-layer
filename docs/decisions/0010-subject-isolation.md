@@ -1,6 +1,6 @@
 # 0010 — Isolating the test-subject agent's settings
 
-- **Status:** open
+- **Status:** decided
 - **Date:** 2026-11-18
 - **Decide by:** before M3 baseline runs
 
@@ -19,6 +19,6 @@ The harness copies the host user's `~/.claude.json` and `~/.claude/settings.json
 
 A. It makes fairness a property of the machine, not of remembering a checklist.
 
-## Decision (Ammad)
+## Decision
 
-—
+A, a dedicated `tlsubject` user on the runner. Decided by Claude (delegated): it keeps the subject clean by construction instead of by a checklist. Needs Israr's OK and a sudo command on his laptop.

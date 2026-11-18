@@ -1,6 +1,6 @@
 # 0008 — Where the `simple-ledger` agent folder lives
 
-- **Status:** open
+- **Status:** decided
 - **Date:** 2026-11-18
 - **Decide by:** start of M4 (checker v0)
 
@@ -20,6 +20,6 @@ Collider-Bench gives the agent our `record-quantity` tool through an agent folde
 
 A. It is the only option where one commit pins exactly what the agent saw. The fork differs from upstream by one added folder.
 
-## Decision (Ammad)
+## Decision
 
-—
+A, fork Collider-Bench and add one folder. Decided by Claude (Ammad delegated these calls on 2026-11-18): it is the only option where one pinned commit shows exactly what the agent was given.

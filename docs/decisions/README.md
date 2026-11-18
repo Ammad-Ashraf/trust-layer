@@ -13,9 +13,9 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0005](0005-study-b-model.md) | Which model Study B tests | open |
 | [0006](0006-budget-cap.md) | Budget cap | open |
 | [0007](0007-haiku-arm.md) | Add a Haiku 4.5 arm | open |
-| [0008](0008-ledger-agent-folder.md) | Where the `simple-ledger` agent folder lives | open |
-| [0009](0009-pint-in-container.md) | `pint` inside the container | open |
-| [0010](0010-subject-isolation.md) | Isolating the test-subject agent's settings | open |
-| [0011](0011-auth-for-measured-runs.md) | Auth for measured runs | open |
-| [0012](0012-commit-transcripts.md) | Commit run transcripts? | open |
-| [0013](0013-baseline-failure-mix.md) | Check the baseline failure mix before fixing Study B tasks | open |
+| [0008](0008-ledger-agent-folder.md) | Where the `simple-ledger` agent folder lives | decided |
+| [0009](0009-pint-in-container.md) | `pint` inside the container | decided |
+| [0010](0010-subject-isolation.md) | Isolating the test-subject agent's settings | decided |
+| [0011](0011-auth-for-measured-runs.md) | Auth for measured runs | decided |
+| [0012](0012-commit-transcripts.md) | Commit run transcripts? | decided |
+| [0013](0013-baseline-failure-mix.md) | Check the baseline failure mix before fixing Study B tasks | decided |

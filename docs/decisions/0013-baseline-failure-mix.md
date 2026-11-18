@@ -1,6 +1,6 @@
 # 0013 — Check the baseline failure mix before fixing Study B tasks
 
-- **Status:** open
+- **Status:** decided
 - **Date:** 2026-11-18
 - **Decide by:** before M6 task selection
 
@@ -21,6 +21,6 @@ An ε-plausibility check (3c) goes to the parking lot, not Phase 1 (scope guard)
 
 A. It fits M3 (baseline run, label errors) and costs little next to Study B.
 
-## Decision (Ammad)
+## Decision
 
-—
+A, about 3 baseline runs on 3 tasks before fixing Study B's tasks, run on the subscription (OAuth) so they cost nothing extra. Decided by Claude (delegated): it is a cheap way to learn early whether the checker will have anything to catch.
