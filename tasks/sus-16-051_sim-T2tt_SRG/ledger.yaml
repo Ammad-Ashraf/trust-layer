@@ -1,7 +1,7 @@
-# Correct normalization record for sus-16-046, filled by hand from PUBLIC sources only
+# Correct normalization record for sus-16-051_sim-T2tt_SRG, filled by hand from PUBLIC sources only
 # (the paper, HEPData, Prospino). Effectively an answer key: never give this file to the test-subject agent.
 schema_version: 1
-task: sus-16-046
+task: sus-16-051_sim-T2tt_SRG
 signal_model: null        # process and mass point(s) the task asks for
 quantities:
   cross_section:          # NLO(+NLL) value, e.g. from Prospino or the paper

@@ -1,7 +1,7 @@
 """Create a run folder with a manifest template.
 
 Usage:
-    python scripts/new_run.py 00-smoke-run sus-16-034 baseline
+    python scripts/new_run.py 00-smoke-run sus-16-034_sim-TChiWZ baseline
 
 Creates experiments/<experiment>/runs/<YYYYMMDD-HHMM>_<task>_<arm>_<n>/ with
 manifest.yaml and labels.yaml to fill in during and after the run.

@@ -96,7 +96,7 @@ papers:
   - {id: agents-of-discovery, title: "Agents of Discovery", arxiv: "2509.08535", priority: background, why: "Agents for physics discovery", notes: null}
 
   # --- Task papers (CMS searches used by the Collider-Bench tasks). Add arXiv ids once confirmed ---
-  - {id: cms-sus-16-034, title: "CMS SUS-16-034 (TChiWZ)", arxiv: null, priority: core, why: "Task paper for sus-16-034", notes: null}
+  - {id: cms-sus-16-034, title: "CMS SUS-16-034 (TChiWZ)", arxiv: "1709.08908", priority: core, why: "Task paper for sus-16-034", notes: null}
   - {id: cms-sus-16-046, title: "CMS SUS-16-046 (T5Wg)", arxiv: null, priority: core, why: "Task paper for sus-16-046", notes: null}
   - {id: cms-sus-16-051, title: "CMS SUS-16-051 (T2tt)", arxiv: null, priority: core, why: "Task paper for sus-16-051", notes: null}
 

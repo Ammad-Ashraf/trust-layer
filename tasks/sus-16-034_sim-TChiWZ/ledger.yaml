@@ -1,0 +1,25 @@
+# Correct normalization record for sus-16-034_sim-TChiWZ, filled by hand from PUBLIC sources only
+# (the paper, CMS public page, HEPData, SUSY Cross Section WG / Prospino). Effectively an answer key:
+# never give this file to the test-subject agent. How to fill it: see README.md in this folder.
+schema_version: 1
+task: sus-16-034_sim-TChiWZ
+signal_model: null        # process and mass point(s) the task asks for (task card "Definitions")
+quantities:
+  cross_section:          # NLO+NLL value for the 550 GeV wino chargino-neutralino pair
+    value: null
+    unit: null            # pb or fb
+    source: null          # exact table / tool + version
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: "CMS 2016 dataset, as stated in the paper"   # add where exactly (e.g. abstract)
+  branching_fraction:
+    value: null
+    unit: dimensionless
+    source: null          # which decays it covers goes in notes; or 1 with a reason
+  efficiency:
+    value: null
+    unit: dimensionless
+    source: null          # VZ region, E_T^miss > 100 GeV, relative to sigma x L x BR
+expected_events: null     # product of the above, unit-free
+notes: ""                 # BR convention, per-bin yields, one plain sentence per factor
