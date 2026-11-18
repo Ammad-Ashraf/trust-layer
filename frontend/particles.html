@@ -1,0 +1,853 @@
+<title>Meet the Particles</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="A gentle, animated guide to the particles and units behind our three Collider-Bench tasks.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a guided course of seven short lessons, each "words on the left,
+   a thing to play with on the right". Particle colours = semantic palette,
+   shared with big-picture.html. */
+:root {
+  --bg: #f2f5f8; --surface: #ffffff; --sunk: #e7edf2; --ink: #132331; --muted: #566878;
+  --line: #d2dce4; --beam: #2350c8; --beam-soft: #dfe7fb;
+  --lepton: #c8324f; --photon: #b07f00; --jet: #0b7f74; --invisible: #6a58b8; --heavy: #8a96a3;
+  --twin: #a3368f; --ok-soft: #dcf0e3; --ok: #1f7a46;
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d151d; --surface: #142029; --sunk: #0f1a22; --ink: #e5edf3; --muted: #94a6b5;
+    --line: #253644; --beam: #86a7ff; --beam-soft: #1c2b4d; --lepton: #ff7a93; --photon: #f0c44a;
+    --jet: #45c9b8; --invisible: #b2a4ff; --heavy: #7d8b98; --twin: #f08ad8; --ok-soft: #133524; --ok: #5fd08f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d151d; --surface: #142029; --sunk: #0f1a22; --ink: #e5edf3; --muted: #94a6b5;
+  --line: #253644; --beam: #86a7ff; --beam-soft: #1c2b4d; --lepton: #ff7a93; --photon: #f0c44a;
+  --jet: #45c9b8; --invisible: #b2a4ff; --heavy: #7d8b98; --twin: #f08ad8; --ok-soft: #133524; --ok: #5fd08f;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6; margin: 0; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.12; margin: 0; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800; font-stretch: 112%; }
+h2 { font-size: clamp(1.45rem, 3vw, 2rem); font-weight: 750; font-stretch: 108%; }
+h3 { font-size: 1.1rem; font-weight: 700; font-stretch: 104%; }
+p { margin: 0; max-width: 64ch; }
+.eyebrow { font-family: var(--font-data); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+a { color: var(--beam); }
+:focus-visible { outline: 3px solid var(--beam); outline-offset: 2px; border-radius: 4px; }
+button, input[type="range"] { font: inherit; }
+button { cursor: pointer; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 7px 12px; font-size: 0.9rem; }
+button:hover { border-color: var(--beam); }
+button.primary { background: var(--beam); border-color: var(--beam); color: var(--surface); }
+button[aria-pressed="true"], button[aria-selected="true"] { background: var(--beam-soft); border-color: var(--beam); }
+input[type="range"] { width: 100%; accent-color: var(--beam); }
+
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+.nav .wrap { display: flex; gap: 4px; overflow-x: auto; padding-block: 10px; scrollbar-width: none; align-items: center; }
+.nav a { flex: none; text-decoration: none; color: var(--muted); font-size: 0.85rem; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.nav a .n { font-family: var(--font-data); color: var(--beam); margin-right: 4px; }
+.nav a:hover { color: var(--ink); background: var(--sunk); }
+
+header { padding-block: 44px 28px; }
+header .wrap { display: grid; gap: 14px; }
+.words { display: flex; flex-wrap: wrap; gap: 6px; }
+.word { font-size: 0.85rem; padding: 4px 10px; border-radius: 999px; }
+.word-box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; min-height: 64px; display: grid; gap: 4px; }
+
+.lesson { padding-block: 44px; border-top: 1px solid var(--line); }
+.lesson > .wrap { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 28px 36px; align-items: start; }
+.lesson-text { display: grid; gap: 14px; min-width: 0; }
+.stage { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.stage canvas { width: 100%; display: block; max-width: 100%; touch-action: none; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.caption { font-size: 0.95rem; min-height: 3.2em; }
+.like { background: var(--sunk); border-radius: var(--radius); padding: 14px 16px; display: grid; gap: 4px; }
+.like strong { font-family: var(--font-display); font-stretch: 105%; }
+.take { border-left: 3px solid var(--beam); padding-left: 12px; font-weight: 500; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 3px 10px; font-size: 0.85rem; border: 1px solid var(--line); background: var(--bg); }
+.chip i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+
+/* Zoom */
+.zoom-view { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 10px; background: var(--sunk); }
+.zoom-view svg { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform 0.7s cubic-bezier(.2,.7,.2,1), opacity 0.6s; }
+.zoom-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.zoom-steps button { font-size: 0.82rem; padding: 6px 8px; }
+
+/* Mass scale */
+.scale { position: relative; height: 150px; margin-inline: 8px; }
+.scale .axis { position: absolute; left: 0; right: 0; top: 74px; height: 2px; background: var(--line); }
+.scale .tick { position: absolute; top: 80px; transform: translateX(-50%); font-family: var(--font-data); font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+.scale .tick::before { content: ""; position: absolute; left: 50%; top: -9px; width: 1px; height: 7px; background: var(--muted); }
+.dot { position: absolute; transform: translate(-50%, -50%); width: 16px; height: 16px; border-radius: 50%; padding: 0; border: 2px solid var(--surface); }
+.dot.imagined { background: var(--surface) !important; border: 2px dashed var(--twin); }
+.dot[aria-pressed="true"] { outline: 3px solid var(--beam); outline-offset: 2px; }
+.dot-label { position: absolute; transform: translateX(-50%); font-size: 0.68rem; white-space: nowrap; color: var(--muted); pointer-events: none; }
+.scale-wrap { overflow-x: auto; }
+.scale-inner { min-width: 560px; }
+.weigh { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; }
+.weigh .big { font-family: var(--font-display); font-weight: 800; font-size: 2rem; font-stretch: 110%; line-height: 1; }
+.bar-track { height: 14px; background: var(--sunk); border-radius: 999px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--beam); border-radius: 999px; transition: width 0.6s cubic-bezier(.2,.7,.2,1); }
+
+/* Cast */
+.cast { display: grid; gap: 10px; }
+.cast-group { display: grid; gap: 6px; }
+.cast-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+.cast-buttons button { display: inline-flex; gap: 6px; align-items: center; }
+.cast-buttons button i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.layers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; font-size: 0.78rem; }
+.layers div { background: var(--sunk); border-radius: 8px; padding: 6px 8px; }
+.layers b { display: block; font-size: 0.8rem; }
+
+/* Twins */
+.twins { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.twin { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; align-items: center; text-align: left; padding: 10px; }
+.twin .known, .twin .shadow { display: grid; gap: 1px; font-size: 0.85rem; }
+.twin .shadow { border: 1.5px dashed var(--twin); border-radius: 8px; padding: 4px 8px; opacity: 0.25; transform: scale(0.9); transition: opacity 0.5s, transform 0.5s; }
+.twin[aria-pressed="true"] .shadow { opacity: 1; transform: scale(1); }
+.twin small { color: var(--muted); font-size: 0.72rem; }
+.stairs { position: relative; height: 210px; background: var(--sunk); border-radius: 10px; overflow: hidden; }
+.step { position: absolute; left: 0; background: var(--surface); border-top: 2px solid var(--twin); display: flex; align-items: flex-start; padding: 4px 8px; font-size: 0.75rem; }
+.ball { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--twin); transition: left 0.6s cubic-bezier(.3,.6,.3,1), top 0.6s cubic-bezier(.5,0,.8,.4); }
+.emit { position: absolute; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); opacity: 0; transform: translateY(6px); transition: opacity 0.4s, transform 0.4s; white-space: nowrap; }
+.emit.on { opacity: 1; transform: translateY(0); }
+
+/* Stories */
+.story-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.view-switch { display: inline-flex; gap: 4px; background: var(--sunk); padding: 4px; border-radius: 10px; flex-wrap: wrap; }
+.view-switch button { border-color: transparent; background: transparent; }
+.view-switch button[aria-pressed="true"] { background: var(--surface); border-color: var(--beam); }
+.decode { display: flex; flex-wrap: wrap; gap: 6px; }
+.decode span { font-family: var(--font-data); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; display: grid; line-height: 1.25; background: var(--surface); }
+.decode span small { font-family: var(--font-body); color: var(--muted); font-size: 0.7rem; }
+.sees { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+/* Rarity */
+.numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.num { background: var(--sunk); border-radius: 10px; padding: 12px; display: grid; gap: 2px; }
+.num .big { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; font-stretch: 110%; line-height: 1.1; }
+.units { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.unit { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; }
+.unit .u { font-family: var(--font-data); font-size: 1.1rem; font-weight: 500; }
+
+footer { padding-block: 36px 60px; border-top: 1px solid var(--line); }
+footer .wrap { display: grid; gap: 8px; font-size: 0.86rem; color: var(--muted); }
+
+@media (max-width: 860px) {
+  .lesson > .wrap { grid-template-columns: minmax(0, 1fr); }
+  .numbers { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .twins, .units, .layers { grid-template-columns: minmax(0, 1fr); }
+  .zoom-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<nav class="nav" aria-label="Lessons">
+  <div class="wrap">
+    <a href="#inside"><span class="n">1</span>What gets smashed</a>
+    <a href="#weight"><span class="n">2</span>Weight (GeV)</a>
+    <a href="#detector"><span class="n">3</span>What the detector sees</a>
+    <a href="#invisible"><span class="n">4</span>Invisible particles</a>
+    <a href="#twins"><span class="n">5</span>Imagined twins</a>
+    <a href="#stories"><span class="n">6</span>Our three tasks</a>
+    <a href="#rare"><span class="n">7</span>How rare</a>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <span class="eyebrow">Trust Layer · a gentle guide</span>
+    <h1>Meet the particles</h1>
+    <p>Seven short lessons, each with something to play with. By the end, a task name like <span class="mono">TChiWZ_550_200</span> will read like a sentence. Tap any word below for a one-line meaning.</p>
+    <div class="words" id="words" role="group" aria-label="Word finder"></div>
+    <div class="word-box" id="word-box" aria-live="polite"></div>
+  </div>
+</header>
+
+<!-- 1. Inside -->
+<section class="lesson" id="inside">
+  <div class="wrap">
+    <div class="lesson-text">
+      <span class="eyebrow">Lesson 1 · what gets smashed</span>
+      <h2>A proton is a small bag of quarks</h2>
+      <p>Everything around you is made of atoms. In the middle of every atom sits a tiny core, and in that core are <b>protons</b>. The LHC smashes protons into each other.</p>
+      <p>A proton is not solid. It is a bag of three <b>quarks</b>, held together by <b>gluons</b>, the "glue" particles. When two protons collide, really it's a quark or gluon from one hitting a quark or gluon from the other.</p>
+      <div class="like"><strong>Like</strong><p>Two bags of marbles thrown at each other very hard. Most marbles fly past; once in a while, two marbles hit head-on, and that hit is what we study.</p></div>
+      <p class="take">Zoom in with the buttons, then press "Collide".</p>
+    </div>
+    <div class="stage">
+      <div class="zoom-view" id="zoom-view" role="img" aria-label="Zooming from an atom to a proton to the quarks inside"></div>
+      <div class="zoom-steps" id="zoom-steps"></div>
+      <p class="caption" id="zoom-caption"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Weight -->
+<section class="lesson" id="weight">
+  <div class="wrap">
+    <div class="lesson-text">
+      <span class="eyebrow">Lesson 2 · the unit GeV</span>
+      <h2>Particles are weighed in GeV</h2>
+      <p>Physicists weigh particles in <b>GeV</b> ("giga-electron-volts"). It is really an energy unit, but since Einstein's E = mc² says mass and energy are the same thing, it works as a weight too.</p>
+      <p>The easy anchor: <b>a proton weighs about 1 GeV.</b> If a proton were a 1 kg bag of sugar, everything else on this scale is weighed against it.</p>
+      <div class="like"><strong>Why it matters</strong><p>To <i>make</i> a heavy particle, a collision has to "spend" at least its weight in energy. One LHC collision has a budget of 13,000 GeV, but it's shared among the quarks inside, so making very heavy things is rare.</p></div>
+      <p class="take">Tap a dot. Dashed dots are the imagined particles from our tasks.</p>
+    </div>
+    <div class="stage">
+      <div class="scale-wrap"><div class="scale-inner"><div class="scale" id="scale"></div></div></div>
+      <div class="weigh">
+        <div class="big mono" id="w-gev"></div>
+        <div style="display:grid;gap:6px;min-width:0">
+          <strong id="w-name"></strong>
+          <span class="muted" id="w-like"></span>
+        </div>
+      </div>
+      <div style="display:grid;gap:4px">
+        <span class="eyebrow">Share of one collision's 13,000 GeV budget</span>
+        <div class="bar-track"><div class="bar-fill" id="w-bar"></div></div>
+      </div>
+      <p class="muted" style="font-size:0.85rem">Not on the scale because they weigh nothing (or almost nothing): the photon, the gluon, and the neutrino.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Detector -->
+<section class="lesson" id="detector">
+  <div class="wrap">
+    <div class="lesson-text">
+      <span class="eyebrow">Lesson 3 · what the detector sees</span>
+      <h2>The detector is an onion, and each particle stops in its own layer</h2>
+      <p>CMS is a giant cylinder built in layers around the collision point. A particle flies outward and leaves a different mark in each layer. Physicists identify it from <i>where it stops</i> and <i>what it leaves behind</i>.</p>
+      <div class="layers">
+        <div><b>Tracker</b>draws the path of charged particles</div>
+        <div><b>ECAL</b>stops electrons and photons</div>
+        <div><b>HCAL</b>stops quark sprays (jets)</div>
+        <div><b>Muon chambers</b>only muons get this far</div>
+      </div>
+      <p>Some particles, like the <b>W</b>, <b>Z</b> and <b>top quark</b>, live for far less than a blink. They never reach the detector. We only ever see what they break into.</p>
+      <div class="like"><strong>Like</strong><p>Footprints in snow. You never see the animal, but a deer, a dog and a bird leave different prints, so you can tell who walked by.</p></div>
+    </div>
+    <div class="stage">
+      <div class="cast" id="cast"></div>
+      <canvas id="det" style="aspect-ratio:1;max-width:460px;margin-inline:auto" role="img" aria-label="End-on view of the detector showing the chosen particle's trace"></canvas>
+      <p class="caption" id="det-caption"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Invisible -->
+<section class="lesson" id="invisible">
+  <div class="wrap">
+    <div class="lesson-text">
+      <span class="eyebrow">Lesson 4 · missing energy</span>
+      <h2>How do you see something invisible? Check the balance.</h2>
+      <p>The protons fly straight along the beam, so before the collision nothing is moving <i>sideways</i>. After the collision, all the sideways pushes must still cancel out. That's a law of nature (momentum is conserved).</p>
+      <p>So if the visible pieces all lean one way, something we can't see must have flown the other way. The size of that imbalance is called <b>missing energy</b>, written <span class="mono">E<sub>T</sub><sup>miss</sup></span>. Invisible particles, like the neutrino and the imagined ones, show up only this way.</p>
+      <div class="like"><strong>Like</strong><p>A tug of war where one team is invisible. If the rope still doesn't move while the visible team pulls left with all its strength, someone unseen is pulling right just as hard.</p></div>
+      <p class="take">Drag the tips of the coloured arrows. The dashed purple arrow is what the invisible particles must carry.</p>
+    </div>
+    <div class="stage">
+      <canvas id="met" style="aspect-ratio:4/3" role="img" aria-label="Drag the visible particle arrows; the missing energy arrow balances them"></canvas>
+      <div class="controls">
+        <button type="button" id="met-reset">Reset</button>
+        <button type="button" id="met-balance">Make it balance</button>
+        <span class="mono" id="met-read" style="margin-left:auto"></span>
+      </div>
+      <p class="caption" id="met-caption"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Twins -->
+<section class="lesson" id="twins">
+  <div class="wrap">
+    <div class="lesson-text">
+      <span class="eyebrow">Lesson 5 · the imagined particles</span>
+      <h2>Supersymmetry: every particle might have a heavy shadow twin</h2>
+      <p><b>Supersymmetry</b> (SUSY) is a popular idea, not a proven fact: every known particle may have a heavier twin. Nobody has found one yet. The three CMS searches in our tasks were looking for them, and found none.</p>
+      <p>The names follow two rules. Twins of matter particles get an <b>s-</b> in front: quark → <b>squark</b>, top quark → <b>top squark</b>. Twins of force particles get <b>-ino</b> at the end: gluon → <b>gluino</b>. The twins of the W, Z, photon and Higgs mix together into <b>charginos</b> (with electric charge) and <b>neutralinos</b> (without).</p>
+      <p>The key rule for us: a heavy twin decays down a staircase into lighter twins, giving off normal particles at each step. The <b>lightest twin</b> can't decay any further, so it flies out of the detector unseen. That's where the missing energy comes from. Some physicists think it could even be dark matter.</p>
+      <p class="take">Tap a known particle to reveal its twin, then press "Roll down the stairs".</p>
+    </div>
+    <div class="stage">
+      <div class="twins" id="twin-grid" role="group" aria-label="Known particles and their twins"></div>
+      <div class="stairs" id="stairs" role="img" aria-label="A heavy twin rolls down a staircase of lighter twins, giving off normal particles"></div>
+      <div class="controls"><button type="button" class="primary" id="stairs-play">Roll down the stairs</button><span class="muted" id="stairs-caption" style="font-size:0.9rem"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Stories -->
+<section class="lesson" id="stories">
+  <div class="wrap">
+    <div class="lesson-text">
+      <span class="eyebrow">Lesson 6 · our three tasks</span>
+      <h2>Each task is one short story of decays</h2>
+      <p>Now you know every word. Each task imagines one pair of twins being made, and asks the AI to predict how many such collisions would pass CMS's filters in 2016.</p>
+      <div class="story-tabs" id="story-tabs" role="tablist" aria-label="Tasks"></div>
+      <div class="decode" id="story-decode"></div>
+      <div class="like"><strong>Two views</strong><p>"What really happens" shows the whole story. "What the detector sees" hides everything that is invisible or too short-lived. The second view is all CMS (and the AI's fake detector) ever gets.</p></div>
+      <p class="muted" style="font-size:0.88rem">The decays really happen within a trillionth of a millimetre, so on the detector's scale everything starts at the centre. The drawing stretches them out so you can follow each step.</p>
+    </div>
+    <div class="stage">
+      <div class="view-switch" role="group" aria-label="View">
+        <button type="button" id="v-real" aria-pressed="true">What really happens</button>
+        <button type="button" id="v-det" aria-pressed="false">What the detector sees</button>
+      </div>
+      <canvas id="story" style="aspect-ratio:1;max-width:480px;margin-inline:auto" role="img" aria-label="Animated decay chain for the chosen task"></canvas>
+      <input type="range" id="story-t" min="0" max="1000" value="1000" aria-label="Time through the story">
+      <div class="controls">
+        <button type="button" class="primary" id="story-play">▶ Play</button>
+        <button type="button" id="story-prev">← Step</button>
+        <button type="button" id="story-next">Step →</button>
+      </div>
+      <p class="caption" id="story-caption"></p>
+      <div class="sees" id="story-sees"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Rarity + units -->
+<section class="lesson" id="rare">
+  <div class="wrap">
+    <div class="lesson-text">
+      <span class="eyebrow">Lesson 7 · how rare, and the units</span>
+      <h2>A few special grains in a thousand swimming pools of sand</h2>
+      <p>In 2016, CMS recorded roughly 2.8 million billion proton collisions. If our 1750 GeV gluinos existed, about 142 pairs would have been made among all of them, and about 55 would have passed the filters.</p>
+      <p>That's why the counting formula matters. You can't just look; you have to predict the number exactly and compare.</p>
+      <div class="like"><strong>Picture it</strong><p>Make every collision one grain of sand (about 1 mm³). The 2016 collisions would fill about 1,100 Olympic swimming pools. Somewhere in there are 142 special grains.</p></div>
+      <p class="muted" style="font-size:0.85rem">Sources: about 78 mb total proton–proton cross-section at 13 TeV × 35.9 fb⁻¹ ≈ 2.8 × 10¹⁵ collisions; gluino pairs 3.96 fb × 35.9 fb⁻¹ ≈ 142 (smoke run); about 55 after filters (Collider-Bench answer, back-computed from the smoke run's score).</p>
+    </div>
+    <div class="stage">
+      <canvas id="pools" style="aspect-ratio:16/9" role="img" aria-label="About 1,100 swimming pools of sand, with a few special grains"></canvas>
+      <div class="controls"><button type="button" class="primary" id="pools-play">Fill the pools</button><span class="muted" id="pools-read" style="font-size:0.9rem"></span></div>
+      <div class="numbers">
+        <div class="num"><span class="eyebrow">collisions, 2016</span><span class="big mono">2.8 × 10¹⁵</span></div>
+        <div class="num"><span class="eyebrow">gluino pairs made</span><span class="big mono">≈ 142</span></div>
+        <div class="num"><span class="eyebrow">left after filters</span><span class="big mono">≈ 55</span></div>
+      </div>
+      <span class="eyebrow">The four units you'll meet</span>
+      <div class="units">
+        <div class="unit"><span class="u">GeV</span><span>Weight (or energy) of a particle. Proton ≈ 1 GeV.</span></div>
+        <div class="unit"><span class="u">TeV</span><span>1,000 GeV. The LHC collides at 13 TeV.</span></div>
+        <div class="unit"><span class="u">fb</span><span>"How likely": the size of the target a process offers. Smaller = rarer. 1 pb = 1,000 fb.</span></div>
+        <div class="unit"><span class="u">fb⁻¹</span><span>"How much data": how much collision "rain" fell. fb × fb⁻¹ = a count.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Part of the trust-layer repo: <span class="mono">frontend/particles.html</span>. Companion page: "From Collisions to One Number" (<span class="mono">frontend/big-picture.html</span>).</p>
+    <p>Masses: Particle Data Group values, rounded. Task particles and masses: Collider-Bench task cards (commit <span class="mono">2986d8b</span>). Everyday weights scale every mass so a proton is 1 kg.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s) => document.querySelector(s);
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const redraws = [];
+  const fit = (cv) => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = cv.clientWidth, h = cv.clientHeight;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+    return { ctx, w, h };
+  };
+  const animate = (ms, frame, done) => {
+    if (reduce) { frame(1); done && done(); return () => {}; }
+    let raf, start = performance.now();
+    const tick = (now) => { const p = Math.min(1, (now - start) / ms); frame(p); if (p < 1) raf = requestAnimationFrame(tick); else done && done(); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  };
+  const ease = (p) => 1 - Math.pow(1 - p, 3);
+  const font = (px, fam = "--font-body") => `${px}px ${css(fam)}`;
+
+  /* ---------- Word finder ---------- */
+  const WORDS = [
+    ["proton", "A small bag of three quarks. The LHC smashes protons together. Weighs about 1 GeV.", "#inside"],
+    ["quark", "A building block inside protons. When knocked out, it sprays into a jet.", "#inside"],
+    ["gluon", "The 'glue' particle that holds quarks together. Weighs nothing.", "#inside"],
+    ["GeV", "The unit for a particle's weight (or energy). A proton is about 1 GeV.", "#weight"],
+    ["TeV", "1,000 GeV. The LHC collides protons at 13 TeV.", "#weight"],
+    ["lepton", "Light particles not made of quarks: electrons, muons (and neutrinos). Electrons and muons leave clean, single tracks.", "#detector"],
+    ["electron", "The lightest charged particle. Stops in the ECAL layer.", "#detector"],
+    ["muon", "A heavier cousin of the electron. Passes through everything and reaches the outer muon chambers.", "#detector"],
+    ["photon", "A particle of light. No track, but a bright flash in the ECAL.", "#detector"],
+    ["jet", "A spray of many particles made by one quark or gluon. Looks like a cone.", "#detector"],
+    ["b-jet", "A jet from a b quark. It starts a tiny bit away from the centre, which is how it's recognised.", "#detector"],
+    ["W and Z", "Heavy 'messenger' particles (80 and 91 GeV). They decay instantly into leptons or jets.", "#detector"],
+    ["top quark", "The heaviest known particle (173 GeV). Decays instantly into a b-jet and a W.", "#detector"],
+    ["neutrino", "A ghostly particle that passes through the whole detector unseen.", "#invisible"],
+    ["missing energy", "The sideways imbalance left by invisible particles. Written E_T^miss.", "#invisible"],
+    ["supersymmetry", "The idea that every particle has a heavier twin. Not yet seen. Short: SUSY.", "#twins"],
+    ["squark / top squark", "Twin of a quark / of the top quark (also called 'stop').", "#twins"],
+    ["gluino", "Twin of the gluon.", "#twins"],
+    ["chargino", "A twin with electric charge (mixture of the W's and Higgs' twins).", "#twins"],
+    ["neutralino", "A twin with no charge. The lightest one is invisible and stable.", "#twins"],
+    ["gravitino", "Twin of the (hypothetical) gravity particle. Almost weightless and invisible.", "#twins"],
+    ["LSP", "Lightest SUSY Particle: the bottom of the staircase. Can't decay, so it escapes unseen.", "#twins"],
+    ["decay", "A heavy particle turning into lighter ones, usually almost instantly.", "#stories"],
+    ["benchmark", "One exact choice of imagined particles and masses, like TChiWZ_550_200.", "#stories"],
+    ["fb and fb⁻¹", "fb: how likely a process is. fb⁻¹: how much data. Multiply them to get a count.", "#rare"],
+  ];
+  $("#words").innerHTML = WORDS.map(([w], i) => `<button type="button" class="word" data-i="${i}" aria-pressed="false">${w}</button>`).join("");
+  const showWord = (i) => {
+    const [w, d, href] = WORDS[i];
+    document.querySelectorAll("#words button").forEach((b, j) => b.setAttribute("aria-pressed", String(i === j)));
+    $("#word-box").innerHTML = `<strong>${w}</strong><span>${d} <a href="${href}">Go to the lesson</a></span>`;
+  };
+  $("#words").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showWord(+b.dataset.i); });
+  showWord(0);
+
+  /* ---------- 1. Zoom ---------- */
+  const ZOOM = [
+    ["Atom", "An atom: a tiny core with electrons around it. About 0.0000001 mm across.",
+      `<circle cx="200" cy="150" r="10" fill="var(--lepton)"/><g fill="none" stroke="var(--muted)" stroke-width="1.2"><ellipse cx="200" cy="150" rx="120" ry="46"/><ellipse cx="200" cy="150" rx="120" ry="46" transform="rotate(60 200 150)"/><ellipse cx="200" cy="150" rx="120" ry="46" transform="rotate(-60 200 150)"/></g><circle cx="320" cy="150" r="5" fill="var(--beam)"/><circle cx="140" cy="54" r="5" fill="var(--beam)"/><text x="214" y="146" font-size="12" fill="var(--muted)">core</text><text x="328" y="140" font-size="12" fill="var(--muted)">electron</text>`],
+    ["Proton", "Zoom into the core: protons (and neutrons). Each is about 100,000 times smaller than the atom.",
+      `<circle cx="200" cy="150" r="95" fill="var(--lepton)" opacity="0.18" stroke="var(--lepton)" stroke-width="2"/><text x="200" y="262" font-size="13" text-anchor="middle" fill="var(--muted)">one proton</text>`],
+    ["Quarks", "Inside a proton: three quarks (the dots), held together by gluons (the wiggly lines).",
+      `<circle cx="200" cy="150" r="118" fill="var(--lepton)" opacity="0.08" stroke="var(--lepton)" stroke-width="1.5" stroke-dasharray="5 5"/><g stroke="var(--photon)" stroke-width="2" fill="none"><path d="M170 120 q8 -8 16 0 t16 0 t16 0 t12 0"/><path d="M162 132 q-8 10 0 18 t0 18 t4 16"/><path d="M238 132 q8 10 0 18 t0 18 t-4 16"/></g><circle cx="160" cy="120" r="14" fill="var(--jet)"/><circle cx="240" cy="120" r="14" fill="var(--jet)"/><circle cx="200" cy="190" r="14" fill="var(--beam)"/><text x="200" y="290" font-size="13" text-anchor="middle" fill="var(--muted)">quarks + gluon "glue"</text>`],
+    ["Collide", "Two protons meet at nearly the speed of light. One quark from each hits head-on, and new particles spray out.", null],
+  ];
+  const zv = $("#zoom-view");
+  zv.innerHTML = ZOOM.map((z, i) => z[2] ? `<svg viewBox="0 0 400 300" data-i="${i}" aria-hidden="true">${z[2]}</svg>` :
+    `<svg viewBox="0 0 400 300" data-i="${i}" aria-hidden="true"><g id="col-a"><circle r="40" fill="var(--lepton)" opacity="0.18" stroke="var(--lepton)" stroke-width="2"/><circle cx="-12" cy="-10" r="6" fill="var(--jet)"/><circle cx="12" cy="-8" r="6" fill="var(--jet)"/><circle cx="0" cy="14" r="6" fill="var(--beam)"/></g><g id="col-b"><circle r="40" fill="var(--lepton)" opacity="0.18" stroke="var(--lepton)" stroke-width="2"/><circle cx="-12" cy="-10" r="6" fill="var(--jet)"/><circle cx="12" cy="-8" r="6" fill="var(--jet)"/><circle cx="0" cy="14" r="6" fill="var(--beam)"/></g><g id="col-spray" stroke-width="2.5" stroke-linecap="round"></g><circle id="col-flash" cx="200" cy="150" r="0" fill="var(--photon)" opacity="0.5"/></svg>`).join("");
+  $("#zoom-steps").innerHTML = ZOOM.map((z, i) => `<button type="button" data-i="${i}" aria-pressed="false">${i + 1}. ${z[0]}</button>`).join("");
+  let zoomAt = 0, stopCollide = () => {};
+  const sprayLines = Array.from({ length: 12 }, (_, i) => {
+    const a = (i / 12) * Math.PI * 2 + 0.2, colors = ["--lepton", "--jet", "--photon", "--jet", "--beam", "--jet"];
+    return { a, c: colors[i % colors.length], l: 90 + (i * 37) % 70 };
+  });
+  function playCollide() {
+    stopCollide();
+    const A = $("#col-a"), B = $("#col-b"), S = $("#col-spray"), F = $("#col-flash");
+    stopCollide = animate(2200, (p) => {
+      const approach = Math.min(1, p / 0.45), x = 50 + 150 * ease(approach) - 0;
+      A.setAttribute("transform", `translate(${Math.min(160, x - 40) + (approach >= 1 ? 0 : 0)},150)`);
+      B.setAttribute("transform", `translate(${Math.max(240, 400 - x + 40)},150)`);
+      const burst = Math.max(0, (p - 0.45) / 0.55);
+      F.setAttribute("r", String(burst > 0 ? 30 * Math.sin(Math.min(1, burst * 2) * Math.PI) : 0));
+      A.style.opacity = B.style.opacity = String(burst > 0 ? 1 - Math.min(1, burst * 2) : 1);
+      S.innerHTML = burst > 0 ? sprayLines.map((s) => {
+        const L = s.l * ease(burst);
+        return `<line x1="200" y1="150" x2="${200 + Math.cos(s.a) * L}" y2="${150 + Math.sin(s.a) * L}" stroke="var(${s.c})"/>`;
+      }).join("") : "";
+    });
+  }
+  function showZoom(i) {
+    zoomAt = i;
+    document.querySelectorAll("#zoom-steps button").forEach((b, j) => b.setAttribute("aria-pressed", String(i === j)));
+    zv.querySelectorAll("svg").forEach((s) => {
+      const j = +s.dataset.i;
+      s.style.opacity = j === i ? "1" : "0";
+      s.style.transform = j === i ? "scale(1)" : j < i ? "scale(4)" : "scale(0.3)";
+    });
+    $("#zoom-caption").textContent = ZOOM[i][1];
+    if (i === 3) playCollide();
+  }
+  $("#zoom-steps").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showZoom(+b.dataset.i); });
+  showZoom(0);
+
+  /* ---------- 2. Mass scale ---------- */
+  const MASSES = [
+    ["electron", 0.000511, "--lepton", false, "half a paperclip (0.5 g)"],
+    ["muon", 0.106, "--lepton", false, "an apple (113 g)"],
+    ["proton", 0.938, "--beam", false, "the 1 kg bag of sugar we compare with"],
+    ["W", 80.4, "--heavy", false, "a grown man (86 kg)"],
+    ["Z", 91.2, "--heavy", false, "a heavier grown man (97 kg)"],
+    ["Higgs", 125, "--heavy", false, "a large panda (133 kg)"],
+    ["top quark", 172.7, "--heavy", false, "a sumo wrestler (184 kg)"],
+    ["neutralino (TChiWZ)", 200, "--twin", true, "a heavy motorbike (213 kg)"],
+    ["chargino (TChiWZ)", 550, "--twin", true, "a horse (586 kg)"],
+    ["top squark (T2tt)", 1000, "--twin", true, "a small car (1.1 tonnes)"],
+    ["gluino (T5Wg)", 1750, "--twin", true, "a big pickup truck (1.9 tonnes)"],
+    ["one collision's budget", 13000, "--photon", false, "a loaded city bus (13.9 tonnes)"],
+  ];
+  const lo = -4, hi = 4.4;
+  const xOf = (m) => ((Math.log10(m) - lo) / (hi - lo)) * 100;
+  const sc = $("#scale");
+  sc.innerHTML = '<div class="axis"></div>' +
+    [0.001, 0.1, 1, 10, 100, 1000, 10000].map((t) => `<span class="tick" style="left:${xOf(t)}%">${t >= 1 ? t.toLocaleString("en-US") : t} GeV</span>`).join("") +
+    MASSES.map(([n, m, c, imag], i) => {
+      const up = i % 2 === 0, y = up ? 50 : 98;
+      return `<button type="button" class="dot ${imag ? "imagined" : ""}" style="left:${xOf(m)}%;top:74px;background:var(${c})" data-i="${i}" aria-pressed="false" aria-label="${n}, ${m} GeV"></button>` +
+        `<span class="dot-label" style="left:${xOf(m)}%;top:${up ? 8 + (i % 4 === 0 ? 0 : 18) : 104 + (i % 4 === 1 ? 0 : 18)}px">${n}</span>`;
+    }).join("");
+  function showMass(i) {
+    const [n, m, , imag, like] = MASSES[i];
+    sc.querySelectorAll(".dot").forEach((d, j) => d.setAttribute("aria-pressed", String(i === j)));
+    $("#w-gev").textContent = (m < 1 ? m.toString() : m.toLocaleString("en-US")) + " GeV";
+    $("#w-name").textContent = n.charAt(0).toUpperCase() + n.slice(1) + (imag ? " · imagined" : "");
+    $("#w-like").textContent = "If a proton weighed 1 kg, this would weigh like " + like + ".";
+    $("#w-bar").style.width = Math.max(0.6, Math.min(100, (m / 13000) * 100)) + "%";
+  }
+  sc.addEventListener("click", (e) => { const b = e.target.closest(".dot"); if (b) showMass(+b.dataset.i); });
+  showMass(10);
+
+  /* ---------- Detector drawing (lessons 3 and 6 share the rings) ---------- */
+  const RINGS = [0.22, 0.42, 0.62, 0.8, 0.98]; // tracker | ECAL | HCAL | magnet | muon
+  function drawRings(ctx, c, R, labels) {
+    ctx.lineWidth = 1; ctx.strokeStyle = css("--line");
+    RINGS.forEach((r) => { ctx.beginPath(); ctx.arc(c, c, R * r, 0, Math.PI * 2); ctx.stroke(); });
+    ctx.fillStyle = css("--sunk"); ctx.beginPath(); ctx.arc(c, c, R * 0.62, 0, Math.PI * 2); ctx.arc(c, c, R * 0.42, 0, Math.PI * 2, true); ctx.fill("evenodd");
+    if (!labels) return;
+    ctx.fillStyle = css("--muted"); ctx.font = font(Math.max(9, R * 0.045), "--font-data"); ctx.textAlign = "left";
+    [["tracker", 0.22], ["ECAL", 0.42], ["HCAL", 0.62], ["muon chambers", 0.98]].forEach(([t, r]) => ctx.fillText(t, c - R * 0.98, c - R * r + 2 + 10 * 0));
+  }
+  const pt = (c, R, a, r) => [c + Math.cos(a) * R * r, c + Math.sin(a) * R * r];
+  function track(ctx, c, R, a, r0, r1, bend, color, w = 2.5, dash = []) {
+    const [x0, y0] = pt(c, R, a, r0), [x1, y1] = pt(c, R, a, r1);
+    const [mx, my] = pt(c, R, a + bend, (r0 + r1) / 2);
+    ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash);
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(mx, my, x1, y1); ctx.stroke(); ctx.setLineDash([]);
+  }
+  function blob(ctx, c, R, a, r, color, size) { const [x, y] = pt(c, R, a, r); ctx.fillStyle = color; ctx.globalAlpha = 0.85; ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
+  function cone(ctx, c, R, a, r0, r1, color, spread = 0.17) {
+    const [x0, y0] = pt(c, R, a, r0);
+    ctx.fillStyle = color; ctx.globalAlpha = 0.25; ctx.beginPath(); ctx.moveTo(x0, y0);
+    ctx.arc(c, c, R * r1, a - spread, a + spread); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+    ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+  function label(ctx, c, R, a, r, text, color) {
+    const [x, y] = pt(c, R, a, r); ctx.fillStyle = color; ctx.font = font(Math.max(10, R * 0.05)); ctx.textAlign = "center"; ctx.fillText(text, x, y);
+  }
+
+  /* ---------- 3. Cast ---------- */
+  const CAST = {
+    seen: [["electron", "--lepton"], ["muon", "--lepton"], ["photon", "--photon"], ["quark → jet", "--jet"], ["b quark → b-jet", "--jet"]],
+    ghost: [["neutrino", "--invisible"]],
+    brief: [["W", "--heavy"], ["Z", "--heavy"], ["top quark", "--heavy"]],
+  };
+  const CAST_TEXT = {
+    "electron": "Electron: a curved track in the tracker (it has charge, so the magnet bends it), then it stops in the ECAL with a burst of energy.",
+    "muon": "Muon: a track that goes all the way out, through every layer, to the muon chambers. Nothing else gets that far.",
+    "photon": "Photon (light): no track, because it has no charge. It appears only as a flash in the ECAL.",
+    "quark → jet": "Quark: it can't fly alone, so it instantly sprays into a cone of many particles, a 'jet', which stops in the HCAL.",
+    "b quark → b-jet": "b quark: also a jet, but it travels a few millimetres before spraying. That small offset from the centre marks it as a 'b-jet'.",
+    "neutrino": "Neutrino: it flies straight through the whole detector and leaves nothing. Only the missing-energy balance (lesson 4) reveals it.",
+    "W": "W (80 GeV): lives far less than a blink, so it decays at the centre. Here it becomes an electron and an invisible neutrino. (It can also become two jets.)",
+    "Z": "Z (91 GeV): decays at once into a matching pair, here two muons. (It can also become two jets, or two neutrinos.)",
+    "top quark": "Top quark (173 GeV): decays at once into a b-jet and a W, and the W then decays too. A two-step staircase.",
+  };
+  const castEl = $("#cast");
+  castEl.innerHTML = [["Seen directly", CAST.seen], ["Invisible", CAST.ghost], ["Too short-lived: seen only through what they become", CAST.brief]]
+    .map(([h, list]) => `<div class="cast-group"><span class="eyebrow">${h}</span><div class="cast-buttons">${list.map(([n, c]) => `<button type="button" data-n="${n}" aria-pressed="false"><i style="background:var(${c})"></i>${n}</button>`).join("")}</div></div>`).join("");
+  let castName = "muon", castP = 1, stopCast = () => {};
+  function drawCast() {
+    const cv = $("#det"); const { ctx, w } = fit(cv); const c = w / 2, R = w * 0.47;
+    drawRings(ctx, c, R, true);
+    const p = castP, a = -0.5, L = css("--lepton"), J = css("--jet"), P = css("--photon"), I = css("--invisible"), H = css("--heavy");
+    const grow = (r0, r1, k = p) => r0 + (r1 - r0) * Math.min(1, k);
+    switch (castName) {
+      case "electron": track(ctx, c, R, a, 0, grow(0, 0.5), 0.25, L); if (p > 0.85) blob(ctx, c, R, a + 0.12, 0.5, L, 9); break;
+      case "muon": track(ctx, c, R, a, 0, grow(0, 0.98), 0.12, L); if (p > 0.9) [0.86, 0.94].forEach((r) => blob(ctx, c, R, a + 0.06, r, L, 3.5)); break;
+      case "photon": track(ctx, c, R, a, 0, grow(0, 0.5), 0, P, 2.2, [6, 5]); if (p > 0.85) blob(ctx, c, R, a, 0.5, P, 11); break;
+      case "quark → jet": cone(ctx, c, R, a, 0, grow(0, 0.7), J); if (p > 0.85) blob(ctx, c, R, a, 0.7, J, 12); break;
+      case "b quark → b-jet": { const off = 0.06; const [x, y] = pt(c, R, a, off); ctx.strokeStyle = J; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c, c); ctx.lineTo(x, y); ctx.stroke(); ctx.setLineDash([]);
+        if (p > 0.15) { ctx.save(); ctx.translate(x - c, y - c); cone(ctx, c, R, a, 0, grow(0, 0.64, (p - 0.15) / 0.85), J); ctx.restore(); }
+        ctx.fillStyle = css("--ink"); ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fill(); label(ctx, c, R, a + 0.5, 0.16, "starts a few mm out", css("--muted")); break; }
+      case "neutrino": track(ctx, c, R, a, 0, grow(0, 1.0), 0, I, 2, [2, 6]); label(ctx, c, R, a + 0.18, 0.75, "no trace", I); break;
+      case "W": blob(ctx, c, R, 0, 0, H, 10 * (1 - Math.min(1, p * 3)) + 2); if (p > 0.2) { const q = (p - 0.2) / 0.8; track(ctx, c, R, -0.6, 0, grow(0, 0.5, q), 0.25, L); track(ctx, c, R, 2.5, 0, grow(0, 1, q), 0, I, 2, [2, 6]); if (q > 0.9) blob(ctx, c, R, -0.48, 0.5, L, 8); } break;
+      case "Z": blob(ctx, c, R, 0, 0, H, 10 * (1 - Math.min(1, p * 3)) + 2); if (p > 0.2) { const q = (p - 0.2) / 0.8; track(ctx, c, R, -0.9, 0, grow(0, 0.98, q), 0.1, L); track(ctx, c, R, 2.2, 0, grow(0, 0.98, q), -0.1, L); } break;
+      case "top quark": blob(ctx, c, R, 0, 0, H, 10 * (1 - Math.min(1, p * 3)) + 2);
+        if (p > 0.15) { const q = (p - 0.15) / 0.85; cone(ctx, c, R, -2.2, 0, grow(0, 0.64, q), J); if (q > 0.25) { const [wx, wy] = pt(c, R, 0.7, 0.12); ctx.fillStyle = H; ctx.beginPath(); ctx.arc(wx, wy, 5, 0, Math.PI * 2); ctx.fill();
+          const k = (q - 0.25) / 0.75; ctx.save(); ctx.translate(wx - c, wy - c); track(ctx, c, R, 0.5, 0, grow(0, 0.4, k), 0.25, L); track(ctx, c, R, 1.6, 0, grow(0, 0.9, k), 0, I, 2, [2, 6]); ctx.restore(); }
+          label(ctx, c, R, -2.2, 0.75, "b-jet", J); } break;
+    }
+    ctx.fillStyle = css("--ink"); ctx.beginPath(); ctx.arc(c, c, 3, 0, Math.PI * 2); ctx.fill();
+  }
+  function showCast(n, play) {
+    castName = n;
+    castEl.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.n === n)));
+    $("#det-caption").textContent = CAST_TEXT[n];
+    stopCast(); if (!play) { castP = 1; drawCast(); return; }
+    stopCast = animate(1300, (p) => { castP = ease(p); drawCast(); });
+  }
+  castEl.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showCast(b.dataset.n, true); });
+  redraws.push(drawCast);
+
+  /* ---------- 4. Missing energy ---------- */
+  const DEFAULT_ARROWS = [[0.55, -0.15, "--lepton", "muon"], [0.25, 0.42, "--jet", "jet"], [0.35, -0.5, "--photon", "photon"]];
+  let arrows = DEFAULT_ARROWS.map((a) => ({ x: a[0], y: a[1], c: a[2], n: a[3] }));
+  let drag = null;
+  function metGeom() { const cv = $("#met"); return { cv, w: cv.clientWidth, h: cv.clientHeight, s: Math.min(cv.clientWidth, cv.clientHeight) * 0.42 }; }
+  function arrow(ctx, x0, y0, x1, y1, color, w, dash) {
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []);
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); ctx.setLineDash([]);
+    const a = Math.atan2(y1 - y0, x1 - x0), h = 11;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - h * Math.cos(a - 0.4), y1 - h * Math.sin(a - 0.4)); ctx.lineTo(x1 - h * Math.cos(a + 0.4), y1 - h * Math.sin(a + 0.4)); ctx.closePath(); ctx.fill();
+  }
+  function drawMet() {
+    const { cv, s } = metGeom(); const { ctx, w, h } = fit(cv); const cx = w / 2, cy = h / 2;
+    ctx.strokeStyle = css("--line"); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, s, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = css("--muted"); ctx.font = font(11, "--font-data"); ctx.textAlign = "left"; ctx.fillText("beam comes out of the screen here ⊙", 8, 16);
+    let sx = 0, sy = 0;
+    arrows.forEach((a) => { sx += a.x; sy += a.y; arrow(ctx, cx, cy, cx + a.x * s, cy + a.y * s, css(a.c), 3);
+      ctx.fillStyle = css(a.c); ctx.beginPath(); ctx.arc(cx + a.x * s, cy + a.y * s, 7, 0, Math.PI * 2); ctx.globalAlpha = 0.3; ctx.fill(); ctx.globalAlpha = 1;
+      ctx.font = font(12); ctx.fillText(a.n, cx + a.x * s + 10, cy + a.y * s - 8); });
+    const mag = Math.hypot(sx, sy);
+    if (mag > 0.02) { arrow(ctx, cx, cy, cx - sx * s, cy - sy * s, css("--invisible"), 3, [8, 6]); ctx.fillStyle = css("--invisible"); ctx.font = font(12); ctx.fillText("missing", cx - sx * s + 10, cy - sy * s + 16); }
+    ctx.fillStyle = css("--ink"); ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
+    const gev = Math.round(mag * 300);
+    $("#met-read").textContent = `missing energy ≈ ${gev} GeV`;
+    $("#met-caption").textContent = mag < 0.05 ? "Balanced: the visible particles cancel out, so nothing invisible is needed." :
+      mag < 0.4 ? "A small imbalance: maybe just measurement blur, or a soft invisible particle." :
+      "A big imbalance: something invisible carried this much sideways. Our tasks look for exactly this.";
+  }
+  const metCanvas = $("#met");
+  const toLocal = (e) => { const r = metCanvas.getBoundingClientRect(); const { s } = metGeom(); return { x: (e.clientX - r.left - r.width / 2) / s, y: (e.clientY - r.top - r.height / 2) / s }; };
+  metCanvas.addEventListener("pointerdown", (e) => {
+    const p = toLocal(e); const { s } = metGeom();
+    drag = arrows.find((a) => Math.hypot(a.x - p.x, a.y - p.y) * s < 22) || null;
+    if (drag) metCanvas.setPointerCapture(e.pointerId);
+  });
+  metCanvas.addEventListener("pointermove", (e) => {
+    if (!drag) return; const p = toLocal(e); const m = Math.hypot(p.x, p.y), k = m > 1 ? 1 / m : 1;
+    drag.x = p.x * k; drag.y = p.y * k; drawMet();
+  });
+  ["pointerup", "pointercancel"].forEach((t) => metCanvas.addEventListener(t, () => { drag = null; }));
+  $("#met-reset").addEventListener("click", () => { arrows = DEFAULT_ARROWS.map((a) => ({ x: a[0], y: a[1], c: a[2], n: a[3] })); drawMet(); });
+  $("#met-balance").addEventListener("click", () => {
+    const from = arrows.map((a) => ({ ...a }));
+    const sx = arrows.reduce((t, a) => t + a.x, 0), sy = arrows.reduce((t, a) => t + a.y, 0);
+    animate(700, (p) => { const k = ease(p); arrows.forEach((a, i) => { a.x = from[i].x - (sx / arrows.length) * k; a.y = from[i].y - (sy / arrows.length) * k; }); drawMet(); });
+  });
+  redraws.push(drawMet);
+
+  /* ---------- 5. Twins ---------- */
+  const TWINS = [
+    ["quark", "matter", "squark", "s- in front"],
+    ["top quark", "173 GeV", "top squark (stop)", "1000 GeV in T2tt"],
+    ["gluon", "force, 0 GeV", "gluino", "1750 GeV in T5Wg"],
+    ["W, Z, photon, Higgs", "forces", "charginos + neutralinos", "550 GeV in TChiWZ"],
+    ["electron", "matter", "selectron", "not in our tasks"],
+    ["graviton (gravity, never seen)", "force", "gravitino", "≈ 0 GeV, invisible, in T5Wg"],
+  ];
+  $("#twin-grid").innerHTML = TWINS.map(([k, ks, t, ts], i) =>
+    `<button type="button" class="twin" data-i="${i}" aria-pressed="${i === 2}"><span class="known"><b>${k}</b><small>${ks}</small></span><span aria-hidden="true">→</span><span class="shadow"><b>${t}</b><small>${ts}</small></span></button>`).join("");
+  $("#twin-grid").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) b.setAttribute("aria-pressed", String(b.getAttribute("aria-pressed") !== "true")); });
+
+  const STAIRS = [
+    ["gluino · 1750 GeV", 1750, null],
+    ["partner · 1700 GeV", 1700, "gives off: 2 quarks (jets)"],
+    ["gravitino · ≈ 0 GeV (lightest)", 0, "gives off: a photon"],
+  ];
+  const st = $("#stairs");
+  function buildStairs() {
+    const H = st.clientHeight, W = st.clientWidth, stepW = W / 3;
+    st.innerHTML = STAIRS.map(([n, m], i) => {
+      const top = 24 + (1 - m / 1750) * (H - 70) + (i === 1 ? 26 : 0);
+      return `<div class="step" style="left:${i * stepW}px;width:${W - i * stepW}px;top:${top}px;height:${H - top}px">${n}</div>`;
+    }).join("") + STAIRS.slice(1).map(([, , e], i) => `<span class="emit" data-i="${i + 1}" style="left:${(i + 1) * stepW + 8}px;top:4px">${e}</span>`).join("") +
+      `<span class="emit" data-i="3" style="right:8px;bottom:8px">escapes unseen → missing energy</span><div class="ball" id="ball"></div>`;
+    placeBall(0, false);
+  }
+  function stepTop(i) { return parseFloat(st.querySelectorAll(".step")[i].style.top); }
+  function placeBall(i) { const b = $("#ball"), W = st.clientWidth; b.style.left = (i * W / 3 + 12) + "px"; b.style.top = (stepTop(Math.min(i, 2)) - 23) + "px"; }
+  let stairTimers = [];
+  $("#stairs-play").addEventListener("click", () => {
+    stairTimers.forEach(clearTimeout); stairTimers = [];
+    st.querySelectorAll(".emit").forEach((e) => e.classList.remove("on")); placeBall(0);
+    const cap = $("#stairs-caption");
+    cap.textContent = "A heavy gluino is made at the top of the stairs…";
+    const seq = [
+      [700, () => { placeBall(1); st.querySelector('.emit[data-i="1"]').classList.add("on"); cap.textContent = "It steps down to its slightly lighter partner and gives off two quarks."; }],
+      [2000, () => { placeBall(2); st.querySelector('.emit[data-i="2"]').classList.add("on"); cap.textContent = "The partner steps down to the lightest twin and gives off a photon."; }],
+      [3300, () => { const b = $("#ball"); b.style.left = (st.clientWidth + 30) + "px"; st.querySelector('.emit[data-i="3"]').classList.add("on"); cap.textContent = "The lightest twin can't go lower, so it leaves the detector unseen."; }],
+    ];
+    seq.forEach(([t, f]) => stairTimers.push(setTimeout(f, reduce ? 0 : t)));
+  });
+  redraws.push(buildStairs);
+
+  /* ---------- 6. Stories ---------- */
+  // Each node: label, kind, angle (deg), length (fraction of R), children. Kinds: heavy | twin | lepton | photon | jet | bjet | invisible
+  const STORIES = {
+    TChiWZ: {
+      paper: "sus-16-034", bench: "TChiWZ_550_200",
+      decode: [["T", "a 'topology' (a story)"], ["Chi", "charginos and neutralinos"], ["WZ", "decaying via a W and a Z"], ["550", "their weight, GeV"], ["200", "the lightest twin, GeV"]],
+      tree: [
+        { l: "chargino 550", k: "twin", a: 200, len: 0.2, ch: [
+          { l: "W", k: "heavy", a: 235, len: 0.12, ch: [{ l: "muon", k: "lepton", a: 255, len: 0.95 }, { l: "neutrino", k: "invisible", a: 205, len: 0.9 }] },
+          { l: "neutralino 200", k: "invisible", a: 165, len: 0.9 }] },
+        { l: "neutralino 550", k: "twin", a: 20, len: 0.2, ch: [
+          { l: "Z", k: "heavy", a: 50, len: 0.12, ch: [{ l: "electron", k: "lepton", a: 80, len: 0.55 }, { l: "electron", k: "lepton", a: 20, len: 0.55 }] },
+          { l: "neutralino 200", k: "invisible", a: -15, len: 0.9 }] },
+      ],
+      caps: ["Two protons collide head-on. The beam points out of the screen, so we see the collision end-on.",
+        "The collision energy turns into two imagined twins: a chargino and a neutralino, 550 GeV each. Heavy, so they move slowly.",
+        "Each decays at once: one into a W, the other into a Z, and each also lets go of the lightest twin (200 GeV), which is invisible.",
+        "The W and Z decay too: the W into a muon and an invisible neutrino, the Z into two electrons. Done."],
+      sees: [["lepton", "3 leptons"], ["invisible", "missing energy"]],
+    },
+    T5Wg: {
+      paper: "sus-16-046", bench: "T5Wg_1750_1700",
+      decode: [["T5", "a story starting from two gluinos"], ["W", "one side gives a W"], ["g", "the other a photon (γ)"], ["1750", "gluino weight, GeV"], ["1700", "its partner's weight, GeV"]],
+      tree: [
+        { l: "gluino 1750", k: "twin", a: 195, len: 0.2, ch: [
+          { l: "quark", k: "jet", a: 150, len: 0.62 }, { l: "quark", k: "jet", a: 230, len: 0.62 },
+          { l: "partner 1700", k: "twin", a: 190, len: 0.12, ch: [{ l: "photon", k: "photon", a: 205, len: 0.42 }, { l: "gravitino", k: "invisible", a: 170, len: 0.9 }] }] },
+        { l: "gluino 1750", k: "twin", a: 15, len: 0.2, ch: [
+          { l: "quark", k: "jet", a: -30, len: 0.62 }, { l: "quark", k: "jet", a: 60, len: 0.62 },
+          { l: "partner 1700", k: "twin", a: 10, len: 0.12, ch: [{ l: "W", k: "heavy", a: 0, len: 0.1, ch: [{ l: "quark", k: "jet", a: -10, len: 0.6 }, { l: "quark", k: "jet", a: 30, len: 0.6 }] }, { l: "gravitino", k: "invisible", a: -45, len: 0.9 }] }] },
+      ],
+      caps: ["Two protons collide head-on.",
+        "Two very heavy gluinos are made (1750 GeV each). This is rare: only about 142 times in all of 2016, if they exist.",
+        "Each gluino steps down to its partner (1700 GeV) and gives off two quarks. The step is small, so the quarks are weak.",
+        "One partner gives off a photon, the other a W; both let go of an invisible gravitino. The W becomes two more jets."],
+      sees: [["photon", "a photon"], ["jet", "jets"], ["invisible", "missing energy"]],
+    },
+    T2tt: {
+      paper: "sus-16-051", bench: "T2tt_1000_50",
+      decode: [["T2", "a story starting from two squarks"], ["tt", "each gives a top quark"], ["1000", "top squark weight, GeV"], ["50", "the lightest twin, GeV"]],
+      tree: [
+        { l: "top squark 1000", k: "twin", a: 200, len: 0.2, ch: [
+          { l: "top", k: "heavy", a: 225, len: 0.12, ch: [{ l: "b quark", k: "bjet", a: 250, len: 0.62 }, { l: "W", k: "heavy", a: 205, len: 0.1, ch: [{ l: "muon", k: "lepton", a: 190, len: 0.95 }, { l: "neutrino", k: "invisible", a: 225, len: 0.9 }] }] },
+          { l: "neutralino 50", k: "invisible", a: 160, len: 0.9 }] },
+        { l: "top squark 1000", k: "twin", a: 20, len: 0.2, ch: [
+          { l: "top", k: "heavy", a: 40, len: 0.12, ch: [{ l: "b quark", k: "bjet", a: 70, len: 0.62 }, { l: "W", k: "heavy", a: 15, len: 0.1, ch: [{ l: "quark", k: "jet", a: 0, len: 0.62 }, { l: "quark", k: "jet", a: 35, len: 0.62 }] }] },
+          { l: "neutralino 50", k: "invisible", a: -20, len: 0.9 }] },
+      ],
+      caps: ["Two protons collide head-on.",
+        "Two top squarks are made, 1000 GeV each: the heavy twins of the top quark.",
+        "Each decays into a normal top quark and the lightest twin (50 GeV), which escapes unseen.",
+        "Each top becomes a b-jet and a W. One W gives a muon (and a neutrino), the other gives two jets."],
+      sees: [["lepton", "1 lepton"], ["jet", "4 jets (2 are b-jets)"], ["invisible", "missing energy"]],
+    },
+  };
+  let story = "TChiWZ", storyT = 1, detView = false, stopStory = () => {};
+  const KIND_COLOR = { heavy: "--heavy", twin: "--twin", lepton: "--lepton", photon: "--photon", jet: "--jet", bjet: "--jet", invisible: "--invisible" };
+  const DEPTH_T = [[0.1, 0.35], [0.35, 0.6], [0.6, 0.85], [0.85, 1.0]];
+  function layout(nodes, depth, x, y, out) {
+    nodes.forEach((n) => {
+      const a = (n.a * Math.PI) / 180, final = !n.ch;
+      const t0 = DEPTH_T[depth][0], t1 = final ? 1 : DEPTH_T[depth][1];
+      out.push({ ...n, depth, a, x0: x, y0: y, x1: x + Math.cos(a) * n.len, y1: y + Math.sin(a) * n.len, t0, t1, final });
+      if (n.ch) layout(n.ch, depth + 1, x + Math.cos(a) * n.len, y + Math.sin(a) * n.len, out);
+    });
+    return out;
+  }
+  function drawStory() {
+    const cv = $("#story"); const { ctx, w } = fit(cv); const c = w / 2, R = w * 0.47;
+    drawRings(ctx, c, R, false);
+    const t = storyT, nodes = layout(STORIES[story].tree, 0, 0, 0, []);
+    // collision flash
+    if (t < 0.15) { ctx.fillStyle = css("--photon"); ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(c, c, 6 + 30 * Math.sin((t / 0.15) * Math.PI), 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
+    let mx = 0, my = 0;
+    for (const n of nodes) {
+      if (t < n.t0) continue;
+      const k = Math.min(1, (t - n.t0) / (n.t1 - n.t0));
+      const color = css(KIND_COLOR[n.k]);
+      if (detView) {
+        if (!n.final) continue;
+        if (n.k === "invisible") { if (k >= 1) { mx += Math.cos(n.a); my += Math.sin(n.a); } continue; }
+        const r1 = n.k === "photon" ? 0.42 : n.k === "lepton" ? n.len : 0.62;
+        if (n.k === "jet" || n.k === "bjet") cone(ctx, c, R, n.a, 0, r1 * k, color, 0.13);
+        else track(ctx, c, R, n.a, 0, r1 * k, n.k === "photon" ? 0 : 0.12, color, 2.5, n.k === "photon" ? [6, 5] : []);
+        continue;
+      }
+      const x0 = c + n.x0 * R, y0 = c + n.y0 * R, x1 = c + (n.x0 + (n.x1 - n.x0) * k) * R, y1 = c + (n.y0 + (n.y1 - n.y0) * k) * R;
+      const done = !n.final && t >= n.t1;
+      ctx.globalAlpha = done ? 0.45 : 1;
+      if (n.k === "jet" || n.k === "bjet") {
+        ctx.save(); ctx.translate(x0 - c, y0 - c); cone(ctx, c, R, n.a, 0, n.len * k, color, 0.13); ctx.restore();
+      } else {
+        ctx.strokeStyle = color; ctx.lineWidth = n.k === "twin" || n.k === "heavy" ? 5 : 2.5;
+        ctx.setLineDash(n.k === "invisible" ? [3, 6] : n.k === "photon" ? [6, 5] : []);
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); ctx.setLineDash([]);
+      }
+      if (k > 0.3 && (n.k === "twin" || n.k === "heavy" || n.final)) {
+        ctx.fillStyle = color; ctx.font = font(Math.max(10, R * 0.048)); ctx.textAlign = "center";
+        const lx = n.final ? x0 + (x1 - x0) * 0.8 : (x0 + x1) / 2, ly = n.final ? y0 + (y1 - y0) * 0.8 : (y0 + y1) / 2;
+        ctx.fillText(n.l, lx + Math.cos(n.a + Math.PI / 2) * 12, ly + Math.sin(n.a + Math.PI / 2) * 12);
+      }
+      ctx.globalAlpha = 1;
+    }
+    if (detView && Math.hypot(mx, my) > 0.1) {
+      const L = 0.85, a = Math.atan2(my, mx); const [ex, ey] = pt(c, R, a, L);
+      ctx.strokeStyle = css("--invisible"); ctx.fillStyle = css("--invisible"); ctx.lineWidth = 3; ctx.setLineDash([9, 6]);
+      ctx.beginPath(); ctx.moveTo(c, c); ctx.lineTo(ex, ey); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font = font(Math.max(10, R * 0.05)); ctx.textAlign = "center"; ctx.fillText("missing energy", ex, ey + 16);
+    }
+    ctx.fillStyle = css("--ink"); ctx.beginPath(); ctx.arc(c, c, 3, 0, Math.PI * 2); ctx.fill();
+    const capI = t < 0.1 ? 0 : t < 0.35 ? 1 : t < 0.6 ? 2 : 3;
+    $("#story-caption").textContent = detView && t >= 0.85 ? "This is all the detector records. Everything else has to be worked out." : STORIES[story].caps[capI];
+    $("#story-t").value = String(Math.round(t * 1000));
+  }
+  function showStory(name) {
+    story = name; const s = STORIES[name];
+    document.querySelectorAll("#story-tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.s === name)));
+    $("#story-decode").innerHTML = s.decode.map(([k, v]) => `<span>${k}<small>${v}</small></span>`).join("");
+    $("#story-sees").innerHTML = '<span class="eyebrow">Detector sees</span>' + s.sees.map(([k, t]) => `<span class="chip"><i style="background:var(${KIND_COLOR[k]})"></i>${t}</span>`).join("");
+    playStory();
+  }
+  function playStory() {
+    stopStory(); const from = 0;
+    stopStory = animate(6500, (p) => { storyT = from + (1 - from) * p; drawStory(); });
+  }
+  $("#story-tabs").innerHTML = Object.entries(STORIES).map(([k, s]) => `<button type="button" role="tab" data-s="${k}" aria-selected="false"><b>${k}</b> <span class="muted mono" style="font-size:0.78rem">${s.paper}</span></button>`).join("");
+  $("#story-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showStory(b.dataset.s); });
+  $("#story-play").addEventListener("click", playStory);
+  $("#story-t").addEventListener("input", (e) => { stopStory(); storyT = +e.target.value / 1000; drawStory(); });
+  const STOPS = [0, 0.3, 0.55, 0.8, 1];
+  $("#story-next").addEventListener("click", () => { stopStory(); storyT = STOPS.find((s) => s > storyT + 0.01) ?? 1; drawStory(); });
+  $("#story-prev").addEventListener("click", () => { stopStory(); storyT = [...STOPS].reverse().find((s) => s < storyT - 0.01) ?? 0; drawStory(); });
+  const setView = (d) => { detView = d; $("#v-real").setAttribute("aria-pressed", String(!d)); $("#v-det").setAttribute("aria-pressed", String(d)); drawStory(); };
+  $("#v-real").addEventListener("click", () => setView(false));
+  $("#v-det").addEventListener("click", () => setView(true));
+  redraws.push(drawStory);
+
+  /* ---------- 7. Pools ---------- */
+  const POOLS = 1120;
+  let poolsP = 1, stopPools = () => {};
+  function drawPools() {
+    const cv = $("#pools"); const { ctx, w, h } = fit(cv);
+    const cols = 56, rows = Math.ceil(POOLS / cols), gap = 1.5;
+    const cw = (w - gap * (cols - 1)) / cols, ch = Math.min(cw * 0.55, (h - 30 - gap * (rows - 1)) / rows);
+    const shown = Math.round(POOLS * poolsP);
+    ctx.fillStyle = css("--beam"); ctx.globalAlpha = 0.55;
+    for (let i = 0; i < shown; i++) { const r = Math.floor(i / cols), c = i % cols; ctx.fillRect(c * (cw + gap), r * (ch + gap), cw, ch); }
+    ctx.globalAlpha = 1;
+    if (poolsP >= 1) {
+      const special = [[37, 4], [8, 13], [50, 17], [21, 9]];
+      ctx.fillStyle = css("--twin");
+      special.forEach(([c, r]) => { const x = c * (cw + gap) + cw / 2, y = r * (ch + gap) + ch / 2; ctx.beginPath(); ctx.arc(x, y, 2.2, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = css("--twin"); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.stroke(); });
+    }
+    ctx.fillStyle = css("--muted"); ctx.font = font(12); ctx.textAlign = "left";
+    ctx.fillText("each block = one Olympic pool of sand (2,500 m³) · pink rings: the special grains are in there somewhere", 0, h - 8);
+    $("#pools-read").textContent = `${shown.toLocaleString("en-US")} pools · ${(shown * 2.5e12 / 1e15).toFixed(1)} × 10¹⁵ grains`;
+  }
+  $("#pools-play").addEventListener("click", () => { stopPools(); stopPools = animate(3000, (p) => { poolsP = p; drawPools(); }); });
+  redraws.push(drawPools);
+
+  /* ---------- Boot ---------- */
+  showCast("muon", false);
+  showStory("TChiWZ");
+  storyT = 1; stopStory(); drawStory();
+  const redrawAll = () => redraws.forEach((f) => f());
+  redrawAll();
+  let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(redrawAll, 120); });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redrawAll);
+  new MutationObserver(redrawAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
+})();
+</script>

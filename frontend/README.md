@@ -4,6 +4,7 @@ Visual explainers, and later the results, for the trust layer. These are plain H
 
 | Page | What it shows |
 | --- | --- |
+| [`particles.html`](particles.html) | Seven animated lessons for beginners: what a proton is, GeV, what the detector sees, missing energy, supersymmetry twins, our three tasks as decay stories, how rare they are |
 | [`big-picture.html`](big-picture.html) | What a Collider-Bench task asks, real data vs simulation, the three tasks, the pipeline, a mistake lab that previews the checker, and where we fit in an LHC analysis |
 
 ## Rules
