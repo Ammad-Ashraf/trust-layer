@@ -3,8 +3,8 @@
 The checker must never read Collider-Bench's internals (hidden answers, evaluator
 targets) directly. Its inputs are the ledger, the agent's workspace and public task
 data. This test fails if any checker source file refers to the submodule path or to
-known hidden-answer locations. Extend FORBIDDEN once the smoke run shows where
-Collider-Bench keeps its hidden answers.
+known hidden-answer locations. Collider-Bench keeps its hidden answers under
+`ColliderBench/tasks/shared/<paper>/reference/` (confirmed in the 2026-11-18 smoke run).
 """
 
 from pathlib import Path
@@ -14,6 +14,10 @@ SRC = Path(__file__).resolve().parents[1] / "src" / "trustlayer"
 FORBIDDEN = [
     "external/collider-bench",
     "external\\collider-bench",
+    "ColliderBench/tasks",
+    "ColliderBench\\tasks",
+    "tasks/shared",
+    "tasks\\shared",
 ]
 
 

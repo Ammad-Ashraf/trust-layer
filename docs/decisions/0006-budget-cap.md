@@ -13,6 +13,10 @@
 | Sonnet 4.6 (~$137) + rental | Fits $300 | Weaker headline |
 | Free NCP / university compute | Saves the rental | Not guaranteed or timely |
 
+## Data point (smoke run, 2026-11-18)
+
+One Sonnet 4.6 run at effort max on T5Wg cost $5.68 API-equivalent in 28 min, so 18 runs ≈ $100 at that rate. Longer tasks and Opus will cost more.
+
 ## Decision (Ammad)
 
 —

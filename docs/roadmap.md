@@ -6,7 +6,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 
 | # | Milestone | Dates | Done when | Status |
 | --- | --- | --- | --- | --- |
-| M1 | Set up repo and container | 11–17 Nov | One Collider-Bench task runs end to end on the runner; lab log started | 🟨 |
+| M1 | Set up repo and container | 11–17 Nov | One Collider-Bench task runs end to end on the runner; lab log started | ✅ 18 Nov |
 | M2 | Learn the formula by hand | 16–29 Nov | `tasks/sus-16-034/ledger.yaml` filled by Ammad, with every unit and source, explainable in simple words | ⬜ |
 | M3 | Baseline run, label errors | 23 Nov–6 Dec | One baseline transcript read in full; every mistake labelled with a sub-gap code | ⬜ |
 | M4 | Build checker v0 | 30 Nov–15 Dec | C1–C5 pass unit tests; the gate blocks a bad ledger in a real test run | ⬜ |
@@ -29,19 +29,26 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 | Gate (Stop hook, bounce cap 3, bounce log) | `src/trustlayer/gate/` | — | ⬜ |
 | Injector for Study A | `src/trustlayer/inject/` | — | ⬜ |
 | Report (results tables) | `src/trustlayer/report/` | — | ⬜ |
-| Container integration (mount CLI + hook) | `integration/` | — | ⬜ |
+| Container integration (mount CLI + hook) | `integration/` | — | 🟨 map done; design in 0008–0010 |
 
 ## This week (13–17 Nov)
 
 - [x] Scaffold the repo and push it to GitHub (private)
-- [ ] Connect to the runner laptop (SSH, or Tailscale if on different networks)
-- [ ] Clone the repo with submodules on the runner; build/pull the Collider-Bench container; record the image digest
-- [ ] Create a separate, spend-limited Anthropic API key for benchmark runs only
-- [ ] Smoke run: sus-16-034, tiny N_gen, cheap model, no checker → `experiments/00-smoke-run/`
-- [ ] Map the four attachment points → `integration/attachment-points.md`
+- [x] Connect to the runner laptop (Claude Code on the runner, driven remotely)
+- [x] Clone the repo with submodules on the runner; pull the Collider-Bench container; record the image digest
+- [ ] Create a separate, spend-limited Anthropic API key for benchmark runs only (smoke run used OAuth; see 0011)
+- [x] Smoke run → `experiments/00-smoke-run/` (T5Wg, Sonnet 4.6, OAuth; δ_norm 0.98, failed on ε)
+- [x] Map the four attachment points → `integration/attachment-points.md`
 - [ ] Send the two compute emails (supervisor, NCP) — bonus track
 - [ ] Read the paper's per-task tables; note where each model failed normalization
 
+## Next (from 18 Nov)
+
+- [ ] Ammad decides 0008–0013 (agent folder, pint, subject isolation, auth, transcripts, failure mix)
+- [ ] M2: fill `tasks/sus-16-034/ledger.yaml` by hand
+- [ ] On the runner: commit the smoke run's `session.jsonl.gz` and `analysis.py` (if 0012 = A), then check the photon–jet overlap hypothesis
+- [ ] Set up the dedicated subject user on the runner (if 0010 = A)
+
 ## Parking lot (not Phase 1)
 
-Second-opinion recalculation · provenance check (leading Phase 2 candidate) · human escalation · HEPTABench as a second test bed.
+Second-opinion recalculation · ε-plausibility check (3c; from the smoke run) · provenance check (leading Phase 2 candidate) · human escalation · HEPTABench as a second test bed.
