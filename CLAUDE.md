@@ -10,6 +10,7 @@ Read first: [`docs/project-summary.md`](docs/project-summary.md) (the whole proj
 | Path | What |
 | --- | --- |
 | `docs/roadmap.md` | Milestones and features, with status. **Check the current milestone before starting work** |
+| `docs/session-kickoff.md` | How to start a new session without re-pasting context |
 | `docs/decisions/` | One file per decision (options → lean → Ammad's call + why) |
 | `docs/engineering-standards.md` | Coding and engineering rules. **Follow them for all code** |
 | `docs/artifacts/` | Read-only exports of the claude.ai docs (see `docs/INDEX.md`). Never edit |
