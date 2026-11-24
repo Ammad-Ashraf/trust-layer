@@ -3,23 +3,42 @@
 # never give this file to the test-subject agent. How to fill it: see README.md in this folder.
 schema_version: 1
 task: sus-16-034_sim-TChiWZ
-signal_model: null        # process and mass point(s) the task asks for (task card "Definitions")
+signal_model:             # what is made, and at which masses
+  name: TChiWZ_550_200
+  process: "pp -> chargino_1(+-) + neutralino_2; chargino_1 -> W + neutralino_1; neutralino_2 -> Z + neutralino_1"
+  masses_gev: {chargino_1: 550, neutralino_2: 550, neutralino_1: 200}
+  source: "Collider-Bench task card TASK.md, Definitions; paper Sec. 2 and Fig. 1 (upper right)"
+  in_plain_words: "A proton collision makes a chargino and a neutralino-2 (550 GeV each). The chargino drops a W, the neutralino-2 drops a Z, and both become an invisible 200 GeV lightest neutralino, seen only as missing energy."
 quantities:
   cross_section:          # NLO+NLL value for the 550 GeV wino chargino-neutralino pair
-    value: null
-    unit: null            # pb or fb
-    source: null          # exact table / tool + version
+    value: 30.1656
+    unit: fb
+    uncertainty: 2.88065  # fb, absolute
+    source: "LHC SUSY Cross Section WG, twiki SUSYCrossSections13TeVn2x1wino (r11, 2017-06-15), first table: NLO-NLL wino-like chi1+chi20 and chi1-chi20 combined, envelope of CTEQ6.6 and MSTW2008nlo90cl (Resummino), row m = 550 GeV. Matches the 30.2 fb in the caption of CMS-SUS-16-034 Additional Table 7"
+    in_plain_words: "On average about 30 chargino-neutralino pairs of 550 GeV are made per 1 fb^-1 'bucket' of collisions; theorists calculated it, give or take about 3."
   luminosity:
     value: 35.9
     unit: fb^-1
-    source: "CMS 2016 dataset, as stated in the paper"   # add where exactly (e.g. abstract)
+    source: "Paper abstract, page 1: 'integrated luminosity of 35.9 fb-1 of proton-proton collisions at 13 TeV collected with the CMS detector at the LHC in 2016'; same value on the task card"
+    in_plain_words: "How much collision data CMS recorded in 2016: 35.9 'buckets' (1 fb^-1 is about 78 trillion collisions)."
   branching_fraction:
-    value: null
+    value: 0.101
     unit: dimensionless
-    source: null          # which decays it covers goes in notes; or 1 with a reason
+    covers: "Z -> l+ l- with l = e, mu, tau only. chargino_1 -> W + neutralino_1 and neutralino_2 -> Z + neutralino_1 are 1 by the model's definition. The W decay and the loss of tau pairs are left to the efficiency"
+    source: "CMS-SUS-16-034 Additional Table 7 caption: 'the Z boson was required to decay leptonically, for a branching fraction of 0.10' (rounded). Exact value: PDG, B(Z->ee) + B(Z->mumu) + B(Z->tautau) = 3.363% + 3.366% + 3.370% = 0.101; sigma x L x 0.101 = 109.4, within 0.1% of the table's 'Expected events' row (109.35)"
+    in_plain_words: "About one Z in ten turns into a lepton pair, the only kind of Z decay CMS's net looks for."
   efficiency:
-    value: null
+    value: 0.0495
     unit: dimensionless
-    source: null          # VZ region, E_T^miss > 100 GeV, relative to sigma x L x BR
-expected_events: null     # product of the above, unit-free
-notes: ""                 # BR convention, per-bin yields, one plain sentence per factor
+    source: "CMS-SUS-16-034 Additional Table 7 (cut flow, TChiWZ 550/200, electroweak on-Z VZ region): 5.41 events after E_T^miss > 100 GeV / 109.35 'Expected events' = 0.04947"
+    in_plain_words: "Of the pairs whose Z became a lepton pair, about 1 in 20 passes every cut of CMS's VZ signal region."
+expected_events:
+  value: 5.41             # 30.1656 fb x 35.9 fb^-1 x 0.101 x 0.04947 = 5.411
+  unit: events
+  per_bin:                # E_T^miss bins [GeV], differences of the cut-flow rows in Additional Table 7
+    "100-150": 0.45
+    "150-250": 1.37
+    "250-350": 1.65
+    ">350": 1.94
+  self_check: "sigma x L x BR = 109.38 vs 109.35 in Table 7 (0.03% off); full product 5.411 vs 5.41 (matches)"
+notes: "BR covers only Z -> lepton pairs (e, mu, tau); everything else (W decay, tau pairs failing the e/mu requirement, all cuts) is inside the efficiency, as in CMS's own cut flow. The task card's last bin is '350-450' but is told to hold ALL events above 350 GeV."

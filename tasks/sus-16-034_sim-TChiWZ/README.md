@@ -6,7 +6,7 @@
 - **Data:** CMS 2016, 35.9 fb⁻¹ at 13 TeV.
 - **Paper's per-task results (Collider-Bench Tables 2–3):** Opus 4.7 total/shape error 0.19/0.09, Sonnet 4.6 0.30/0.07. There is a counting gap, so the task is a good fit (decision 0014).
 
-`ledger.yaml` is the hand-filled correct normalization record (milestone M2; also used in Study A).
+`ledger.yaml` is the hand-filled correct normalization record (milestone M2; also used in Study A). **To revise it, read [`story.md`](story.md)**: the whole ledger as one plain-words story.
 
 ## Public sources
 

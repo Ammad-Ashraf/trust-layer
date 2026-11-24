@@ -7,7 +7,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 | # | Milestone | Dates | Done when | Status |
 | --- | --- | --- | --- | --- |
 | M1 | Set up repo and container | 11–17 Nov | One Collider-Bench task runs end to end on the runner; lab log started | ✅ 18 Nov |
-| M2 | Learn the formula by hand | 16–29 Nov | `tasks/sus-16-034_sim-TChiWZ/ledger.yaml` filled by Ammad, with every unit and source, explainable in simple words | 🟨 sources found, guide written; Ammad filling |
+| M2 | Learn the formula by hand | 16–29 Nov | `tasks/sus-16-034_sim-TChiWZ/ledger.yaml` filled by Ammad, with every unit and source, explainable in simple words | ✅ 24 Nov |
 | M3 | Baseline run, label errors | 23 Nov–6 Dec | One baseline transcript read in full; every mistake labelled with a sub-gap code | ⬜ |
 | M4 | Build checker v0 | 30 Nov–15 Dec | C1–C5 pass unit tests; the gate blocks a bad ledger in a real test run | ⬜ |
 | M5 | Study A: error injection | 9–22 Dec | Catch rate per sub-gap and false-alarm rate, for 3 tasks | ⬜ |
@@ -49,7 +49,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 - [ ] Runner: commit the smoke run's `session.jsonl.gz`, `analysis.py` and `report.md` (0012); check the photon–jet guess
 - [ ] Windows: fork Collider-Bench and add the `simple-ledger` agent folder (0008)
 - [x] M2 prep: confirm task id (`sus-16-034_sim-TChiWZ`), find public sources, write the fill guide; rename `tasks/` folders to full task ids
-- [ ] M2: Ammad fills `tasks/sus-16-034_sim-TChiWZ/ledger.yaml` by hand (guide in its README)
+- [x] M2: fill `tasks/sus-16-034_sim-TChiWZ/ledger.yaml` by hand, step by step (5.41 events, matches CMS's cut flow); revision story in `story.md`
 
 ## Parking lot (not Phase 1)
 
