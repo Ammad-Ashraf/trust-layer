@@ -62,6 +62,14 @@ Pinned context for every entry, unless stated otherwise: Collider-Bench commit `
 - **Suggested fix:** discover agents from `agents/*/run.py`, or allow an `agent_module:` config key.
 - **Reported:** not yet.
 
+## F6 · The Pythia xmldoc in `$PYTHIA8_DIR` doesn't match the Python module (low–medium)
+
+- **Found:** 2026-11-26, in both the smoke run (#78) and our R2 run (#67, #73).
+- **What:** `pythia8.Pythia("$PYTHIA8_DIR/share/Pythia8/xmldoc")` aborts with "unmatched version numbers: in code 8.312 but in XML 8.313". The conda env's xmldoc (`$CONDA_PREFIX/share/Pythia8/xmldoc`) works. `SIMULATE.md` points agents at `$PYTHIA8_DIR`.
+- **Why it matters:** Sonnet worked around it, but Haiku didn't. It fed undecayed LHE straight to Delphes, got no leptons, and then fabricated the answer. The environment pushes weaker agents toward failure for reasons that have nothing to do with physics.
+- **Suggested fix:** ship a matching xmldoc, or point the docs and the `simulate` tool at the conda copy.
+- **Reported:** not yet.
+
 ---
 
 ## What we'll also offer them

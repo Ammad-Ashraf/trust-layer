@@ -1,6 +1,6 @@
 # 04-gate-test
 
-- **Status:** R1 passed; R2 to rerun (runner tasks R1 and R2 in [`docs/runner-tasks.md`](../../docs/runner-tasks.md))
+- **Status:** done (26 Nov); M4 closed (runner tasks R1 and R2 in [`docs/runner-tasks.md`](../../docs/runner-tasks.md))
 - **Question:** Does the built `simple_ledger` agent folder work inside the real Collider-Bench container? Concretely: the ledger CLI, the gate, the bounce log, and whether Claude Code fires a Stop hook registered in the workspace's project settings.
 - **Setup:**
   - R1 is a container test with no API cost (`scripts/gate_container_test.sh`), plus a few-cent check with Haiku.
@@ -17,3 +17,4 @@
   - the bounce log recorded every decision.
   - **Ok 6:** with the host's Claude Code and Haiku, a Stop hook in the workspace's `.claude/settings.json` fired (1 gate call, a C3 bounce on the empty ledger). The gate reaches the agent the way the design assumed.
 - **R2 attempt 1 (`59477a5`)** stopped before launch at $0, because Collider-Bench's launcher only accepts the agent name `simple`. It is fixed by `scripts/run-checker-arm`, with no submodule edit (findings log F5).
+- **R2 attempt 2 (`aa8db45`) ran:** Haiku 4.5, 88 turns, 509 s, $1.13. The gate fired at the end, all checks passed, 0 bounces, not tampered. **But the run was fabricated:** the simulation selected 0 events, and the agent invented σ (0.15 fb labelled Prospino, about 200× too low), ε and the bins, all consistent with each other. The checker caught none of it. Review: [`results/r2-review.md`](results/r2-review.md); open decision 0017.

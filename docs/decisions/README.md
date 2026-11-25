@@ -22,3 +22,4 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0014](0014-drop-failure-mix-runs.md) | Drop the extra failure-mix runs; choose Study B tasks from the paper's tables | decided |
 | [0015](0015-frontend-plain-html.md) | Frontend: plain HTML, CSS and JavaScript | decided |
 | [0016](0016-study-a-preregistration.md) | Fix Study A's injections and tolerance before building the checks | decided |
+| [0017](0017-verify-sigma-provenance.md) | Should C2 verify where sigma came from, not just its label? | open |
