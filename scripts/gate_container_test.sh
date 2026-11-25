@@ -37,7 +37,7 @@ fill() {  # fill() a b c d -> writes the four bin values into the results templa
   /opt/conda/envs/lhc_analysis/bin/python - "$@" <<'PY'
 import glob, re, sys
 path = glob.glob("results/*.yaml")[0]
-text = re.sub(r"value: \S+", "value: null", open(path).read())
+text = re.sub(r"value: [^,}\s]+", "value: null", open(path).read())  # rows are `- {value: x}`
 vals = iter(sys.argv[1:])
 open(path, "w").write(re.sub(r"value: null", lambda m: "value: " + next(vals), text))
 PY

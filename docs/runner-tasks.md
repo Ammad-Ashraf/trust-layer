@@ -15,9 +15,10 @@ Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/run
 
 ---
 
-## R1 · Container test of the gate (M4 step 7) · **open**
+## R1 · Container test of the gate (M4 step 7) · **open: rerun**
 
-- **Needs:** commit `832a1e6` or later; Podman; the image `ghcr.io/dfaroughy/lhc-bench@sha256:8820ecd3…` already pulled (it is, from the smoke run).
+- **Attempt 1 (2026-11-26, `2144354`):** ok 1–2 passed, but ok 3 failed. The cause was a bug in the test script, not the gate: `fill()` broke the template's `- {value: x}` rows, and the gate correctly rejected the file as invalid YAML. Fixed in the commit that adds this line. Rerun all of R1 in a new run folder; keep the first one.
+- **Needs:** this commit or later; Podman; the image `ghcr.io/dfaroughy/lhc-bench@sha256:8820ecd3…` already pulled (it is, from the smoke run).
 - **Cost:** part A free; part B a few cents (Haiku, OAuth).
 - **Steps:**
   1. `python3 scripts/build_agent_folder.py`. It prints `built …/build/agent/simple_ledger`.
