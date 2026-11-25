@@ -15,29 +15,17 @@ Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/run
 
 ---
 
-## R1 · Container test of the gate (M4 step 7) · **open: rerun**
+## R2 · One real checker-arm run (M4 step 8) · **open: rerun**
 
-- **Attempt 1 (2026-11-26, `2144354`):** ok 1–2 passed, but ok 3 failed. The cause was a bug in the test script, not the gate: `fill()` broke the template's `- {value: x}` rows, and the gate correctly rejected the file as invalid YAML. Fixed in the commit that adds this line. Rerun all of R1 in a new run folder; keep the first one.
-- **Needs:** this commit or later; Podman; the image `ghcr.io/dfaroughy/lhc-bench@sha256:8820ecd3…` already pulled (it is, from the smoke run).
-- **Cost:** part A free; part B a few cents (Haiku, OAuth).
-- **Steps:**
-  1. `python3 scripts/build_agent_folder.py`. It prints `built …/build/agent/simple_ledger`.
-  2. Make the run folder: `mkdir -p experiments/04-gate-test/runs/$(date +%Y%m%d-%H%M)_container-test` (call it `$D`).
-  3. Part A: `bash scripts/gate_container_test.sh 2>&1 | tee $D/container-test.txt`. Expected last line before the cleanup note: `CONTAINER TEST PASSED`.
-  4. Part B, once: `bash scripts/gate_container_test.sh --claude-hook 2>&1 | tee $D/claude-hook-test.txt`. Expected: `ok 6: Claude Code fired the project Stop hook`. It uses the host's `claude` (logged in with OAuth) and `python3`. Before it, apply the smoke run's isolation: `export ENABLE_CLAUDEAI_MCP_SERVERS=false`.
-  5. Copy `build/agent/simple_ledger/runtime/BUILD-INFO.yaml` into `$D/`.
-  6. Write `$D/report.md`: pass/fail of ok 1–6, the Python version printed, anything odd. If ok 6 failed, include the last 40 lines of the `claude.out` file the script names.
-  7. Commit `$D` ("Add M4 container gate test results") and push.
+- **Attempt 1 (`59477a5`):** stopped before launch, at $0. Collider-Bench's `run-agent` accepts only the agent name `simple` (`agent_runtime/config.py:43`), and it also needed its `.venv` activated. Both are now handled by our launcher `scripts/run-checker-arm`, with no submodule edit. Rerun with the steps below in a new run folder; keep the first one.
 
-## R2 · One real checker-arm run (M4 step 8) · **open**
-
-- **Needs:** R1 passed, including ok 6. If ok 6 failed, stop: the gate can't reach the agent this way, and the Windows side must change the design first.
+- **Needs:** R1 passed (done), and this commit or later.
 - **Cost:** about $1 API-equivalent (Haiku 4.5), on the subscription.
 - **Steps:**
   1. Rebuild and place the agent folder in the runner's Collider-Bench checkout. This is a temporary dirty submodule; never commit it:
      `python3 scripts/build_agent_folder.py && rm -rf $CB/agents/simple_ledger && cp -r build/agent/simple_ledger $CB/agents/`
   2. Isolation as in the smoke run: remove user-scope MCP servers for the run, and `export ENABLE_CLAUDEAI_MCP_SERVERS=false`. Restore them afterwards. (Decision 0010's dedicated user is still pending.)
-  3. Run from `$CB`: `scripts/run-agent --config ../../experiments/04-gate-test/harness-config.yaml`. Note the run dir it prints (`<RUN>`).
+  3. Run from the repo root: `bash scripts/run-checker-arm --config experiments/04-gate-test/harness-config.yaml 2>&1 | tee /tmp/r2-launch.log`. It activates `$CB/.venv` itself and launches `agents.simple_ledger.run` through Collider-Bench's own `run_with_compute`. Don't use `scripts/run-agent` for the checker arm: it rejects the agent name. Note the run dir it prints (`<RUN>`), and copy the log into `$D` as `launch.log`.
   4. Post-run check from the repo root: `python3 scripts/postrun_check.py <RUN> $D` with `$D=experiments/04-gate-test/runs/<YYYYMMDD-HHMM>_sus-16-034_checker_1`. It copies `gate-bounces.jsonl` into `$D` and prints `bounces`, `gate_final_event`, `tampered` and `gate_error`.
   5. Copy into `$D`:
      - `<RUN>/workspace/session.jsonl` gzipped as `session.jsonl.gz`;
@@ -56,4 +44,4 @@ Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/run
 
 ## Done
 
-(none yet)
+- **R1 · Container test of the gate (M4 step 7): passed** on attempt 2 (`da69956`, folder `20261126-0119_container-test`), ok 1–6. Ok 6 confirms that Claude Code in `-p` mode fires a Stop hook from the workspace's `.claude/settings.json`. Attempt 1 (`2144354`) failed on a bug in the test script, fixed in `f713503`.

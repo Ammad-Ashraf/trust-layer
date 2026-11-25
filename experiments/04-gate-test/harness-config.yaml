@@ -1,6 +1,7 @@
 # M4 step 8 (runner task R2): one cheap real run of the checker arm.
-# Same as the smoke run's config except agent, task and model.
-agent:    simple_ledger
+# Same as the smoke run's config except task and model. No `agent:` key: Collider-Bench's
+# validator only allows `simple`, so the agent (simple_ledger) is fixed by
+# scripts/run-checker-arm, which launches it with Collider-Bench's own launch code.
 task:     sus-16-034_sim-TChiWZ
 runner:   claude
 auth:     oauth                   # dev runs use the subscription (decision 0011)

@@ -54,6 +54,14 @@ Pinned context for every entry, unless stated otherwise: Collider-Bench commit `
   - The repo's CLAUDE.md names transcripts `*.stream.jsonl`; they are written to `workspace/session.jsonl` (`launch.py:162`).
 - **Reported:** not yet.
 
+## F5 · Agent names are hard-coded, so add-on agents need a side door (low, extensibility)
+
+- **Found:** 2026-11-26, M4 runner task R2.
+- **What:** `agent_runtime/config.py:43` (`_ALLOWED_AGENTS = {"simple"}`) and the dispatch `case` in `scripts/run-agent` accept only built-in agent names. A new folder under `agents/` can't be launched through the sanctioned entry point without editing the benchmark. We launch ours with `scripts/run-checker-arm`, which reuses their `run_with_compute` and `launch_single_run` unchanged.
+- **Also:** `run-agent` fails with `activate_lhc_analysis: no harness-ready Python` unless `.venv` is activated first. CLAUDE.md shows the activation only in the one-time setup block.
+- **Suggested fix:** discover agents from `agents/*/run.py`, or allow an `agent_module:` config key.
+- **Reported:** not yet.
+
 ---
 
 ## What we'll also offer them

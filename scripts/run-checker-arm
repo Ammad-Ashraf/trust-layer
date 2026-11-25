@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Launch the checker arm (agents/simple_ledger) through Collider-Bench's own launch code.
+#
+# Collider-Bench's scripts/run-agent accepts only its own agent names (the allow-list in
+# agent_runtime/config.py and the dispatch `case` in run-agent), and we never edit the
+# submodule. This script does what run-agent does for `simple` (same env setup, same auth
+# handling, same run_with_compute and launch_single_run), but with
+# PY_MODULE=agents.simple_ledger.run. The harness config must therefore NOT contain an
+# `agent:` key; the agent is fixed here.
+#
+# Usage, from the trust-layer repo root on the runner:
+#   bash scripts/run-checker-arm --config experiments/04-gate-test/harness-config.yaml
+# Needs agents/simple_ledger in the Collider-Bench checkout (see docs/runner-tasks.md).
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+CB="${CB:-$ROOT/external/collider-bench}"
+CONFIG=""
+ARGS=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --config) CONFIG="$(readlink -f "$2")"; ARGS+=("--config" "$CONFIG"); shift 2 ;;
+    *) ARGS+=("$1"); shift ;;
+  esac
+done
+[[ -n "$CONFIG" ]] || { echo "run-checker-arm: --config is required" >&2; exit 2; }
+[[ -f "$CB/agents/simple_ledger/run.py" ]] || {
+  echo "run-checker-arm: $CB/agents/simple_ledger is missing; build and copy it first" >&2; exit 2; }
+
+cd "$CB"
+if [[ -f "$CB/.venv/bin/activate" ]]; then
+  # shellcheck disable=SC1091
+  source "$CB/.venv/bin/activate"   # the harness's own venv (run-agent needs it too)
+fi
+# shellcheck disable=SC1091
+source "$CB/agent_runtime/shell/agent_env.sh"
+if ! activate_lhc_analysis; then
+  bootstrap_lhc_analysis
+fi
+ensure_python_modules
+
+if python - "$CONFIG" <<'PY'
+import sys
+from agent_runtime.config import load_config
+cfg = load_config(sys.argv[1])
+if cfg.get("agent"):
+    sys.exit(f"run-checker-arm: remove `agent: {cfg['agent']}` from {sys.argv[1]}; the agent is fixed")
+PY
+then :; else exit 2; fi
+
+# Auth handling copied from scripts/run-agent: never let an API key leak into an OAuth run.
+AUTH="$(python - "$CONFIG" <<'PY'
+import sys
+from agent_runtime.config import load_config
+print(load_config(sys.argv[1]).get("auth") or "oauth")
+PY
+)"
+if [[ "$AUTH" == "api" ]]; then
+  API_KEYS_FILE="${LHC_RECAST_API_KEYS_FILE:-$CB/.api_keys.env}"
+  # shellcheck disable=SC1090
+  [[ -f "$API_KEYS_FILE" ]] && source "$API_KEYS_FILE"
+  echo "run-checker-arm: auth=api" >&2
+else
+  unset ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN ANTHROPIC_BASE_URL ANTHROPIC_MODEL
+  echo "run-checker-arm: auth=oauth" >&2
+fi
+
+export PY_MODULE="agents.simple_ledger.run"
+run_with_compute "${ARGS[@]}"

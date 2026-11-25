@@ -30,12 +30,14 @@ The shims run `/opt/conda/envs/lhc_analysis/bin/python -s -P` with `PYTHONPATH=r
 
 The harness copies the *host user's* `~/.claude/settings.json` into every run, so a hook placed there would fire in baseline runs too. Instead, `simple_ledger/run.py` wraps Collider-Bench's `build_workspace` and writes a **project-level** `workspace/.claude/settings.json` holding only the Stop hook. Baseline runs use upstream `simple` and never get it. Upstream code is not edited; our `run.py` replaces the function at run time.
 
-Open check: does Claude Code in `-p --dangerously-skip-permissions` mode load hooks from project settings? The 18 Nov test used user settings. `scripts/gate_container_test.sh --claude-hook` answers it (M4 step 7).
+Confirmed 2026-11-26 (runner task R1, ok 6): Claude Code in `-p --dangerously-skip-permissions` mode fires a Stop hook from the workspace's project settings.
+
+**Launching:** Collider-Bench's `scripts/run-agent` only accepts the agent `simple`. The checker arm is launched with `scripts/run-checker-arm --config <harness config without agent:>`, which runs the same `run_with_compute` and `launch_single_run` with `PY_MODULE=agents.simple_ledger.run` (finding F5).
 
 ## Runner checklist (M4 steps 7–8)
 
 1. `git pull`, then `python3 scripts/build_agent_folder.py`.
 2. `bash scripts/gate_container_test.sh` (free) and, once, `--claude-hook` (Haiku, a few cents).
-3. For the real test run, copy the built folder into the runner's Collider-Bench checkout: `cp -r build/agent/simple_ledger external/collider-bench/agents/`. This is a dirty submodule, fine for an M4 test but not for measured runs. Then run one cheap task with `agent: simple_ledger`.
+3. For the real test run, copy the built folder into the runner's Collider-Bench checkout: `cp -r build/agent/simple_ledger external/collider-bench/agents/`. This is a dirty submodule, fine for an M4 test but not for measured runs. Then run one cheap task with `bash scripts/run-checker-arm --config <config>`.
 4. After the run: `python3 scripts/postrun_check.py <harness run dir> experiments/<exp>/runs/<run-id>/`. It copies the bounce log and prints `bounces`, `gate_final_event`, `tampered` and `gate_error` for the manifest.
 5. Before Study B: the fork (decision 0008). Push the built folder to a fork commit and repin the submodule, so one commit pins what the agent ran.
