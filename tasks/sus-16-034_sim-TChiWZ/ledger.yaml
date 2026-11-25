@@ -1,7 +1,7 @@
 # Correct normalization record for sus-16-034_sim-TChiWZ, filled by hand from PUBLIC sources only
 # (the paper, CMS public page, HEPData, SUSY Cross Section WG / Prospino). Effectively an answer key:
 # never give this file to the test-subject agent. How to fill it: see README.md in this folder.
-schema_version: 1
+schema_version: 2         # v2 (2026-11-26): added source_type, process, masses_gev; values unchanged
 task: sus-16-034_sim-TChiWZ
 signal_model:             # what is made, and at which masses
   name: TChiWZ_550_200
@@ -14,22 +14,28 @@ quantities:
     value: 30.1656
     unit: fb
     uncertainty: 2.88065  # fb, absolute
+    source_type: xsec_wg
+    process: chargino_neutralino
+    masses_gev: {chargino_1: 550, neutralino_2: 550}
     source: "LHC SUSY Cross Section WG, twiki SUSYCrossSections13TeVn2x1wino (r11, 2017-06-15), first table: NLO-NLL wino-like chi1+chi20 and chi1-chi20 combined, envelope of CTEQ6.6 and MSTW2008nlo90cl (Resummino), row m = 550 GeV. Matches the 30.2 fb in the caption of CMS-SUS-16-034 Additional Table 7"
     in_plain_words: "On average about 30 chargino-neutralino pairs of 550 GeV are made per 1 fb^-1 'bucket' of collisions; theorists calculated it, give or take about 3."
   luminosity:
     value: 35.9
     unit: fb^-1
+    source_type: paper
     source: "Paper abstract, page 1: 'integrated luminosity of 35.9 fb-1 of proton-proton collisions at 13 TeV collected with the CMS detector at the LHC in 2016'; same value on the task card"
     in_plain_words: "How much collision data CMS recorded in 2016: 35.9 'buckets' (1 fb^-1 is about 78 trillion collisions)."
   branching_fraction:
     value: 0.101
     unit: dimensionless
+    source_type: other    # PDG
     covers: "Z -> l+ l- with l = e, mu, tau only. chargino_1 -> W + neutralino_1 and neutralino_2 -> Z + neutralino_1 are 1 by the model's definition. The W decay and the loss of tau pairs are left to the efficiency"
     source: "CMS-SUS-16-034 Additional Table 7 caption: 'the Z boson was required to decay leptonically, for a branching fraction of 0.10' (rounded). Exact value: PDG, B(Z->ee) + B(Z->mumu) + B(Z->tautau) = 3.363% + 3.366% + 3.370% = 0.101; sigma x L x 0.101 = 109.4, within 0.1% of the table's 'Expected events' row (109.35)"
     in_plain_words: "About one Z in ten turns into a lepton pair, the only kind of Z decay CMS's net looks for."
   efficiency:
     value: 0.0495
     unit: dimensionless
+    source_type: paper
     source: "CMS-SUS-16-034 Additional Table 7 (cut flow, TChiWZ 550/200, electroweak on-Z VZ region): 5.41 events after E_T^miss > 100 GeV / 109.35 'Expected events' = 0.04947"
     in_plain_words: "Of the pairs whose Z became a lepton pair, about 1 in 20 passes every cut of CMS's VZ signal region."
 expected_events:

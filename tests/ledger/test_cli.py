@@ -246,7 +246,7 @@ def test_last_value_wins_and_corrections_replace_by_name(ledger_path: Path) -> N
 
 def test_recording_onto_v1_ledger_upgrades_version(tmp_path: Path) -> None:
     path = tmp_path / "ledger.yaml"
-    path.write_text((TASKS / "sus-16-034_sim-TChiWZ" / "ledger.yaml").read_text("utf-8"), "utf-8")
+    path.write_text((TASKS / "sus-16-046_sim-T5Wg" / "ledger.yaml").read_text("utf-8"), "utf-8")
     assert run(path, "luminosity", "--value", "35.9", "--unit", "fb^-1", "--source", "paper") == 0
     ledger = load_ledger(path)
     assert ledger.schema_version == 2
@@ -275,3 +275,56 @@ def test_default_path_is_working_directory(tmp_path: Path, monkeypatch: pytest.M
     monkeypatch.chdir(tmp_path)
     assert main(["luminosity", "--value", "35.9", "--unit", "fb^-1", "--source", "paper"]) == 0
     assert (tmp_path / "ledger.yaml").exists()
+
+
+@pytest.mark.parametrize(
+    ("args", "message"),
+    [
+        (["--mass", "squarkino=500"], "unknown particle"),
+        (["--process", "gluon_fusion"], "--process 'gluon_fusion': unknown"),
+    ],
+)
+def test_refuses_unknown_names(
+    ledger_path: Path, capsys: pytest.CaptureFixture[str], args: list[str], message: str
+) -> None:
+    base = [
+        "cross_section",
+        "--value",
+        "3.96",
+        "--unit",
+        "fb",
+        "--source",
+        "p",
+        "--source-type",
+        "prospino",
+    ]
+    assert run(ledger_path, *base, *args) == 1
+    assert message in capsys.readouterr().err
+
+
+def test_particle_aliases_are_normalized(ledger_path: Path) -> None:
+    assert (
+        run(
+            ledger_path,
+            "cross_section",
+            "--value",
+            "3.96",
+            "--unit",
+            "fb",
+            "--source",
+            "p",
+            "--source-type",
+            "prospino",
+            "--process",
+            "Gluino Pair",
+            "--mass",
+            "~g=1750",
+            "--mass",
+            "1000022=1700",
+        )
+        == 0
+    )
+    sigma = load_ledger(ledger_path).get("cross_section")
+    assert sigma is not None
+    assert sigma.process == "gluino_pair"
+    assert sigma.masses_gev == {"gluino": 1750.0, "neutralino_1": 1700.0}

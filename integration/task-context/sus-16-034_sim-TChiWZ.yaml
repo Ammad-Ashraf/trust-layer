@@ -1,0 +1,11 @@
+# Public facts for the checker (C4 Match). Copied ONLY from the agent-visible task card
+# (agent_context/TASK.md) and results template. Never put reference yields or answers here.
+schema_version: 1
+task: sus-16-034_sim-TChiWZ
+public_source: "Collider-Bench TASK.md: benchmark TChiWZ_550_200; results template luminosity_fb"
+luminosity_fb: 35.9
+signal:
+  benchmark: TChiWZ_550_200
+  process: chargino_neutralino
+  sigma_masses_gev: {chargino_1: 550, neutralino_2: 550}   # the masses sigma depends on
+  masses_gev: {chargino_1: 550, neutralino_2: 550, neutralino_1: 200}

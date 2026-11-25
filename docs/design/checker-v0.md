@@ -38,7 +38,7 @@ Stop hook ──▶ trustlayer.gate ──▶ checks C1..C5 (pure functions)
 | Checks C1–C5 + registry | `src/trustlayer/checks/` | container + host (Study A) |
 | Gate (Stop hook entry point) | `src/trustlayer/gate/` | container |
 | Task context (public facts per task) | `integration/task-context/<task>.yaml` | mounted read-only |
-| Agent folder `simple-ledger` | our Collider-Bench fork (0008) | built by `scripts/build_agent_folder.py` |
+| Agent folder `simple_ledger` | our Collider-Bench fork (0008) | built by `scripts/build_agent_folder.py` |
 | Injector | `src/trustlayer/inject/` | host (Study A) |
 | Report | `src/trustlayer/report/` | host |
 
@@ -95,8 +95,9 @@ bin/record-quantity show        # prints the ledger and the product sigma*L*BR*e
 One interface (engineering standards §3):
 
 ```python
-def check(ledger: Ledger, ctx: TaskContext, sub: Submission | None) -> CheckResult
-CheckResult(check_id="C1", subgap="1a", passed=bool, messages=[...])
+def check(inputs: CheckInputs) -> CheckResult
+# CheckInputs: ledger, task (TaskContext), submission (+ submission_error), ledger_path, c5_tolerance
+CheckResult(check_id="C1", subgap="1a", passed=bool, messages=(...))
 ```
 
 The gate runs a registered list and knows nothing about individual checks. `TaskContext` comes from `integration/task-context/<task>.yaml`, built **only from the public task card** (TASK.md: benchmark name, masses, luminosity, process family). It holds nothing the agent can't read itself, so it may be mounted.
@@ -115,7 +116,7 @@ The gate runs a registered list and knows nothing about individual checks. `Task
 
 ## 5. The gate
 
-- **Entry point:** `python -m trustlayer.gate`, called by a Claude Code **Stop hook** set in the subject user's settings (0010). It reads the hook's JSON on stdin (it uses `cwd`; `stop_hook_active` is logged).
+- **Entry point:** `python -m trustlayer.gate`, called by a Claude Code **Stop hook** in the checker-arm workspace's project settings (`workspace/.claude/settings.json`, written by `simple_ledger/run.py`; see `integration/container/README.md`). The host user's settings can't be used, because the harness copies them into baseline runs too. It reads the hook's JSON on stdin (it uses `cwd`; `stop_hook_active` is logged).
 - **Finding the inputs:** the ledger at `<cwd>/ledger.yaml`, the submission at `<cwd>/results/*.yaml` (the two-document template), and the task context from the path in the `TRUSTLAYER_TASK_CONTEXT` env var, set by the agent folder's launcher.
 - **Decision:**
   - all checks pass → exit 0;
@@ -127,7 +128,7 @@ The gate runs a registered list and knows nothing about individual checks. `Task
 
 ## 6. Getting it into the container
 
-Decision 0008 is a fork of Collider-Bench plus one agent folder, `agents/simple-ledger/`:
+Decision 0008 is a fork of Collider-Bench plus one agent folder, `agents/simple_ledger/`. It is named with an underscore because Collider-Bench imports `agents.<name>.run` as a Python module. The folder is
 
 - a copy of `agents/simple/`;
 - plus `runtime/bin/record-quantity`, a small bash shim that runs `/opt/conda/envs/lhc_analysis/bin/python -m trustlayer.ledger.cli` with `PYTHONPATH` set to `runtime/lib/`;
@@ -169,9 +170,25 @@ Each step ends with tests passing and one commit (engineering standards' definit
 | 5 | `gate`: Stop-hook entry, bounce cap, log, messages | tests feed hook JSON on stdin and assert exit codes, messages and log lines | 1 day |
 | 6 | `build_agent_folder.py` + fork + `AGENTS.md` paragraph; extend the fairness test | fork commit pinned in the submodule; fairness test scans the built folder | ½ day |
 | 7 | Container gate test (no API cost): run the gate inside the image on a bad and a good workspace | exit 2 then 0, as expected | runner, 1 h |
-| 8 | One real cheap run (Haiku 4.5, OAuth, about $1) with `simple-ledger` | gate fired at least once, the agent saw the message, the bounce log was committed → **M4 done** | runner, 1 h |
+| 8 | One real cheap run (Haiku 4.5, OAuth, about $1) with `simple_ledger` | gate fired at least once, the agent saw the message, the bounce log was committed → **M4 done** | runner, 1 h |
 
 Then M5: `inject` + `report`, fill the two missing hand ledgers, run Study A.
+
+## 8a. Build status (2026-11-26)
+
+Steps 2–6 are built and tested on the dev laptop: 161 tests, ruff and mypy clean. Every Study A injection is caught by exactly the checks listed in `tests/checks/test_study_a_injections.py`, with no false alarm on the near-misses. Which check catches which injection:
+
+| Injection | Caught by |
+| --- | --- |
+| 1a σ in pb written as fb | C5 (×1000 off); C1 can't see a value whose unit label is valid |
+| 1a L in pb⁻¹ unconverted | C4, C5 |
+| 1b LO σ (labelled generator, or falsely labelled prospino with the generator σ recorded) | C2, C5 |
+| 1c BR removed / BR = 1 without reason | C3, C5 |
+| 1d neighbouring mass point | C4, C5 |
+| 1d L = 36.1 | C4 (C5 stays within τ) |
+| 1e bins unscaled / null bin | C5 |
+
+So C1 catches only missing or wrong-kind units. A unit that is valid but wrong for its value is caught downstream by C4 or C5. Study A reports catches per check, so this is visible, not hidden. Steps 7–8 run on the runner (`integration/container/README.md`).
 
 ## 9. Risks
 

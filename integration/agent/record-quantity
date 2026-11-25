@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# trust-layer ledger CLI for the simple_ledger agent (built by scripts/build_agent_folder.py).
+# Runs trustlayer.ledger.cli from the read-only runtime/lib with the container's stock Python.
+set -euo pipefail
+
+RUNTIME="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+PY="${TRUSTLAYER_PYTHON:-/opt/conda/envs/lhc_analysis/bin/python}"
+if [ ! -x "$PY" ]; then PY="$(command -v python3)"; fi
+
+# The ledger always lives at the workspace root, whatever directory the agent is in.
+# Called as <workspace>/bin/record-quantity (a symlink), so the workspace is one level up.
+CALLED_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [ -z "${TRUSTLAYER_LEDGER:-}" ] && [ -d "$CALLED_DIR/results" ]; then
+  export TRUSTLAYER_LEDGER="$CALLED_DIR/ledger.yaml"
+fi
+
+# Task id = prefix of the run folder name (<task>_<agent-id>/workspace).
+if [ -z "${TRUSTLAYER_TASK:-}" ]; then
+  RUN_NAME="$(basename "$(cd "$(dirname "${TRUSTLAYER_LEDGER:-$PWD/x}")/.." && pwd)")"
+  for ctx in "$RUNTIME"/task-context/*.yaml; do
+    stem="$(basename "$ctx" .yaml)"
+    case "$RUN_NAME" in "$stem"_*) export TRUSTLAYER_TASK="$stem" ;; esac
+  done
+fi
+
+export PYTHONPATH="$RUNTIME/lib"
+exec "$PY" -s -P -m trustlayer.ledger.cli "$@"

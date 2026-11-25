@@ -1,0 +1,11 @@
+# Public facts for the checker (C4 Match). Copied ONLY from the agent-visible task card
+# (agent_context/TASK.md) and results template. Never put reference yields or answers here.
+schema_version: 1
+task: sus-16-046_sim-T5Wg
+public_source: "Collider-Bench TASK.md: benchmark T5Wg_1750_1700 (gluino 1750, wino NLSP 1700, massless LSP)"
+luminosity_fb: 35.9
+signal:
+  benchmark: T5Wg_1750_1700
+  process: gluino_pair
+  sigma_masses_gev: {gluino: 1750}
+  masses_gev: {gluino: 1750, chargino_1: 1700, neutralino_1: 1700, gravitino: 0}

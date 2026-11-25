@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# trust-layer gate: the Claude Code Stop hook for the simple_ledger agent
+# (built by scripts/build_agent_folder.py). Reads the hook JSON on stdin; exit 2 sends the
+# agent back with the problems on stderr, exit 0 lets it stop. See trustlayer/gate/hook.py.
+set -uo pipefail
+
+RUNTIME="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+PY="${TRUSTLAYER_PYTHON:-/opt/conda/envs/lhc_analysis/bin/python}"
+if [ ! -x "$PY" ]; then PY="$(command -v python3)"; fi
+
+export PYTHONPATH="$RUNTIME/lib"
+export TRUSTLAYER_RUNTIME="$RUNTIME"
+exec "$PY" -s -P -m trustlayer.gate

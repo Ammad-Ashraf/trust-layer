@@ -41,6 +41,7 @@ from trustlayer.ledger.model import (
     LedgerError,
     empty_ledger,
 )
+from trustlayer.ledger.names import PARTICLES, PROCESSES, canonical_particle, canonical_process
 from trustlayer.ledger.units import UnitError, parse_unit
 
 CORRECTION = "correction"
@@ -74,8 +75,14 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--unit", help="fb, pb, fb^-1, pb^-1 or dimensionless")
     p.add_argument("--source", help="where the number comes from (tool + settings, table, page)")
     p.add_argument("--source-type", choices=sorted(SOURCE_TYPES))
-    p.add_argument("--process", help="for sigma: process token, e.g. gluino_pair")
-    p.add_argument("--mass", action="append", default=[], metavar="PARTICLE=GEV")
+    p.add_argument("--process", help=f"for sigma, one of: {', '.join(PROCESSES)}")
+    p.add_argument(
+        "--mass",
+        action="append",
+        default=[],
+        metavar="PARTICLE=GEV",
+        help=f"for sigma, repeatable; particles: {', '.join(PARTICLES)}",
+    )
     p.add_argument("--reason", help="required when a branching fraction or efficiency is 1")
     p.add_argument("--n-pass", type=float, help="events passing (efficiency only)")
     p.add_argument("--n-gen", type=float, help="events generated (efficiency only)")
@@ -99,10 +106,24 @@ def _parse_masses(items: Sequence[str]) -> dict[str, float]:
             value = float(mass)
         except ValueError:
             value = math.nan
-        if not sep or not particle.strip() or not math.isfinite(value) or value <= 0:
+        if not sep or not particle.strip() or not math.isfinite(value) or value < 0:
             raise InputError(f"--mass {item!r}: use PARTICLE=GEV, e.g. --mass gluino=1750")
-        masses[particle.strip()] = value
+        name = canonical_particle(particle)
+        if name is None:
+            raise InputError(
+                f"--mass {item!r}: unknown particle; use one of {', '.join(PARTICLES)}"
+            )
+        masses[name] = value
     return masses
+
+
+def _parse_process(text: str | None) -> str | None:
+    if text is None:
+        return None
+    process = canonical_process(text)
+    if process is None:
+        raise InputError(f"--process {text!r}: unknown; use one of {', '.join(PROCESSES)}")
+    return process
 
 
 def _check_unit(kind: str, unit_text: str | None) -> str:
@@ -173,7 +194,7 @@ def build_entry(args: argparse.Namespace) -> Entry:
         unit=unit,
         source=args.source.strip(),
         source_type=source_type,
-        process=args.process.strip().lower() if args.process else None,
+        process=_parse_process(args.process),
         masses_gev=_parse_masses(args.mass),
         reason=args.reason.strip() if args.reason else None,
         n_pass=args.n_pass,

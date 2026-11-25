@@ -1,0 +1,11 @@
+# Public facts for the checker (C4 Match). Copied ONLY from the agent-visible task card
+# (agent_context/TASK.md) and results template. Never put reference yields or answers here.
+schema_version: 1
+task: sus-16-046_sim-TChiWg
+public_source: "Collider-Bench TASK.md: benchmark TChiWg_700 (mass-degenerate wino NLSP 700, massless LSP)"
+luminosity_fb: 35.9
+signal:
+  benchmark: TChiWg_700
+  process: chargino_neutralino
+  sigma_masses_gev: {chargino_1: 700, neutralino_1: 700}
+  masses_gev: {chargino_1: 700, neutralino_1: 700, gravitino: 0}

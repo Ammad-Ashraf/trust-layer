@@ -22,9 +22,9 @@ def _minimal(**quantities: object) -> dict[str, object]:
     return {"schema_version": 2, "task": "t", "quantities": quantities}
 
 
-def test_loads_filled_v1_hand_ledger() -> None:
+def test_loads_filled_hand_ledger() -> None:
     ledger = load_ledger(TCHIWZ)
-    assert ledger.schema_version == 1
+    assert ledger.schema_version == 2
     sigma = ledger.get("cross_section")
     assert sigma is not None
     assert (sigma.value, sigma.unit, sigma.uncertainty) == (30.1656, "fb", 2.88065)
@@ -35,6 +35,7 @@ def test_loads_filled_v1_hand_ledger() -> None:
 def test_loads_half_filled_template_with_nulls() -> None:
     ledger = load_ledger(T5WG_TEMPLATE)
     sigma = ledger.get("cross_section")
+    assert ledger.schema_version == 1
     assert sigma is not None and sigma.value is None and sigma.unit is None
 
 

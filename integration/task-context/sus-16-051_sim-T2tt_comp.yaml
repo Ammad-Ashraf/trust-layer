@@ -1,0 +1,11 @@
+# Public facts for the checker (C4 Match). Copied ONLY from the agent-visible task card
+# (agent_context/TASK.md) and results template. Never put reference yields or answers here.
+schema_version: 1
+task: sus-16-051_sim-T2tt_comp
+public_source: "Collider-Bench TASK.md: benchmark T2tt_800_400"
+luminosity_fb: 35.9
+signal:
+  benchmark: T2tt_800_400
+  process: stop_pair
+  sigma_masses_gev: {stop_1: 800}
+  masses_gev: {stop_1: 800, neutralino_1: 400}
