@@ -196,6 +196,10 @@ Steps 2–6 are built and tested on the dev laptop: 161 tests, ruff and mypy cle
 
 So C1 catches only missing or wrong-kind units. A unit that is valid but wrong for its value is caught downstream by C4 or C5. Study A reports catches per check, so this is visible, not hidden. Steps 7–8 run on the runner (`integration/container/README.md`).
 
+## 8b. Study A done (2026-11-26)
+
+`trustlayer.inject` builds the §7 cases generically from any complete hand ledger; `trustlayer.report` scores them (`python -m trustlayer.report study-a`). On 3 tasks: 28/28 injections caught, 0/10 false alarms at τ = 5%; 0017 rows 6/6 and 0/3. Cases that don't apply when BR is truly 1 are listed as skipped. Details: `experiments/02-study-a/README.md`.
+
 ## 9. Risks
 
 - **The agent ignores the ledger.** C5 fails with "no ledger", the gate bounces, and after 3 bounces the run submits with warnings, which is itself a measured outcome.

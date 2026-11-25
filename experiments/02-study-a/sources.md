@@ -9,11 +9,11 @@ Collected ahead of M5 so the T5Wg and T2tt hand ledgers, and the 1d "neighbourin
 - 1700 GeV: 5.662E-03 pb ± 17.93%
 - 1750 GeV: 4.342E-03 pb ± 19.05%
 - 1800 GeV: 3.349E-03 pb ± 20.52%
-- ⚠ CMS-SUS-16-046 (2017) normalized at **NLO+NLL**, which is no longer on the page. An NLO+NLL vs NNLOapprox comparison PDF (`compare_gg.pdf`) is attached there, not fetched. **Open:** which order the hand ledger uses. Lean: the paper's order (NLO+NLL), from an archived twiki revision. Fall back to NNLOapprox+NNLL with a note.
+- ⚠ CMS-SUS-16-046 (2017) normalized at **NLO+NLL**, which is no longer on the page. An NLO+NLL vs NNLOapprox comparison PDF (`compare_gg.pdf`) is attached there, not fetched. **Decided (Ammad, 26 Nov): the paper's order, NLO+NLL.** Read from the Wayback Machine copy of the twiki (r8, 2019-02-20), which lists both orders. NLO+NLL: 1700 GeV 4.70323 fb ± 26.10% · **1750 GeV 3.59842 fb ± 27.15%** · 1800 GeV 2.76133 fb ± 28.11%.
 - For comparison, the smoke-run agent's Prospino NLO at 1750 GeV is 3.96 fb (LO 1.64 fb, K = 2.41), and MadGraph LO is 1.453 fb (transcript #24, #69).
 
 **Stop pair (`SUSYCrossSections13TeVstopsbottom`, r14, 2024-12-09)**
-- Again only **NNLOapprox+NNLL** (PDF4LHC21, decoupled). Same open question as above (CMS-SUS-16-051 used NLO+NLL).
+- Again only **NNLOapprox+NNLL** (PDF4LHC21, decoupled). CMS-SUS-16-051 used NLO+NLL. From the Wayback Machine copy (r9, 2019-02-20), NLO+NLL: 750 GeV 43.1418 fb ± 13.75% · **800 GeV 28.3338 fb ± 14.17%** · 850 GeV 18.9612 fb ± 14.70%.
 - 750: 5.330E-02 pb ± 6.90% · 800: 3.482E-02 pb ± 7.26% · 850: 2.314E-02 pb ± 7.64% · 950: 1.068E-02 pb ± 8.55% · 1000: 7.395E-03 pb ± 9.08%
 
 **Wino chargino–neutralino (`SUSYCrossSections13TeVn2x1wino`, r11, 2017-06-15)**

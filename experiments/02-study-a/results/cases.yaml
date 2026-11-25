@@ -1,0 +1,533 @@
+version: study-a-v1
+tau: 0.05
+cases:
+- task: sus-16-034_sim-TChiWZ
+  case: 1a-sigma-pb-as-fb
+  group: '0016'
+  kind: injection
+  subgap: 1a
+  description: sigma's pb value written with unit fb
+  failing_checks:
+  - C5
+  flagged: true
+  bins_over_ledger: 999.227265
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: 1a-lumi-pb-inverse
+  group: '0016'
+  kind: injection
+  subgap: 1a
+  description: L's fb^-1 value written with unit pb^-1
+  failing_checks:
+  - C4
+  - C5
+  flagged: true
+  bins_over_ledger: 999.227265
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: 1b-lo-generator
+  group: '0016'
+  kind: injection
+  subgap: 1b
+  description: LO sigma used, labelled generator
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 1.250717
+  provisional_input: true
+- task: sus-16-034_sim-TChiWZ
+  case: 1b-lo-false-label
+  group: '0016'
+  kind: injection
+  subgap: 1b
+  description: LO sigma used, falsely labelled prospino
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 1.250717
+  provisional_input: true
+- task: sus-16-034_sim-TChiWZ
+  case: 1c-br-removed
+  group: '0016'
+  kind: injection
+  subgap: 1c
+  description: branching fraction not recorded
+  failing_checks:
+  - C3
+  - C5
+  flagged: true
+  bins_over_ledger: null
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: 1c-br-one-no-reason
+  group: '0016'
+  kind: injection
+  subgap: 1c
+  description: BR set to 1 with no reason
+  failing_checks:
+  - C3
+  - C5
+  flagged: true
+  bins_over_ledger: 0.100922
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: 1d-mass-neighbour
+  group: '0016'
+  kind: injection
+  subgap: 1d
+  description: sigma taken at the neighbouring mass point (chargino_1 500, neutralino_2
+    500 GeV)
+  failing_checks:
+  - C4
+  - C5
+  flagged: true
+  bins_over_ledger: 0.650273
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: 1d-lumi-36.1
+  group: '0016'
+  kind: injection
+  subgap: 1d
+  description: L = 36.1 fb^-1 instead of 35.9
+  failing_checks:
+  - C4
+  flagged: true
+  bins_over_ledger: 0.993691
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: 1e-bins-unscaled
+  group: '0016'
+  kind: injection
+  subgap: 1e
+  description: bins left at the earlier LO normalization after sigma was fixed
+  failing_checks:
+  - C5
+  flagged: true
+  bins_over_ledger: 0.798306
+  provisional_input: true
+- task: sus-16-034_sim-TChiWZ
+  case: 1e-null-bin
+  group: '0016'
+  kind: injection
+  subgap: 1e
+  description: one bin left null
+  failing_checks:
+  - C5
+  flagged: true
+  bins_over_ledger: null
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: clean
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: the correct ledger
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999227
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: sigma-in-pb-converted
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: sigma recorded in pb, correctly
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999227
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: br-one-with-reason
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: BR = 1 with BR folded into eps
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999227
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: rounded-2-sig-figs
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: branching_fraction rounded to 2 significant figures (0.101 -> 0.1)
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 1.00922
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: 0017-prospino-no-output
+  group: '0017'
+  kind: injection
+  subgap: 1b
+  description: invented sigma (correct / 201) labelled prospino; Prospino never ran
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 200.84468
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: 0017-prospino-mismatch
+  group: '0017'
+  kind: injection
+  subgap: 1b
+  description: invented sigma (correct / 201) labelled prospino; Prospino ran and
+    disagrees
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 200.84468
+  provisional_input: false
+- task: sus-16-034_sim-TChiWZ
+  case: 0017-prospino-matches
+  group: '0017'
+  kind: near_miss
+  subgap: clean
+  description: sigma labelled prospino and equal to the run's Prospino NLO result
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999227
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 1a-sigma-pb-as-fb
+  group: '0016'
+  kind: injection
+  subgap: 1a
+  description: sigma's pb value written with unit fb
+  failing_checks:
+  - C5
+  flagged: true
+  bins_over_ledger: 999.95421
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 1a-lumi-pb-inverse
+  group: '0016'
+  kind: injection
+  subgap: 1a
+  description: L's fb^-1 value written with unit pb^-1
+  failing_checks:
+  - C4
+  - C5
+  flagged: true
+  bins_over_ledger: 999.95421
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 1b-lo-generator
+  group: '0016'
+  kind: injection
+  subgap: 1b
+  description: LO sigma used, labelled generator
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 2.476432
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 1b-lo-false-label
+  group: '0016'
+  kind: injection
+  subgap: 1b
+  description: LO sigma used, falsely labelled prospino
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 2.476432
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 1c-br-removed
+  group: '0016'
+  kind: injection
+  subgap: 1c
+  description: branching fraction not recorded
+  failing_checks:
+  - C3
+  - C5
+  flagged: true
+  bins_over_ledger: null
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 1d-mass-neighbour
+  group: '0016'
+  kind: injection
+  subgap: 1d
+  description: sigma taken at the neighbouring mass point (gluino 1700 GeV)
+  failing_checks:
+  - C4
+  - C5
+  flagged: true
+  bins_over_ledger: 0.76506
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 1d-lumi-36.1
+  group: '0016'
+  kind: injection
+  subgap: 1d
+  description: L = 36.1 fb^-1 instead of 35.9
+  failing_checks:
+  - C4
+  flagged: true
+  bins_over_ledger: 0.994414
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 1e-bins-unscaled
+  group: '0016'
+  kind: injection
+  subgap: 1e
+  description: bins left at the earlier LO normalization after sigma was fixed
+  failing_checks:
+  - C5
+  flagged: true
+  bins_over_ledger: 0.40377
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 1e-null-bin
+  group: '0016'
+  kind: injection
+  subgap: 1e
+  description: one bin left null
+  failing_checks:
+  - C5
+  flagged: true
+  bins_over_ledger: null
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: clean
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: the correct ledger
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999954
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: sigma-in-pb-converted
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: sigma recorded in pb, correctly
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999954
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: rounded-2-sig-figs
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: efficiency rounded to 2 significant figures (0.42461 -> 0.42)
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 1.01093
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 0017-prospino-no-output
+  group: '0017'
+  kind: injection
+  subgap: 1b
+  description: invented sigma (correct / 201) labelled prospino; Prospino never ran
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 200.990796
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 0017-prospino-mismatch
+  group: '0017'
+  kind: injection
+  subgap: 1b
+  description: invented sigma (correct / 201) labelled prospino; Prospino ran and
+    disagrees
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 200.990796
+  provisional_input: false
+- task: sus-16-046_sim-T5Wg
+  case: 0017-prospino-matches
+  group: '0017'
+  kind: near_miss
+  subgap: clean
+  description: sigma labelled prospino and equal to the run's Prospino NLO result
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999954
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: 1a-sigma-pb-as-fb
+  group: '0016'
+  kind: injection
+  subgap: 1a
+  description: sigma's pb value written with unit fb
+  failing_checks:
+  - C5
+  flagged: true
+  bins_over_ledger: 999.992817
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: 1a-lumi-pb-inverse
+  group: '0016'
+  kind: injection
+  subgap: 1a
+  description: L's fb^-1 value written with unit pb^-1
+  failing_checks:
+  - C4
+  - C5
+  flagged: true
+  bins_over_ledger: 999.992817
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: 1b-lo-generator
+  group: '0016'
+  kind: injection
+  subgap: 1b
+  description: LO sigma used, labelled generator
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 1.248176
+  provisional_input: true
+- task: sus-16-051_sim-T2tt_comp
+  case: 1b-lo-false-label
+  group: '0016'
+  kind: injection
+  subgap: 1b
+  description: LO sigma used, falsely labelled prospino
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 1.248176
+  provisional_input: true
+- task: sus-16-051_sim-T2tt_comp
+  case: 1c-br-removed
+  group: '0016'
+  kind: injection
+  subgap: 1c
+  description: branching fraction not recorded
+  failing_checks:
+  - C3
+  - C5
+  flagged: true
+  bins_over_ledger: null
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: 1d-mass-neighbour
+  group: '0016'
+  kind: injection
+  subgap: 1d
+  description: sigma taken at the neighbouring mass point (stop_1 750 GeV)
+  failing_checks:
+  - C4
+  - C5
+  flagged: true
+  bins_over_ledger: 0.656755
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: 1d-lumi-36.1
+  group: '0016'
+  kind: injection
+  subgap: 1d
+  description: L = 36.1 fb^-1 instead of 35.9
+  failing_checks:
+  - C4
+  flagged: true
+  bins_over_ledger: 0.994453
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: 1e-bins-unscaled
+  group: '0016'
+  kind: injection
+  subgap: 1e
+  description: bins left at the earlier LO normalization after sigma was fixed
+  failing_checks:
+  - C5
+  flagged: true
+  bins_over_ledger: 0.801158
+  provisional_input: true
+- task: sus-16-051_sim-T2tt_comp
+  case: 1e-null-bin
+  group: '0016'
+  kind: injection
+  subgap: 1e
+  description: one bin left null
+  failing_checks:
+  - C5
+  flagged: true
+  bins_over_ledger: null
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: clean
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: the correct ledger
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999993
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: sigma-in-pb-converted
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: sigma recorded in pb, correctly
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999993
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: rounded-2-sig-figs
+  group: '0016'
+  kind: near_miss
+  subgap: clean
+  description: efficiency rounded to 2 significant figures (0.0077666 -> 0.0078)
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.995711
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: 0017-prospino-no-output
+  group: '0017'
+  kind: injection
+  subgap: 1b
+  description: invented sigma (correct / 201) labelled prospino; Prospino never ran
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 200.998556
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: 0017-prospino-mismatch
+  group: '0017'
+  kind: injection
+  subgap: 1b
+  description: invented sigma (correct / 201) labelled prospino; Prospino ran and
+    disagrees
+  failing_checks:
+  - C2
+  - C5
+  flagged: true
+  bins_over_ledger: 200.998556
+  provisional_input: false
+- task: sus-16-051_sim-T2tt_comp
+  case: 0017-prospino-matches
+  group: '0017'
+  kind: near_miss
+  subgap: clean
+  description: sigma labelled prospino and equal to the run's Prospino NLO result
+  failing_checks: []
+  flagged: false
+  bins_over_ledger: 0.999993
+  provisional_input: false
