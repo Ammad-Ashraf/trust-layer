@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+  File "/home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/agent_runtime/config.py", line 182, in load_config
+    validate_config(cfg, source=str(Path(path)))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/agent_runtime/config.py", line 101, in validate_config
+    raise ValueError(f"{source}: agent={agent!r}; must be one of {sorted(_ALLOWED_AGENTS)}")
+ValueError: ../../experiments/04-gate-test/harness-config.yaml: agent='simple_ledger'; must be one of ['simple']

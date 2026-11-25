@@ -1,0 +1,10 @@
+# M4 step 8 (runner task R2): one cheap real run of the checker arm.
+# Same as the smoke run's config except agent, task and model.
+agent:    simple_ledger
+task:     sus-16-034_sim-TChiWZ
+runner:   claude
+auth:     oauth                   # dev runs use the subscription (decision 0011)
+model:    claude-haiku-4-5
+effort:   max
+sandbox:  podman
+compute:  local
