@@ -1,0 +1,7 @@
+agent: simple_ledger
+trust_layer_commit: f713503af771f4d423c3bd9567da5866bace5361
+trust_layer_dirty: false
+collider_bench_commit: 2986d8b270ae49e0d6e8c95bbf95ef1159f16d7c
+built_at: '2026-11-25T20:19:23+00:00'
+c5_tolerance: 0.05
+max_bounces: 3
