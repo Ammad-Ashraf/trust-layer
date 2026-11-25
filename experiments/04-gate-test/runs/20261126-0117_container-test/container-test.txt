@@ -1,0 +1,17 @@
+test workspace: /tmp/tl-gate-test.ocV1Ha/runs/claude_test/sus-16-034_sim-TChiWZ_ContainerTest_1/workspace
+Python 3.11.15
+ok 1: empty workspace sent back (exit 2)
+ok 2: ledger recorded, task detected, product 5.41
+[trust-layer checker] Your normalization record has problems. Fix them, then finish again.
+Ledger:  /tmp/tl-gate-test.ocV1Ha/runs/claude_test/sus-16-034_sim-TChiWZ_ContainerTest_1/workspace/ledger.yaml
+Results: /tmp/tl-gate-test.ocV1Ha/runs/claude_test/sus-16-034_sim-TChiWZ_ContainerTest_1/workspace/results/histogram_TChiWZ.yaml
+- C5 (results match the ledger): cannot read your results: /tmp/tl-gate-test.ocV1Ha/runs/claude_test/sus-16-034_sim-TChiWZ_ContainerTest_1/workspace/results/histogram_TChiWZ.yaml: not valid YAML (while parsing a flow mapping
+  in "<unicode string>", line 13, column 5:
+      - {value: 0.45
+        ^
+expected ',' or '}', but got '{'
+  in "<unicode string>", line 14, column 5:
+      - {value: 1.37
+        ^)
+Check your ledger with `bin/record-quantity show`. This check runs every time you try to finish.
+FAIL: matching results: expected exit 0, got 2
