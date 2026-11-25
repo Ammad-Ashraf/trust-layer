@@ -153,7 +153,7 @@ def _show_ratio(ratio: float | None) -> str:
         return "—"
     if 0.5 <= ratio <= 2:
         return f"{ratio - 1:+.1%}"
-    return f"×{ratio:.3g}"
+    return f"×{ratio:.4g}" if ratio >= 1 else f"×{ratio:.2g}"
 
 
 def case_table(outcomes: Sequence[Outcome]) -> list[str]:
