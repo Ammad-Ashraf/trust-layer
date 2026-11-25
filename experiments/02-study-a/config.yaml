@@ -5,3 +5,6 @@ model: null
 n_runs: null
 collider_bench_commit: null
 container_digest: null
+# Fixed by decision 0016 before the checks were built. Do not tune on Study A results.
+c5_tolerance: 0.05        # relative |sum(bins) - sigma*L*BR*eps*corrections| / (sigma*L*BR*eps*corrections)
+injections: docs/design/checker-v0.md#7-study-a-fixed-before-it-runs

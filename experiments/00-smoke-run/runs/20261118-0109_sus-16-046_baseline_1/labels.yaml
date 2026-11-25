@@ -1,19 +1,93 @@
-# Every mistake found in this run, with its sub-gap code (1a-1e, 2a-2e, 3a-3f).
-# DRAFT by Claude (runner session, 2026-11-18) from a partial read of the transcript.
-# Not a full M3 read: Ammad confirms or replaces these codes after reading session.jsonl.
+# Every mistake found in this run, with its sub-gap code (1a-1e, 2a-2e, 3a-3f; docs/project-summary.md §3).
+# Full M3 read by Claude (Windows session, 2026-11-26): session.jsonl.gz (all 145 steps, 910 lines),
+# analysis.py, report.md, score.json, submitted YAML, and the paper (CMS-SUS-16-046, Sec. 4-5, Table 1).
+# Step numbers (#N) count assistant text and tool calls in order (scripts used: see m3-review.md).
+# Replaces the 18 Nov draft (one 3c label from a partial read).
 schema_version: 1
+reviewer: claude (builder)
+read: full
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 0, 1e: 0, 2x: 0, 3a: 1, 3b: 1, 3c: 1, 3d: 1, uncoded: 1}
+  gap1_errors: 0
+  verdict: >-
+    The counting was right; the simulated detector was wrong. sigma, L, BR, N_gen and units are all
+    correct and the submitted yields equal the agent's own formula, so checks C1-C5 would have passed
+    this run. The yield is ~50x low because only 0.93% of events survive. Reading the full transcript
+    shows the biggest loss is at the p_T^miss > 300 GeV cut (4329 -> 247 events, before any jet cut),
+    not at the photon-jet rule guessed on 18 Nov.
+cutflow_from_transcript:   # agent's own numbers, 10,000 generated events
+  photon_pt180_barrel: 4329          # step #105
+  plus_met300: 247                   # #105: 94% of photon events lost here
+  plus_mt300: 213
+  plus_st600_no_jet_cuts: 201        # #105, i.e. eps ~ 2.0% before the jet cuts
+  final_with_jet_cuts: 93            # #135, eps = 0.93% (preselection 1997)
+  reco_met_mean_gev: 127             # #103; only 885/10000 events have MET > 300
+  truth_gravitino_pt_mean_gev: 344   # #99, two gravitinos per event, max 1698
 labels:
-  - code: 3c               # proposed; alternative 3d. Not a Gap-1 normalization-formula error
-    status: draft
-    where: "analysis.py weights (w = sigma*L/N_gen) and report.md section 4"
+  - id: L1
+    code: 3a
+    confidence: high
+    where: "Delphes step (#101, delphes_card_CMS.tcl used unmodified) -> MET in #103"
     what: >-
-      Signal-region efficiency 93/10000 = 0.93% vs ~38.6% implied by the reference
-      (54.8 events / (3.96 fb x 35.9 fb^-1 = 142 produced)). Yield is ~50x low and the S_T
-      distribution falls where CMS rises. The agent reported the 0.93% acceptance without
-      questioning it (no sanity check against expected acceptance for a 1750/1700 compressed
-      spectrum with a hard photon + MET). Root cause in the sim chain not yet found.
-    checked_ok: >-
-      sigma = 3.96 fb is Prospino NLO (0.00396 pb, converted correctly to fb): no 1a/1b.
-      L = 35.9 fb^-1 correct. Gluino BRs sum to 1 and chi10 -> gamma G~ at 100%: no 1c seen.
-      Mass point 1750/1700 matches the task target: no 1d. Submitted yields match the
-      agent's reported analysis output (report.md table): no 1e seen.
+      The missing momentum was destroyed in the detector simulation. The stock Delphes CMS card
+      lists neutrinos and neutralinos (1000022-1000045) as invisible but not the gravitino (PDG
+      1000039), so its energy goes into the HCal by default and comes out as a jet. Detector setup
+      is a detail the paper cannot give; the agent had to fill it in and did not.
+    evidence: >-
+      Read-only check on the runner, 2026-11-26 (same image digest, run's own ROOT file, first 3000
+      events): EnergyFraction lists in the card have no 1000039 (ECal default {0} 0.0, HCal default
+      {0} 1.0); NeutrinoFilter lists only 12/14/16. Truth invisible MET (gravitinos + neutrinos):
+      mean 487.5 GeV, 72.4% above 300 GeV. Reco MissingET: mean 127.6 GeV, 9.2% above 300 GeV
+      (GenMissingET 82.4 GeV, 8.3%). Events with a p_T > 100 GeV jet within Delta R < 0.4 of a truth
+      gravitino: 2972/3000.
+    impact: "Dominant: about a factor 20 of the ~50x deficit."
+  - id: L2
+    code: 3c
+    confidence: high
+    where: "#103-#105 (\"Good.\" after MET>300 = 885/10000), #135 (eps = 0.93% accepted), report.md"
+    what: >-
+      No sanity check. The agent saw a mean MET of 127 GeV for a signal built to give large MET,
+      and 93/10000 events surviving, and moved on both times. It never compared reco MET with the
+      truth gravitinos or GenMissingET (both in the same ROOT file), and never asked whether a ~1%
+      acceptance is plausible for a 1750 GeV gluino with a hard photon.
+  - id: L3
+    code: 3d
+    confidence: high
+    where: "report.md 'Deviations' #1 and final message (#145)"
+    what: >-
+      Wrong diagnosis. The report names a missing lepton veto as the "dominant systematic deviation".
+      The paper says no lepton requirement is applied ("no selection criteria are applied on the
+      presence or absence of jets or leptons"), and a veto would lower the yield, while the real
+      problem was a yield 50x too low. The agent misread the paper and pointed reviewers at the
+      wrong place.
+  - id: L4
+    code: 3b
+    confidence: medium
+    where: "analysis.py lines 94-117"
+    what: >-
+      Photon-jet separation (Delta R > 0.5) and Delta phi(MET, jet) > 0.3 are applied to every Delphes
+      jet. The paper first keeps only jets with p_T > 30 GeV, |eta| < 3 that are separated from photons,
+      electrons and muons. With fake jets from L1 in the event, these two cuts remove a further ~54%
+      (201 -> 93). Part of that loss is L1 showing up again. The 18 Nov guess (the photon vetoes
+      itself as its own jet) is ruled out: the card writes the Jet branch from UniqueObjectFinder,
+      which already removes jets built from the photon.
+    impact: "About a factor 2."
+  - id: L5
+    code: null              # no sub-gap fits: a process slip, not a physics judgment
+    confidence: high
+    where: "#136 -> context compaction (#137/#138) -> report.md 'Deviations' #5"
+    what: >-
+      The agent wrote "the jet isolation cut needs to apply only to jets with pT > 30 GeV ... let me
+      fix this". The context was then compacted, the fix was never made, and the report lists it as
+      a known deviation instead. A fix it had already decided on was lost when the context was cut.
+checked_ok:
+  - "sigma = 0.00396 pb from Prospino NLO (#24), converted to 3.96 fb correctly: no 1a. Prospino NLO passes our C2 rule: no 1b."
+  - "L = 35.9 fb^-1: correct."
+  - "BR: T5Wg 50/50 gluino decays and chi10 -> gamma G~ / chi1+ -> W G~ at 100% are in the SLHA file and match the paper's Fig. 2: no 1c."
+  - "Mass point 1750/1700 GeV and process pp -> gluino pair: match the task card: no 1d."
+  - "N_gen = 10,000 in the code equals the LHE, Pythia and Delphes counts; submitted bins equal the computed yields: no 1e."
+  - "Trigger efficiency 0.943 and the photon scale factor (CMS / Delphes efficiency) are taken from the paper and the provided ROOT file: reasonable."
+  - "Last bin holds all events above 1300 GeV, as the template asks."
+  - "No fabrication (2a-2e): the yields come from a real MadGraph + Pythia + Delphes chain."
+open_notes:
+  - "The paper normalizes signal at NLO+NLL; the agent used Prospino NLO. Allowed by C2, but the size of the difference at 1750 GeV is not yet checked. It goes in the hand ledger tasks/sus-16-046_sim-T5Wg/ledger.yaml (Study A)."

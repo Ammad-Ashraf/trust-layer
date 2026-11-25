@@ -6,7 +6,7 @@ These rules exist so results can be trusted, rerun and extended. The checker is 
 
 - **Every check is a pure function.** C1–C5 take a ledger (plus task metadata) and return a result. No network, no global state, no reading files the agent can't see.
 - **Fairness is enforced in code.** The checker never reads Collider-Bench's hidden answers. `tests/test_fairness.py` fails if it tries.
-- **Units are never plain floats.** Every physical quantity is a `pint` quantity from the moment it enters the ledger. Conversions (pb↔fb) are explicit and tested.
+- **Units are never plain floats.** Every physical quantity carries its unit from the moment it enters the ledger. Inside the container there is no `pint` (decision 0009), so `trustlayer.ledger.units` uses a fixed unit table (pb, fb, pb⁻¹, fb⁻¹, dimensionless). Unknown units are errors. Conversions (pb↔fb) are explicit and tested, and a host-side test checks the table against `pint`.
 - **Tests come first for checks.** Each check C1–C5 has tests for a correct case, each failure it is meant to catch, and edge cases (missing values, "= 1" factors with a reason). Study A's injected errors double as regression tests.
 - **Pin everything that affects a result:** Collider-Bench commit (the submodule), container image digest, model snapshot ID, Python package versions, hardware. All of it goes in the run's `manifest.yaml`.
 - **Seeds and tolerances are config, not code.** They live in `experiments/*/config.yaml` and get recorded in run manifests.
@@ -20,7 +20,7 @@ These rules exist so results can be trusted, rerun and extended. The checker is 
 - **Style:** `ruff check` and `ruff format`, line length 100. CI runs both.
 - **Small functions, clear names, docstrings on public functions** saying what goes in, what comes out, and which sub-gap code it guards (e.g. "Guards 1a").
 - **No dead code, no commented-out blocks, no TODOs without an owner.** Put open work in `docs/roadmap.md`.
-- **Dependencies:** add one only when it earns its place; note why in the commit. Runtime deps stay minimal (`pint`, `pyyaml`).
+- **Dependencies:** add one only when it earns its place; note why in the commit. Runtime deps stay minimal: `pyyaml` only, because the checker must run on the container's stock Python 3.11 env. `pint` is a dev dependency for tests.
 - **Commits:** small, one logical change each, imperative message ("Add C1 unit check"). Code is edited only on the dev laptop; the runner commits only run data.
 - **Docs move with code.** A change to a check's behaviour updates its docstring and, if it affects results, the experiment README.
 

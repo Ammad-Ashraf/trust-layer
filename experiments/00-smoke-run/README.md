@@ -27,7 +27,7 @@
   - The agent got σ (3.96 fb from Prospino), L (35.9 fb⁻¹) and the mass point right.
   - The signal-region efficiency was 0.93%, against about 38.6% in the reference.
   - Checks C1–C5 would have passed this run. That is expected: it was a selection mistake, which is out of Phase 1 scope. The paper shows such runs are the exception (decision [0014](../../docs/decisions/0014-drop-failure-mix-runs.md)).
-  - Suspected cause, not yet verified: photon–jet overlap removal in Delphes. Draft labels are 3b and 3c.
+  - **Cause, confirmed in the M3 read (26 Nov):** the stock Delphes CMS card doesn't treat the gravitino as invisible, so it turns into a jet and the missing momentum is lost. Truth MET is above 300 GeV in 72% of events; reco MET only in 9%. The 18 Nov photon–jet guess is ruled out. Labels are 3a, 3b, 3c, 3d plus one uncoded slip, and no Gap-1 errors → [`results/m3-review.md`](results/m3-review.md).
 - **All four attachment points are mapped** → [`integration/attachment-points.md`](../../integration/attachment-points.md). A Stop hook fires inside the container and its rejection reaches the agent.
 - **Setup problems hit:**
   - The runner had no Podman and no `python3-venv`.

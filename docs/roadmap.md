@@ -8,19 +8,19 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 | --- | --- | --- | --- | --- |
 | M1 | Set up repo and container | 11–17 Nov | One Collider-Bench task runs end to end on the runner; lab log started | ✅ 18 Nov |
 | M2 | Learn the formula by hand | 16–29 Nov | `tasks/sus-16-034_sim-TChiWZ/ledger.yaml` filled by Ammad, with every unit and source, explainable in simple words | ✅ 24 Nov |
-| M3 | Baseline run, label errors | 23 Nov–6 Dec | One baseline transcript read in full; every mistake labelled with a sub-gap code | ⬜ |
-| M4 | Build checker v0 | 30 Nov–15 Dec | C1–C5 pass unit tests; the gate blocks a bad ledger in a real test run | ⬜ |
+| M3 | Baseline run, label errors | 23 Nov–6 Dec | One baseline transcript read in full; every mistake labelled with a sub-gap code | ✅ 26 Nov |
+| M4 | Build checker v0 | 30 Nov–15 Dec | C1–C5 pass unit tests; the gate blocks a bad ledger in a real test run | 🟨 design done ([checker-v0.md](design/checker-v0.md)) |
 | M5 | Study A: error injection | 9–22 Dec | Catch rate per sub-gap and false-alarm rate, for 3 tasks | ⬜ |
 | M6 | Study B: 18 agent runs | 16 Dec–5 Jan | 18 scored runs, with and without the checker, each labelled | ⬜ |
 | M7 | Note + public repo | 4–15 Jan | 2–4 page note, public repo, one results table quotable in the motivation letter | ⬜ |
 | — | CERN openlab deadline | **21 Jan 2027** | Application submitted | ⬜ |
-| — | Send results to Collider-Bench authors | 25 Jan 2027 | Email sent | ⬜ |
+| — | Send results to Collider-Bench authors | 25 Jan 2027 | Email sent; includes every entry in [collider-bench-findings.md](outreach/collider-bench-findings.md) | ⬜ |
 
 ## Features (checker v0)
 
 | Feature | Path | Guards | Status |
 | --- | --- | --- | --- |
-| Ledger + `record-quantity` CLI | `src/trustlayer/ledger/` | all of 1a–1e (records inputs) | ⬜ |
+| Ledger + `record-quantity` CLI | `src/trustlayer/ledger/` | all of 1a–1e (records inputs) | ✅ 26 Nov |
 | C1 Units | `src/trustlayer/checks/` | 1a | ⬜ |
 | C2 Source | `src/trustlayer/checks/` | 1b | ⬜ |
 | C3 Complete formula | `src/trustlayer/checks/` | 1c | ⬜ |
@@ -46,11 +46,21 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 
 - [x] Decide 0008–0013 (Claude, delegated by Ammad on 18 Nov)
 - [ ] Ammad: ask Israr for OK to add a `tlsubject` user on his laptop (0010)
-- [ ] Runner: commit the smoke run's `session.jsonl.gz`, `analysis.py` and `report.md` (0012); check the photon–jet guess
-- [ ] Windows: fork Collider-Bench and add the `simple-ledger` agent folder (0008)
+- [x] Runner: commit the smoke run's `session.jsonl.gz`, `analysis.py` and `report.md` (0012); check the photon–jet guess (ruled out; the real cause is the gravitino, see M3)
+- [x] M3: smoke-run transcript read in full and labelled → `labels.yaml` + `results/m3-review.md` (0 Gap-1 errors; 3a, 3b, 3c, 3d + 1 uncoded)
+- [ ] Windows: fork Collider-Bench and add the `simple-ledger` agent folder (0008) → M4 step 6
+
+## This week (30 Nov–6 Dec): M4 checker v0, steps from [checker-v0.md](design/checker-v0.md) §8
+
+- [x] Ammad: decide 0016 → A: Study A's injections and τ = 5% fixed before the checks (26 Nov)
+- [x] Step 2: `ledger` schema v2 + unit table + load/save (reads the v1 hand ledgers) (26 Nov)
+- [x] Step 3: `record-quantity` CLI incl. `show` (26 Nov; 73 tests, ruff and mypy clean)
+- [ ] Step 4: C1–C5 + registry, tests first; upgrade the sus-16-034 hand ledger to v2 (source_type, process, masses)
+- [ ] Step 5: gate (Stop hook, bounce cap 3, bounce log)
+- [x] Update `docs/engineering-standards.md`: no `pint` inside the container (0009); `pint` is now a dev dependency
 - [x] M2 prep: confirm task id (`sus-16-034_sim-TChiWZ`), find public sources, write the fill guide; rename `tasks/` folders to full task ids
 - [x] M2: fill `tasks/sus-16-034_sim-TChiWZ/ledger.yaml` by hand, step by step (5.41 events, matches CMS's cut flow); revision story in `story.md`
 
 ## Parking lot (not Phase 1)
 
-Second-opinion recalculation · ε-plausibility check (3c; from the smoke run) · provenance check (leading Phase 2 candidate) · human escalation · HEPTABench as a second test bed.
+Second-opinion recalculation · ε-plausibility check (3c; the M3 read shows it would have caught the smoke run: reco vs truth missing momentum) · provenance check (leading Phase 2 candidate) · human escalation · HEPTABench as a second test bed.
