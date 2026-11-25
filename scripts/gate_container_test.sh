@@ -69,6 +69,19 @@ echo "ok 4: one bin 10x off sent back (exit 2)"
 events=$(/opt/conda/envs/lhc_analysis/bin/python -c "import json;print(' '.join(json.loads(l)['event'] for l in open('$HOME/.trustlayer/bounces.jsonl')))")
 [ "$events" = "bounce pass bounce" ] || fail "bounce log events: '$events'"
 echo "ok 5: bounce log = $events"
+
+# Decision 0017: a sigma labelled prospino must match a Prospino result from this run.
+fill 0.45 1.37 1.65 1.94
+echo prompt > prompt.txt
+bin/record-quantity cross_section --value 30.1656 --unit fb --source-type prospino \
+  --process chargino_neutralino --mass chargino_1=550 --mass neutralino_2=550 --source "bin/prospino nn" >/dev/null
+hook 2>"$TMP/msg7"; code=$?; [ $code -eq 2 ] || fail "prospino label without output: expected exit 2, got $code"
+grep -q "no finished Prospino result" "$TMP/msg7" || fail "prospino label: message lacks the 0017 reason"
+mkdir -p prospino_scratch/nn-containertest
+echo "nn  5  2   0.0   0.0   1.0   550   550   0.000   0.0215   0.01   0.0301656   0.01   1.40   0.0215   0.0301656" \
+  > prospino_scratch/nn-containertest/prospino.dat
+hook 2>"$TMP/msg8"; code=$?; [ $code -eq 0 ] || { cat "$TMP/msg8"; fail "prospino label with matching output: expected exit 0, got $code"; }
+echo "ok 7: prospino-labelled sigma sent back without Prospino output, passed with matching output"
 echo "CONTAINER TEST PASSED"
 INSIDE
 

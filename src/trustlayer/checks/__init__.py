@@ -22,6 +22,7 @@ from trustlayer.checks.inputs import (
     load_submission,
     load_task_context,
 )
+from trustlayer.checks.prospino import ProspinoResult
 
 CHECKS: tuple[Check, ...] = (check_units, check_source, check_complete, check_match, check_carried)
 
@@ -38,6 +39,7 @@ __all__ = [
     "CheckInputs",
     "CheckResult",
     "InputsError",
+    "ProspinoResult",
     "Submission",
     "TaskContext",
     "check_carried",

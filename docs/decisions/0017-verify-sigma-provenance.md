@@ -1,6 +1,6 @@
 # 0017 — Should C2 verify where sigma came from, not just its label?
 
-- **Status:** open
+- **Status:** decided
 - **Date:** 2026-11-26
 - **Decide by:** before Study B (M6). It doesn't block Study A: Study A takes minutes to rerun if C2 changes.
 
@@ -26,4 +26,4 @@ B. It's the narrowest change that makes C2 do what its name says, and the eviden
 
 ## Decision (Ammad)
 
-—
+B, decided 2026-11-26 ("Yes, add it"). Built the same day: `trustlayer/checks/prospino.py` reads finished `prospino_scratch/*/prospino.dat` files written since the run's `prompt.txt` (in the workspace and in the Collider-Bench root that `bin/prospino` works from). C2 then requires a Prospino-labelled σ to match one of their NLO values within 1%. R2's real ledger is a regression test (`tests/checks/test_prospino.py`).

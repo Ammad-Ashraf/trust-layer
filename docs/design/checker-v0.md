@@ -105,7 +105,7 @@ The gate runs a registered list and knows nothing about individual checks. `Task
 | Check | Guards | Passes when | Fails on (examples) |
 | --- | --- | --- | --- |
 | C1 Units | 1a | σ has area power +1, L has −1, BR/ε/corrections are dimensionless, and the full product is unit-free; every unit is in the table | `unit: pb` on L; a missing unit; σ in "events" |
-| C2 Source | 1b | σ `source_type` ∈ {prospino, xsec_wg, paper}; and if a generator σ is recorded, σ isn't within 1% of it | `source_type: generator`; σ equals the MadGraph LO value |
+| C2 Source | 1b | σ `source_type` ∈ {prospino, xsec_wg, paper}; if a generator σ is recorded, σ isn't within 1% of it; **and (0017) a `prospino` σ matches, within 1%, the NLO value of a Prospino run found in this run's scratch folders** | `source_type: generator`; σ equals the MadGraph LO value |
 | C3 Complete | 1c | σ, L, BR, ε are all present with values; 0 < BR ≤ 1 and 0 < ε ≤ 1; BR = 1 or ε = 1 only with a non-empty `reason`; if n_pass/n_gen are given, they agree with ε within 1% | BR missing; BR = 1 with no reason; ε = 1.3 |
 | C4 Match | 1d | σ `process` and `masses_gev` equal the task context; L equals the task's luminosity | σ for a 500 GeV point on a 550 GeV task; L = 36.1 |
 | C5 Carried through | 1e | the submitted bins exist and are all filled, and their sum equals σ·L·BR·ε·corrections within the tolerance τ | the sum is 100× the ledger; no ledger at all (agent skipped it); null bins |
@@ -152,6 +152,12 @@ To keep Study A from being a test we designed to pass, its injection list and to
 | 1d | σ taken at a neighbouring mass point (550 → 500 GeV); and L = 36.1 | Ammad's M2 slip (550 → 500) |
 | 1e | submitted bins left at an earlier value (not rescaled); and one bin left null | smoke run L5 shows how a fix gets lost |
 | clean | the correct ledger, plus near-misses that must **pass**: σ in pb converted correctly; BR = 1 with a valid reason; BR 0.10 vs 0.101 (1%, below τ) | false-alarm rate |
+
+**Added after 0016 (decision 0017, 2026-11-26), reported separately:**
+
+| Sub-gap | Injection | Grounded in |
+| --- | --- | --- |
+| 1b / 2a | σ labelled `prospino` with no Prospino output in the run; and labelled `prospino` but matching none of the run's Prospino results | R2 (Haiku): an invented 0.15 fb labelled Prospino |
 
 - **Measured:** catch rate per sub-gap, and false-alarm rate on clean and near-miss copies, for 3 tasks.
 - **Proposed τ = 5%:** above the honest rounding seen in M2 (0.03–1%), and far below the smallest injected error (×1.5 at a neighbouring mass point).

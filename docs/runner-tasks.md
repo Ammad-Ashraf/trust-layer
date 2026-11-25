@@ -15,7 +15,14 @@ Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/run
 
 ---
 
-(no open tasks)
+## R3 · Container test of the 0017 Prospino check · **open**
+
+- **Needs:** this commit or later. **Cost:** free (part A only; no `--claude-hook` needed).
+- **Steps:**
+  1. `python3 scripts/build_agent_folder.py`.
+  2. `D=experiments/04-gate-test/runs/$(date +%Y%m%d-%H%M)_container-test-0017 && mkdir -p $D`
+  3. `bash scripts/gate_container_test.sh 2>&1 | tee $D/container-test.txt`. Expected: ok 1–5 as before, plus `ok 7: prospino-labelled sigma sent back without Prospino output, passed with matching output`, then `CONTAINER TEST PASSED`.
+  4. Copy `build/agent/simple_ledger/runtime/BUILD-INFO.yaml` into `$D/`, write a 3-line `$D/report.md` (pass/fail per ok line), commit `$D` ("Add 0017 container test results"), push.
 
 ---
 

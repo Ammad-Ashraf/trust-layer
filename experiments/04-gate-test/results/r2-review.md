@@ -26,6 +26,6 @@ All five checks passed, as designed: C1–C5 test consistency and labels, and a 
 ## What this means
 
 - **It's Gap 2 (fabrication), which Phase 1 doesn't target.** The Collider-Bench paper found that about 6% of runs fabricate, mostly with cheap models like Haiku. Our first Haiku run happens to be one of them.
-- **It is still a 200× σ error that C2 let through.** C2 trusts the label `prospino`. Decision [0017](../../../docs/decisions/0017-verify-sigma-provenance.md) asks whether C2 should check Prospino-labelled values against Prospino's actual output in the run. Lean: yes, narrowly.
+- **It is still a 200× σ error that C2 let through.** C2 trusts the label `prospino`. Decision [0017](../../../docs/decisions/0017-verify-sigma-provenance.md) (decided B, built 26 Nov): C2 now checks Prospino-labelled values against Prospino's actual output in the run. On R2's real ledger it fails with "no finished Prospino result" (regression test `tests/checks/test_prospino.py`). The invented ε and bins would still pass; that part is Phase 2 provenance.
 - **For the note:** we report it as it is. The checker caught 0 of the run's 6 labelled mistakes, because none of them was a counting mistake in an honest pipeline. This is also evidence that the provenance check (the Phase 2 candidate) is needed.
 - **For Study B:** with Haiku, fabrication may dominate. That bears on the Haiku-arm decision (0007).

@@ -30,6 +30,7 @@ from trustlayer.checks import (
     Submission,
     load_submission,
     load_task_context,
+    prospino,
     run_checks,
 )
 from trustlayer.gate import log
@@ -83,6 +84,25 @@ def _read_submission(path: Path | None, error: str | None) -> tuple[Submission |
         return None, str(exc)
 
 
+def _scratch_roots(workspace: Path, env: Mapping[str, str]) -> list[Path]:
+    """Where `bin/prospino` may have written: the workspace, and the Collider-Bench root it
+    `cd`s into ($REPO_ROOT, or three levels above our runtime/ folder)."""
+    roots = [workspace]
+    if env.get("REPO_ROOT"):
+        roots.append(Path(env["REPO_ROOT"]))
+    if env.get("TRUSTLAYER_RUNTIME"):
+        roots.append(Path(env["TRUSTLAYER_RUNTIME"]).resolve().parents[2])
+    return roots
+
+
+def _run_start(workspace: Path) -> float | None:
+    """When this run began: the harness writes prompt.txt just before starting the agent."""
+    try:
+        return (workspace / "prompt.txt").stat().st_mtime
+    except OSError:
+        return None
+
+
 def render(
     failed: Sequence[CheckResult], preamble: str | None, ledger: Path, results: Path | None
 ) -> str:
@@ -132,6 +152,9 @@ def run(hook_input: str, cwd: Path, env: Mapping[str, str]) -> Outcome:
 
     ledger, ledger_problem = _read_ledger(paths.ledger)
     submission, submission_error = _read_submission(paths.results, paths.results_error)
+    prospino_runs = prospino.collect(
+        _scratch_roots(paths.workspace, env), _run_start(paths.workspace)
+    )
     inputs = CheckInputs(
         ledger=ledger,
         task=task,
@@ -139,6 +162,7 @@ def run(hook_input: str, cwd: Path, env: Mapping[str, str]) -> Outcome:
         submission_error=submission_error,
         ledger_path=paths.ledger,
         c5_tolerance=config.c5_tolerance,
+        prospino_results=prospino_runs,
     )
     results = run_checks(inputs)
     failed = [r for r in results if not r.passed]
@@ -157,6 +181,10 @@ def run(hook_input: str, cwd: Path, env: Mapping[str, str]) -> Outcome:
             for r in results
         ],
         "ledger_problem": ledger_problem,
+        "prospino_results": [
+            {"process": r.process, "lo_pb": r.lo_pb, "nlo_pb": r.nlo_pb, "path": str(r.path)}
+            for r in prospino_runs
+        ],
     }
     if not failed:
         log.append(log_file, {**record, "event": log.PASS})

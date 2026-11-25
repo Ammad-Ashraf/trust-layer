@@ -189,3 +189,40 @@ def test_config_defaults_and_validation(tmp_path: Path) -> None:
     bad.write_text("max_bounces: -1\n", encoding="utf-8")
     with pytest.raises(ConfigError, match="max_bounces"):
         load_config(bad)
+
+
+def _prospino_ledger(ws: Path) -> None:
+    text = HAND_LEDGER.read_text(encoding="utf-8").replace(
+        "source_type: xsec_wg", "source_type: prospino"
+    )
+    (ws / "ledger.yaml").write_text(text, encoding="utf-8")
+
+
+def test_prospino_label_needs_prospino_output(setup: tuple[Path, dict[str, str]]) -> None:
+    """Decision 0017, the R2 pattern: a sigma labelled prospino with no Prospino run."""
+    ws, env = setup
+    (ws / "prompt.txt").write_text("prompt", encoding="utf-8")
+    write_results(ws, 0.45, 1.37, 1.65, 1.94)
+    _prospino_ledger(ws)
+    code, message = hook(ws, env)
+    assert code == 2 and "- C2 (cross-section source):" in message
+    assert "no finished Prospino result" in message
+
+
+def test_prospino_label_matching_this_runs_output_passes(
+    setup: tuple[Path, dict[str, str]],
+) -> None:
+    ws, env = setup
+    (ws / "prompt.txt").write_text("prompt", encoding="utf-8")
+    write_results(ws, 0.45, 1.37, 1.65, 1.94)
+    _prospino_ledger(ws)
+    scratch = ws / "prospino_scratch" / "nn-abc123"
+    scratch.mkdir(parents=True)
+    (scratch / "prospino.dat").write_text(
+        "nn  5  2   0.0   0.0   1.0   550   550   0.000   "
+        "0.0215   0.01   0.0301656   0.01   1.40   0.0215   0.0301656\n",
+        encoding="utf-8",
+    )
+    assert hook(ws, env)[0] == 0
+    (entry,) = events(env)
+    assert entry["prospino_results"][0]["nlo_pb"] == 0.0301656
