@@ -1,0 +1,33 @@
+schema_version: 1
+experiment: 04-gate-test
+task: sus-16-034           # Collider-Bench task id: sus-16-034_sim-TChiWZ (TChiWZ_550_200)
+arm: checker                  # baseline | checker
+model_snapshot: claude-haiku-4-5   # from the transcript's init event; Claude Code 2.1.326 (host binary, bind-mounted)
+collider_bench_commit: 2986d8b270ae49e0d6e8c95bbf95ef1159f16d7c
+trust_layer_commit: b71840f   # launcher scripts/run-checker-arm; agent folder built from it (build clean)
+container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f   # ghcr.io/dfaroughy/lhc-bench, same as the smoke run
+machine: runner-laptop-24c # deneb-OMEN, i9-13900HX, 24 cores / 32 threads, 30 GB RAM, Ubuntu 26.04, rootless Podman
+cores: 32                  # nproc on the host
+n_gen: null                # unclear: MadGraph run cards request 100000 and 50000 events, but the ledger records n_pass=1, n_gen=9 (see report.md)
+wall_clock_hours: 0.142    # 509.5 s (20:25:50Z -> 20:34:19Z); harness walltime cap 2.5 h
+tokens:
+  input: 689
+  output: 40311
+  cache_read: 6690948
+  cache_creation: 131549
+  billed_total: 172549     # harness's tokens_total_billed
+  turns: 88
+api_cost_usd: 1.13         # API-equivalent from the harness pricing table; billed to the Claude subscription (auth: oauth)
+bounces: 0                 # postrun_check.py; gate_final_event: pass, tampered: false, gate_error: false
+outcome: scored            # 4/4 bins filled, exit 0
+score:
+  delta_norm: 0.889
+  norm_relative_l2: 0.922
+  shape_relative_l2: 0.753
+  shape_jensen_shannon: 0.148
+  pass: false              # relative L2 >= 0.33
+notes: >-
+  M4 step 8 plumbing test of the checker arm, not a measured run. Launched with
+  scripts/run-checker-arm (agents.simple_ledger.run through Collider-Bench's run_with_compute).
+  Host Mattermost MCP and claude.ai connectors were disabled for the run and restored after;
+  the init event showed mcp_servers=[]. Attempt 1 (20261126-0121_sus-16-034_checker_1) never launched.
