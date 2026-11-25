@@ -1,0 +1,10 @@
+test workspace: /tmp/tl-gate-test.S4Al9v/runs/claude_test/sus-16-034_sim-TChiWZ_ContainerTest_1/workspace
+Python 3.11.15
+ok 1: empty workspace sent back (exit 2)
+ok 2: ledger recorded, task detected, product 5.41
+ok 3: matching results pass (exit 0)
+ok 4: one bin 10x off sent back (exit 2)
+ok 5: bounce log = bounce pass bounce
+ok 7: prospino-labelled sigma sent back without Prospino output, passed with matching output
+CONTAINER TEST PASSED
+all done; scratch in /tmp/tl-gate-test.S4Al9v
