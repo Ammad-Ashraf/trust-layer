@@ -15,7 +15,7 @@ from trustlayer.ledger import (
 
 TASKS = Path(__file__).resolve().parents[2] / "tasks"
 TCHIWZ = TASKS / "sus-16-034_sim-TChiWZ" / "ledger.yaml"
-T5WG_TEMPLATE = TASKS / "sus-16-046_sim-T5Wg" / "ledger.yaml"
+V1_TEMPLATE = TASKS / "sus-16-051_sim-T2tt_SRG" / "ledger.yaml"
 
 
 def _minimal(**quantities: object) -> dict[str, object]:
@@ -33,7 +33,7 @@ def test_loads_filled_hand_ledger() -> None:
 
 
 def test_loads_half_filled_template_with_nulls() -> None:
-    ledger = load_ledger(T5WG_TEMPLATE)
+    ledger = load_ledger(V1_TEMPLATE)
     sigma = ledger.get("cross_section")
     assert ledger.schema_version == 1
     assert sigma is not None and sigma.value is None and sigma.unit is None

@@ -68,7 +68,7 @@ def _cases() -> list[tuple[str, CheckInputs, set[str]]]:
                 with_entry(
                     clean,
                     "cross_section",
-                    value=46.4,
+                    value=46.3533,  # SUSY xsec WG NLO-NLL, 500 GeV
                     masses_gev={"chargino_1": 500.0, "neutralino_2": 500.0},
                 )
             ),

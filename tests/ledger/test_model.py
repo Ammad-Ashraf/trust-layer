@@ -46,7 +46,7 @@ def test_corrections_multiply_in() -> None:
 
 
 def test_missing_factors_on_half_filled_template() -> None:
-    ledger = load_ledger(TASKS / "sus-16-046_sim-T5Wg" / "ledger.yaml")
+    ledger = load_ledger(TASKS / "sus-16-051_sim-T2tt_SRG" / "ledger.yaml")
     assert ledger.missing_factors() == ["cross_section", "branching_fraction", "efficiency"]
     with pytest.raises(ValueError, match="missing: cross_section"):
         ledger.product()

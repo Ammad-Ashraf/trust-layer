@@ -246,7 +246,7 @@ def test_last_value_wins_and_corrections_replace_by_name(ledger_path: Path) -> N
 
 def test_recording_onto_v1_ledger_upgrades_version(tmp_path: Path) -> None:
     path = tmp_path / "ledger.yaml"
-    path.write_text((TASKS / "sus-16-046_sim-T5Wg" / "ledger.yaml").read_text("utf-8"), "utf-8")
+    path.write_text((TASKS / "sus-16-051_sim-T2tt_SRG" / "ledger.yaml").read_text("utf-8"), "utf-8")
     assert run(path, "luminosity", "--value", "35.9", "--unit", "fb^-1", "--source", "paper") == 0
     ledger = load_ledger(path)
     assert ledger.schema_version == 2

@@ -15,7 +15,21 @@ Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/run
 
 ---
 
-(no open tasks)
+### R4 · open · Prospino LO cross sections for two Study A tasks ($0, no API)
+
+- **Why:** Study A's "LO σ used" injections need the leading-order σ for two tasks. Right now they use a stand-in (NLO / 1.25), marked † in `experiments/02-study-a/results/study-a.md`. Prospino's own LO value replaces it.
+- **Needs:** the Collider-Bench image already pulled (same digest as `scripts/gate_container_test.sh`). No API key, no agent.
+- **Run folder:** `experiments/02-study-a/runs/<YYYYMMDD-HHMM>_prospino-lo/`.
+
+Steps:
+1. Read `$CB/ColliderBench/tools/CLI/PROSPINO.md` (or `bin/prospino --doc`) for the process codes, SLHA fields and `ipart` options.
+2. Inside the image (`podman run --rm --network=none` with `$CB` mounted at the same path, `REPO_ROOT=$CB`, working directory a scratch folder under `/tmp`), run `$CB/ColliderBench/bin/prospino run --sqrts 13000 --order NLO` for:
+   - **(a) stop pair, `tb`:** m(stop_1) = 800 GeV; stop_2, sbottoms, the other squarks and the gluino all decoupled (e.g. 5000 GeV); neutralino_1 = 400 GeV.
+   - **(b) wino chargino–neutralino, `nn`:** chargino_1 and neutralino_2 both 550 GeV and pure wino, neutralino_1 = 200 GeV (bino), squarks decoupled. Compute **both** chargino_1⁺ neutralino_2 and chargino_1⁻ neutralino_2, and add them.
+3. Copy into the run folder: each SLHA file you used, each `prospino.dat`, and the JSON each run printed. Don't copy the whole scratch folder.
+4. `report.md`: for (a) and (b), the LO and NLO values in fb (for (b), give each charge and the sum), the K factor (NLO/LO), and how long each run took.
+5. **Sanity check (write the result in the report):** Prospino's NLO should be within about 15% of the published NLO+NLL values, 28.33 fb for (a) and 30.17 fb for (b). If it's further off, say so, and say which SLHA setting you suspect. Don't retry more than twice.
+6. Commit only the run folder and push.
 
 ---
 

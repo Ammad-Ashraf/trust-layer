@@ -1,24 +1,50 @@
 # Correct normalization record for sus-16-046_sim-T5Wg, filled by hand from PUBLIC sources only
-# (the paper, HEPData, Prospino). Effectively an answer key: never give this file to the test-subject agent.
-schema_version: 1
+# (CMS public results page, LHC SUSY Cross Section WG). Effectively an answer key: never give this
+# file to the test-subject agent. Filled 2026-11-26 for Study A (M5).
+schema_version: 2
 task: sus-16-046_sim-T5Wg
-signal_model: null        # process and mass point(s) the task asks for
+signal_model:
+  name: T5Wg_1750_1700
+  process: "pp -> gluino gluino; each gluino -> q q' + wino NLSP (1700 GeV); NLSP -> photon or W + massless gravitino LSP"
+  masses_gev: {gluino: 1750, chargino_1: 1700, neutralino_1: 1700, gravitino: 0}
+  source: "Collider-Bench task card TASK.md, Definitions; CMS-SUS-16-046 Additional Table 2 caption"
+  in_plain_words: "Two heavy gluinos (1750 GeV) are made. Each turns into quarks plus a 1700 GeV wino, and each wino turns into a photon or a W plus an invisible, massless gravitino."
 quantities:
-  cross_section:          # NLO(+NLL) value, e.g. from Prospino or the paper
-    value: null
-    unit: null            # pb or fb
-    source: null          # exact table / tool + version
+  cross_section:
+    value: 3.59842
+    unit: fb
+    uncertainty: 0.977     # fb, absolute (27.15%)
+    source_type: xsec_wg
+    process: gluino_pair
+    masses_gev: {gluino: 1750}
+    source: "LHC SUSY Cross Section WG, twiki SUSYCrossSections13TeVgluglu, NLO+NLL table (squarks decoupled), row 1750 GeV: 0.00359842 pb +- 27.1502%. Read from the Wayback Machine copy of r8 (2019-02-20), which still lists NLO+NLL; the current page has only NNLOapprox+NNLL (4.342 fb). NLO+NLL is the order the 2017 paper used."
+    in_plain_words: "About 3.6 gluino pairs of 1750 GeV are made per 1 fb^-1 'bucket' of collisions, give or take about a quarter."
   luminosity:
     value: 35.9
     unit: fb^-1
-    source: "CMS 2016 dataset, as stated in the paper"
+    source_type: paper
+    source: "CMS-SUS-16-046 abstract and the task card: 35.9 fb-1 of 13 TeV data from 2016"
+    in_plain_words: "How much collision data CMS recorded in 2016."
   branching_fraction:
-    value: null
+    value: 1.0
     unit: dimensionless
-    source: null          # or 1 with a reason
+    source_type: other
+    reason: "T5Wg is a simplified model: gluino -> q q' NLSP and NLSP -> photon/W + gravitino are 1 by definition, and the photon-or-W mix is part of the simulated sample, so it sits inside the efficiency (as in CMS's own cut flow, which starts from all produced events)"
+    source: "CMS-SUS-16-046 Additional Table 2 starts from 'before selection' = all events; no branching factor is applied in the table"
+    in_plain_words: "Nothing is thrown away by decay choice before the cuts; every decay mix is already in the simulated events."
   efficiency:
-    value: null
+    value: 0.42461
     unit: dimensionless
-    source: null
-expected_events: null     # product of the above, unit-free
-notes: ""
+    source_type: paper
+    source: "CMS-SUS-16-046 Additional Table 2 (cut flow, T5Wg 1750/1700, 35.9 fb-1): 54.85 events after S_T^gamma > 600 GeV. Divided by sigma x L = 3.59842 x 35.9 = 129.18 events: 0.42461. See notes on the table's 'before selection' row"
+    in_plain_words: "About 42 in 100 gluino pairs pass every cut of the signal region."
+expected_events:
+  value: 54.85            # 3.59842 fb x 35.9 fb^-1 x 1 x 0.42461 = 54.85
+  unit: events
+  per_bin:                # S_T^gamma bins [GeV], Additional Table 2, last four rows
+    "600-800": 0.49
+    "800-1000": 1.78
+    "1000-1300": 6.10
+    ">1300": 46.48
+  self_check: "0.49 + 1.78 + 6.10 + 46.48 = 54.85, equal to the table's 'S_T^gamma > 600 GeV' row"
+notes: "The table's 'before selection' row is 121.76 events, i.e. sigma = 121.76 / 35.9 = 3.392 fb, 5.7% below the WG's NLO+NLL 3.598 fb. CMS's table may start after a generator-level filter or use an earlier cross-section table; we keep the WG value as sigma and the table's final yield as the answer, so the 5.7% sits inside epsilon. The task card's last bin is '1300-1600' but is told to hold ALL events above 1300 GeV."

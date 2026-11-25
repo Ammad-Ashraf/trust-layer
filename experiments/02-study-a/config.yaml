@@ -1,10 +1,53 @@
-# Configuration for 02-study-a. Recorded into every run's manifest.
+# Configuration for 02-study-a (error injection, no API or simulation cost).
+# Rerun: python -m trustlayer.report study-a   (writes results/ from this file)
 experiment: 02-study-a
-tasks: []
-model: null
-n_runs: null
-collider_bench_commit: null
-container_digest: null
 # Fixed by decision 0016 before the checks were built. Do not tune on Study A results.
 c5_tolerance: 0.05        # relative |sum(bins) - sigma*L*BR*eps*corrections| / (sigma*L*BR*eps*corrections)
 injections: docs/design/checker-v0.md#7-study-a-fixed-before-it-runs
+# 0017 rows: the invented sigma is the correct one divided by this (R2: 0.15 fb vs 30.17 fb).
+fabricated_sigma_divisor: 201
+
+# Per task: the hand ledger (answer key), the public task context, and the two public numbers
+# the injections need beyond the ledger. All public; sources in experiments/02-study-a/sources.md.
+tasks:
+  - task: sus-16-034_sim-TChiWZ
+    ledger: tasks/sus-16-034_sim-TChiWZ/ledger.yaml
+    context: integration/task-context/sus-16-034_sim-TChiWZ.yaml
+    prospino_process: nn
+    neighbour:            # 1d: sigma read at the neighbouring mass point (550 -> 500 GeV)
+      value: 46.3533
+      unit: fb
+      masses_gev: {chargino_1: 500, neutralino_2: 500}
+      source: "SUSY xsec WG n2x1wino r11, NLO-NLL, row 500 GeV"
+    generator_lo:         # 1b: the generator's leading-order sigma
+      value: 24.1
+      unit: fb
+      source: "STAND-IN: NLO / 1.25 until runner task R4 returns Prospino's LO value"
+      provisional: true
+  - task: sus-16-046_sim-T5Wg
+    ledger: tasks/sus-16-046_sim-T5Wg/ledger.yaml
+    context: integration/task-context/sus-16-046_sim-T5Wg.yaml
+    prospino_process: gg
+    neighbour:            # 1750 -> 1700 GeV
+      value: 4.70323
+      unit: fb
+      masses_gev: {gluino: 1700}
+      source: "SUSY xsec WG gluglu r8 (2019 archive), NLO+NLL, row 1700 GeV"
+    generator_lo:
+      value: 1.453
+      unit: fb
+      source: "MadGraph LO for gluino pairs at 1750 GeV, from the M3 smoke run transcript (#24, #69)"
+  - task: sus-16-051_sim-T2tt_comp
+    ledger: tasks/sus-16-051_sim-T2tt_comp/ledger.yaml
+    context: integration/task-context/sus-16-051_sim-T2tt_comp.yaml
+    prospino_process: tb
+    neighbour:            # 800 -> 750 GeV
+      value: 43.1418
+      unit: fb
+      masses_gev: {stop_1: 750}
+      source: "SUSY xsec WG stopsbottom r9 (2019 archive), NLO+NLL, row 750 GeV"
+    generator_lo:
+      value: 22.7
+      unit: fb
+      source: "STAND-IN: NLO / 1.25 until runner task R4 returns Prospino's LO value"
+      provisional: true

@@ -1,0 +1,50 @@
+# Correct normalization record for sus-16-051_sim-T2tt_comp, filled by hand from PUBLIC sources only
+# (CMS public results page, LHC SUSY Cross Section WG). Effectively an answer key: never give this
+# file to the test-subject agent. Filled 2026-11-26 for Study A (M5).
+schema_version: 2
+task: sus-16-051_sim-T2tt_comp
+signal_model:
+  name: T2tt_800_400
+  process: "pp -> stop stop~; each stop -> top + neutralino_1 (400 GeV)"
+  masses_gev: {stop_1: 800, neutralino_1: 400}
+  source: "Collider-Bench task card TASK.md, Definitions; CMS-SUS-16-051 Additional Table 1 column 800/400"
+  in_plain_words: "Two 800 GeV top squarks are made; each turns into a top quark and an invisible 400 GeV neutralino."
+quantities:
+  cross_section:
+    value: 28.3338
+    unit: fb
+    uncertainty: 4.015     # fb, absolute (14.171%)
+    source_type: xsec_wg
+    process: stop_pair
+    masses_gev: {stop_1: 800}
+    source: "LHC SUSY Cross Section WG, twiki SUSYCrossSections13TeVstopsbottom, NLO+NLL table, row 800 GeV: 0.0283338 pb +- 14.171%. Read from the Wayback Machine copy of r9 (2019-02-20), which still lists NLO+NLL; the current page has only NNLOapprox+NNLL (34.82 fb). NLO+NLL is the order the 2017 paper used."
+    in_plain_words: "About 28 top-squark pairs of 800 GeV are made per 1 fb^-1 'bucket' of collisions."
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source_type: paper
+    source: "CMS-SUS-16-051 abstract and the task card: 35.9 fb-1 of 13 TeV data from 2016"
+    in_plain_words: "How much collision data CMS recorded in 2016."
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source_type: other
+    reason: "T2tt is a simplified model: stop -> top + neutralino_1 is 1 by definition; the top decays (and the one-lepton requirement) are inside the efficiency, as in CMS's own cut flow"
+    source: "CMS-SUS-16-051 Additional Table 1 applies no branching factor; the lepton requirement is its first selection row"
+    in_plain_words: "Every stop decays the one way the model allows; which way the top quarks decay is handled by the cuts."
+  efficiency:
+    value: 0.0077666
+    unit: dimensionless
+    source_type: paper
+    source: "CMS-SUS-16-051 Additional Table 1, column 800/400, the four 'compressed region' rows: 2.3 + 1.7 + 1.7 + 2.2 = 7.9 events. The table has no 'all events' row, so divide by sigma x L = 28.3338 x 35.9 = 1017.18: 0.0077666"
+    in_plain_words: "About 8 in 1000 top-squark pairs pass the one-lepton, ISR-tagged compressed selection."
+expected_events:
+  value: 7.9              # 28.3338 fb x 35.9 fb^-1 x 1 x 0.0077666 = 7.90
+  unit: events
+  per_bin:                # E_T^miss bins [GeV], Additional Table 1, 'compressed region' rows, column 800/400
+    "250-350": 2.3
+    "350-450": 1.7
+    "450-550": 1.7
+    ">550": 2.2
+  self_check: "first selection row (>= 1 lepton, >= 2 jets, E_T^miss > 150 GeV) is 269 of 1017 events (26%), a plausible one-lepton fraction for a top pair"
+notes: "Bin yields are given to 2 significant figures (+-0.2 each) in the table. The task card's last bin is '550-650' but is told to hold ALL events above 550 GeV, matching the table's '> 550' row. Study A uses T2tt_comp, not T2tt_SRG (decision 0014: T2tt_SRG shows no counting gap)."
