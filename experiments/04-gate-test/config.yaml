@@ -1,0 +1,7 @@
+# Configuration for 04-gate-test (M4 steps 7-8). Plumbing test, not a measured run.
+experiment: 04-gate-test
+tasks: [sus-16-034_sim-TChiWZ]
+model: claude-haiku-4-5
+n_runs: 1
+collider_bench_commit: 2986d8b270ae49e0d6e8c95bbf95ef1159f16d7c
+container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f

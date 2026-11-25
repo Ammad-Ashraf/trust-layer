@@ -58,8 +58,8 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 - [x] Step 4: C1–C5 + registry, tests first; sus-16-034 hand ledger upgraded to v2; task contexts for 5 tasks (26 Nov)
 - [x] Step 5: gate (Stop hook, bounce cap 3, bounce log) (26 Nov)
 - [x] Step 6: agent-folder build script, shims, fairness test on the built folder, post-run tamper check (26 Nov)
-- [ ] Step 7 (runner): `bash scripts/gate_container_test.sh`, then `--claude-hook` once (confirms project-settings Stop hooks fire)
-- [ ] Step 8 (runner): one cheap real run with `agent: simple_ledger` + `scripts/postrun_check.py` → **M4 done**
+- [ ] Step 7 (runner): task R1 in [runner-tasks.md](runner-tasks.md) (container test + `--claude-hook`)
+- [ ] Step 8 (runner): task R2 in [runner-tasks.md](runner-tasks.md) (one cheap `simple_ledger` run) → **M4 done**
 - [ ] Before Study B: Collider-Bench fork with the agent folder, submodule repinned (0008; creating a public fork needs Ammad's OK)
 - [x] Update `docs/engineering-standards.md`: no `pint` inside the container (0009); `pint` is now a dev dependency
 - [x] M2 prep: confirm task id (`sus-16-034_sim-TChiWZ`), find public sources, write the fill guide; rename `tasks/` folders to full task ids
