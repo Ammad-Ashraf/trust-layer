@@ -11,6 +11,8 @@ The work queue for the runner: the Linux laptop that runs Collider-Bench. Ammad 
 5. Before committing any transcript or log, scan it for secrets: `sk-ant`, `Bearer`, `oauth`, `refresh_token`, `access_token`, `api_key`, `password`. On a real secret, stop and report; don't commit.
 6. If a step fails, write what failed into `report.md`, commit that, and stop. Don't improvise fixes to our code on this machine.
 
+**Study B update (27 Nov, from the person at the runner):** Study B now runs entirely on this machine, so the runner session may edit docs (this file included) and fix setup problems, then document them and carry on. **Code stays frozen at `study-b-v1` until Study B is done.** A code bug is written up for the Windows session and never patched here, so every run uses the same setup (fairness). Later milestones go back to the Windows machine.
+
 Machine specs: [`runner-machine.md`](runner-machine.md).
 
 Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/runs/<runner>_<model>/<task>_<agent-id>/` (written `<RUN>`).
@@ -34,7 +36,7 @@ Everything runs as user `israr`, from the repo root. One script does each run: `
 1. Update: `git checkout main && git pull --ff-only`. R2's hand copy is in the way, so: `rm -rf $CB/agents/simple_ledger && git submodule sync && git submodule update --init`. Then `git -C $CB log --oneline -1` must show `8c81028`.
 2. `test -s ~/.config/trust-layer/claude-oauth-token && echo token present` (don't print the file).
 3. Launch the test run detached (Haiku 4.5, checker arm, TChiWZ, about 10 min, $0 on the subscription):
-   `systemd-run --user --unit tl-smoke --same-dir --setenv=PATH="$PATH" systemd-inhibit --what=sleep:idle --why="Study B smoke" python3 scripts/study_b.py smoke`
+   `systemd-run --user --unit tl-smoke --same-dir --setenv=PATH="$PWD/external/collider-bench/.venv/bin:$PATH" systemd-inhibit --what=sleep:idle --why="Study B smoke" /usr/bin/python3 scripts/study_b.py smoke`
 4. While it runs, keep this session busy with normal work: read files, run `git status`, follow `journalctl --user -u tl-smoke -f`. That is exactly the case that broke the shared login before.
 5. When the unit ends, the script has committed and pushed `experiments/04-gate-test/runs/<stamp>_study-b-smoke/`. Read its `manifest.yaml` and check:
    - `outcome` is not `void`;
@@ -53,7 +55,7 @@ Everything runs as user `israr`, from the repo root. One script does each run: `
 ### R6 · Study B pilot, 3 runs: **open once R5 passes** (the tag `study-b-v1` exists)
 
 1. `python3 scripts/study_b.py status`: S01–S03 are the pilot (Sonnet 4.6, no checker, one per task).
-2. `systemd-run --user --unit tl-pilot --same-dir --setenv=PATH="$PATH" systemd-inhibit --what=sleep:idle --why="Study B pilot" python3 scripts/study_b.py next --pilot-only`. Each run takes 0.5–2.5 h (up to 10 h) and commits itself.
+2. `systemd-run --user --unit tl-pilot --same-dir --setenv=PATH="$PWD/external/collider-bench/.venv/bin:$PATH" systemd-inhibit --what=sleep:idle --why="Study B pilot" /usr/bin/python3 scripts/study_b.py next --pilot-only`. Each run takes 0.5–2.5 h (up to 10 h) and commits itself.
 3. When the unit ends, write `experiments/03-study-b/runs/R6-pilot-report.md`: for each slot, its outcome, wall-clock hours, Δ_norm and judge status, from its `manifest.yaml`. Then commit and push.
 4. **Go/no-go (decision 0019's pilot rule):**
    - **Go** to R7 if all 3 runs are `scored` and each took under 8 h.
@@ -62,7 +64,7 @@ Everything runs as user `israr`, from the repo root. One script does each run: `
 ### R7 · Study B, the remaining 33 runs: **open once R6 says go**
 
 1. `git pull --ff-only`, then `python3 scripts/study_b.py status`.
-2. `systemd-run --user --unit tl-study-b --same-dir --setenv=PATH="$PATH" systemd-inhibit --what=sleep:idle --why="Study B" python3 scripts/study_b.py next`. This runs S04–S36 in the fixed order of `schedule.yaml`, one at a time, about 1–3 weeks in all. Each run commits itself.
+2. `systemd-run --user --unit tl-study-b --same-dir --setenv=PATH="$PWD/external/collider-bench/.venv/bin:$PATH" systemd-inhibit --what=sleep:idle --why="Study B" /usr/bin/python3 scripts/study_b.py next`. This runs S04–S36 in the fixed order of `schedule.yaml`, one at a time, about 1–3 weeks in all. Each run commits itself.
 3. Check it now and then with `python3 scripts/study_b.py status` and `journalctl --user -u tl-study-b -n 50`. **Never start a second copy while one runs** (`systemctl --user is-active tl-study-b`).
 4. If it stops early, look at the last lines of the journal and act:
    - **A run voided 3 times** (usage limit or login): wait for the usage to reset (5 h, or the weekly reset), then start step 2 again. It resumes where it stopped.
