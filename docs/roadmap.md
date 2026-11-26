@@ -70,11 +70,11 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 - [x] Decisions: Sonnet 4.6 + Haiku arm (0005, 0007), $0 on Israr's Max on the runner (0018), 10 h limit + pilot + timeout rules (0019)
 - [x] Public fork, submodule pinned to `d8ac871`
 - [x] Token login instead of a second user (0020); fork `8c81028`; `scripts/study_b.py` runs and files every run; schedule fixed (`experiments/03-study-b/schedule.yaml`)
-- [ ] R5: `claude setup-token` once (person, Israr's account), then the runner's smoke run
-- [ ] Windows: review R5, tag `study-b-v1`, open R6
-- [ ] R6: the 3-run pilot → Windows reviews
+- [x] Study B handed to the runner (27 Nov): everything from here runs on Israr's laptop ([start guide](study-b-start.md), runner tasks R5–R8 with go/no-go rules)
+- [ ] R5: `claude setup-token` once (person, Israr's account), smoke run, tag `study-b-v1`
+- [ ] R6: the 3-run pilot (go if all scored and under 8 h)
 - [ ] R7: the remaining 33 runs
-- [ ] Windows: label every run (`/label-run`), Study B results table via `trustlayer.report`
+- [ ] R8: label every run, `python -m trustlayer.report study-b`, `STUDY-B-DONE.md`
 
 ## Parking lot (not Phase 1)
 

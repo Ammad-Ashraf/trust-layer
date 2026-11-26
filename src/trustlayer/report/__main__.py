@@ -1,6 +1,7 @@
-"""`python -m trustlayer.report study-a`: run Study A and write its results folder.
+"""`python -m trustlayer.report study-a | study-b`: write a study's results folder.
 
-Writes `results/study-a.md` (the tables) and `results/cases.yaml` (one row per case).
+study-a: runs Study A, writes `results/study-a.md` (tables) and `results/cases.yaml`.
+study-b: reads Study B's run folders, writes `results/study-b.md` and `results/runs.yaml`.
 """
 
 from __future__ import annotations
@@ -13,6 +14,7 @@ from pathlib import Path
 import yaml
 
 from trustlayer.inject import load_study_config
+from trustlayer.report import study_b
 from trustlayer.report.study_a import render_markdown, run_study, to_records
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -39,7 +41,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--root", type=Path, default=ROOT, help="repo root (paths in the config)")
     p.add_argument("--config", type=Path, default=None)
     p.add_argument("--out", type=Path, default=None)
+    b = sub.add_parser("study-b", help="tabulate Study B's run folders")
+    b.add_argument("--root", type=Path, default=ROOT)
     args = parser.parse_args(argv)
+    if args.command == "study-b":
+        return _study_b(args.root)
 
     root: Path = args.root
     config_path = args.config or root / "experiments" / "02-study-a" / "config.yaml"
@@ -61,6 +67,22 @@ def main(argv: list[str] | None = None) -> int:
     alarms = sum(o.flagged for o in result.outcomes if o.case.kind == "near_miss")
     n_near = sum(o.case.kind == "near_miss" for o in result.outcomes)
     print(f"Study A: caught {caught}/{n_inj} injections, {alarms}/{n_near} false alarms -> {out}")
+    return 0
+
+
+def _study_b(root: Path) -> int:
+    exp = root / "experiments" / "03-study-b"
+    runs, voids = study_b.load_runs(exp / "runs")
+    out = exp / "results"
+    out.mkdir(parents=True, exist_ok=True)
+    version = _version(root)
+    (out / "study-b.md").write_text(study_b.render_markdown(runs, voids, version), encoding="utf-8")
+    records = [{**vars(r), "passed": r.passed} for r in runs]
+    (out / "runs.yaml").write_text(
+        yaml.safe_dump({"version": version, "voids": voids, "runs": records}, sort_keys=False),
+        encoding="utf-8",
+    )
+    print(f"Study B: {len(runs)} final runs, {sum(voids.values())} void attempts -> {out}")
     return 0
 
 

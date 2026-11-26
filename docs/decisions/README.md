@@ -26,3 +26,4 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0018](0018-study-b-zero-spend.md) | Study B spends nothing: Israr's Max subscription, on the runner laptop | decided |
 | [0019](0019-study-b-walltime.md) | Study B time limit: 10 h, a pilot, fixed timeout reporting | decided |
 | [0020](0020-token-login-not-new-user.md) | Study B logs in with a long-lived token, not a second Linux user | decided |
+| [0021](0021-study-b-runs-on-runner.md) | Study B is run, labelled and tabulated entirely on the runner | decided |

@@ -217,6 +217,22 @@ def _git(*args: str) -> str:
     ).stdout.strip()
 
 
+def push_with_retry(attempts: int = 3) -> None:
+    """Pull (rebase, autostash) and push; the runner session may be committing labels too.
+
+    A failed push is not fatal: the commit stays local and the next run's push carries it.
+    """
+    for i in range(attempts):
+        pulled = subprocess.run(["git", "pull", "--rebase", "--autostash", "-q"], cwd=ROOT)
+        if (
+            pulled.returncode == 0
+            and subprocess.run(["git", "push", "-q"], cwd=ROOT).returncode == 0
+        ):
+            return
+        time.sleep(10 * (i + 1))
+    print("study_b: push failed; the commit is local and goes with the next push", flush=True)
+
+
 def _token() -> str:
     if not TOKEN_FILE.is_file():
         raise StudyBError(
@@ -354,11 +370,14 @@ def _copy_artifacts(run_dir: Path, dest: Path) -> None:
         (ws / "report.md", "agent-report.md"),
         (ws / "analysis.py", "analysis.py"),
     ]
-    pairs += [(p, p.name) for p in sorted(ws.glob("*.yaml")) if p.name != "datasets.yaml"]
+    yamls = sorted(ws.glob("*.yaml")) + sorted((ws / "results").glob("*.yaml"))
+    pairs += [(p, p.name) for p in yamls if p.name != "datasets.yaml"]
     for src, name in pairs:
         if src.is_file():
             shutil.copy2(src, dest / name)
     session = ws / "session.jsonl"
+    if not session.is_file():
+        session = next(iter(sorted(run_dir.glob("*.stream.jsonl"))), session)
     if session.is_file():
         with session.open("rb") as fh, gzip.open(dest / "session.jsonl.gz", "wb") as gz:
             shutil.copyfileobj(fh, gz)
@@ -444,17 +463,32 @@ def run_slot(
     hits = find_secrets(dest, token)
     if hits:
         raise StudyBError(f"possible secret in {dest.name}: {hits}; not committed, stop and report")
-    _git("add", str(dest.relative_to(ROOT)))
-    _git(
-        "commit",
-        "-m",
-        f"Study B {slot.id}: {slot.task} {slot.model} {slot.arm} rep {slot.rep} -> {outcome}",
-    )
+    rel = str(dest.relative_to(ROOT))
+    _git("add", rel)
+    message = f"Study B {slot.id}: {slot.task} {slot.model} {slot.arm} rep {slot.rep} -> {outcome}"
+    _git("commit", "-m", message, "--", rel)  # only this folder, whatever else is staged
     if push:
-        _git("pull", "--rebase", "-q")
-        _git("push", "-q")
+        push_with_retry()
     print(f"study_b: {slot.id}: {outcome} ({dest.name})", flush=True)
     return outcome
+
+
+def _score_summary(path: Path) -> dict[str, Any] | None:
+    """Delta_norm, the two relative L2 errors and pass (norm L2 < 0.33, the paper's tau)."""
+    if not path.is_file():
+        return None
+    score = json.loads(path.read_text(encoding="utf-8"))
+    norm, shape = score.get("normalization") or {}, score.get("shape") or {}
+    l2 = norm.get("relative_l2")
+    return {
+        "n_filled": score.get("n_filled"),
+        "n_bins": score.get("n_bins"),
+        "delta_norm": norm.get("Delta"),
+        "norm_relative_l2": l2,
+        "shape_relative_l2": shape.get("relative_l2"),
+        "shape_jensen_shannon": shape.get("jensen_shannon"),
+        "pass": l2 is not None and l2 < 0.33,
+    }
 
 
 def build_manifest(
@@ -477,7 +511,12 @@ def build_manifest(
     judge: dict[str, Any] = {}
     if (dest / "judge_scores.json").is_file():
         raw = json.loads((dest / "judge_scores.json").read_text(encoding="utf-8"))
-        judge = {k: v for k, v in raw.items() if not isinstance(v, (dict, list))}
+        audit = raw.get("provenance_audit") or {}
+        judge = {
+            "provenance_status": audit.get("status"),
+            "overrule": (audit.get("overrule") or {}).get("action"),
+            "model": raw.get("judge_model"),
+        }
     bounce_events = []
     if (dest / "gate-bounces.jsonl").is_file():
         bounce_events = [
@@ -508,7 +547,7 @@ def build_manifest(
         "exit_code": exit_code,
         "wall_clock_hours": round(wall / 3600, 3) if wall else None,
         "usage": info.get("usage"),
-        "score": info.get("final_score"),
+        "score": _score_summary(dest / "score.json"),
         "judge": judge or None,
         "n_gen": None,
         "notes": "",
