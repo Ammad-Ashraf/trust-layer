@@ -22,6 +22,8 @@ Today's goal: <one line, e.g. "M2 — fill the sus-16-034 ledger with me">
 
 That's all a session needs. End every session with `/session-end`, so the next one can pick up from the lab log.
 
+**On Israr's laptop (Study B runner session):** don't use the prompt above. Use the one-line start and the kickoff prompt in [`study-b-start.md`](study-b-start.md).
+
 ## Rules that keep sessions in sync
 
 - **One machine edits code.** The Windows laptop edits; the runner only adds files under `experiments/*/runs/`.
