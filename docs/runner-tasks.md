@@ -23,17 +23,9 @@ Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/run
 
 **Why:** Study B runs on Israr's Max subscription. The runner session (user `israr`) and the run in the container share one rotating login, so a renewal by the runner session mid-run breaks the run. Running as `tlsubject`, with its own login, gives the run its own token chain. It also gives the subject a clean home with no MCP servers or connectors.
 
-**Part A (Israr, by hand, about 15 min):**
-1. `sudo useradd -m -s /bin/bash tlsubject`, then check that `/etc/subuid` and `/etc/subgid` have a `tlsubject` line (rootless Podman needs them).
-2. `sudo loginctl enable-linger tlsubject`.
-3. `echo 'israr ALL=(tlsubject) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/tlsubject`, then `sudo chmod 440 /etc/sudoers.d/tlsubject`. This lets the runner session act as `tlsubject` only, not as root.
-4. `sudo machinectl shell tlsubject@`, and in that shell:
-   - install Claude Code 2.1.326 (same version as `israr`'s);
-   - `git clone --recurse-submodules /home/israr/Documents/Ammad-Particle-Physics/trust-layer ~/trust-layer`;
-   - `podman pull ghcr.io/dfaroughy/lhc-bench@sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f`;
-   - run `claude` once and log in with Israr's Max account (`/login`), then `/exit`. Add no MCP servers, plugins or settings.
+**Part A (by hand, at the laptop, about 20 min plus the image download):** the step-by-step is in [`runner-r5-setup.md`](runner-r5-setup.md). In short: create `tlsubject`, enable linger, add the one sudoers rule (`israr ALL=(tlsubject) NOPASSWD: ALL`), give `tlsubject` read access to `israr`'s checkout, clone it, install Claude Code 2.1.326, pull the image, and log in with Israr's Max account.
 
-**Part B (runner session):** first, in `israr`'s checkout, switch the submodule to the fork. R2's hand-copied `agents/simple_ledger` is in the way, so delete it first: `rm -rf $CB/agents/simple_ledger && git submodule sync && git submodule update --init`, then check `git -C $CB log --oneline -1` shows `d8ac871`. Then as `tlsubject`, always via `sudo machinectl shell tlsubject@ /bin/bash -lc '…'` (it sets `XDG_RUNTIME_DIR` for Podman; plain `sudo -u` doesn't). Folder: `experiments/04-gate-test/runs/<YYYYMMDD-HHMM>_login-test/`.
+**Part B (runner session):** first, in `israr`'s checkout, switch the submodule to the fork. R2's hand-copied `agents/simple_ledger` is in the way, so delete it first: `rm -rf $CB/agents/simple_ledger && git submodule sync && git submodule update --init`, then check `git -C $CB log --oneline -1` shows `d8ac871`. Then as `tlsubject`, always via `sudo -iu tlsubject env XDG_RUNTIME_DIR=/run/user/$(id -u tlsubject) DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u tlsubject)/bus bash -lc '…'`. Podman and `systemd-run --user` need those two variables; the sudoers rule allows only this, never root. Folder: `experiments/04-gate-test/runs/<YYYYMMDD-HHMM>_login-test/`.
 1. Check the clean home: `~tlsubject/.claude.json` has no `mcpServers` entries, and `~tlsubject/.claude/settings.json` is missing or `{}`. Record yes/no; don't commit either file.
 2. Record the login's `expiresAt` only (never the token): `jq .claudeAiOauth.expiresAt ~/.claude/.credentials.json`, for both `tlsubject` and `israr`.
 3. As `tlsubject`, in `~/trust-layer`, after `git pull --ff-only && git submodule sync && git submodule update --init` (expect `d8ac871`) and the venv setup from R2: launch R2's config **detached**: `systemd-run --user --unit tl-login-test bash scripts/run-checker-arm --config experiments/04-gate-test/harness-config.yaml` (Haiku 4.5, about $1 API-equivalent, $0 on the subscription).
