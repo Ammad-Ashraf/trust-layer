@@ -1,6 +1,6 @@
 # 0018 — Study B spends nothing: Israr's Max subscription, on the runner laptop
 
-- **Status:** decided
+- **Status:** decided; item 3 replaced by [0019](0019-study-b-walltime.md) (10 h limit, pilot, timeout reporting)
 - **Date:** 2026-11-27
 - **Supersedes:** 0006 (budget cap); the Study B parts of 0002 (rent 128 vCPU) and 0011 (API key for Study B)
 

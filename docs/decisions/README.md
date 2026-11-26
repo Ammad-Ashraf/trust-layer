@@ -24,3 +24,4 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0016](0016-study-a-preregistration.md) | Fix Study A's injections and tolerance before building the checks | decided |
 | [0017](0017-verify-sigma-provenance.md) | Should C2 verify where sigma came from, not just its label? | decided |
 | [0018](0018-study-b-zero-spend.md) | Study B spends nothing: Israr's Max subscription, on the runner laptop | decided |
+| [0019](0019-study-b-walltime.md) | Study B time limit: 10 h, a pilot, fixed timeout reporting | decided |

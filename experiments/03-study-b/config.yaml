@@ -1,7 +1,21 @@
 # Configuration for 03-study-b. Recorded into every run's manifest.
+# Decisions: 0005 (Sonnet 4.6), 0007 (Haiku 4.5 arm), 0014 (tasks), 0018 ($0: Max subscription, runner laptop),
+# 0019 (10 h walltime, pilot, timeout reporting).
 experiment: 03-study-b
-tasks: []
-model: null
-n_runs: null
-collider_bench_commit: null
-container_digest: null
+tasks:
+  - sus-16-034_sim-TChiWZ
+  - sus-16-046_sim-T5Wg
+  - sus-16-051_sim-T2tt_comp
+models:                  # snapshot IDs: record the exact one from each run's init event
+  main: claude-sonnet-4-6
+  extra_arm: claude-haiku-4-5
+arms: [baseline, checker]   # baseline = upstream agents/simple; checker = agents/simple_ledger
+n_runs: 3                # per task, per arm, per model -> 36 runs
+effort: max
+auth: oauth              # Israr's Max subscription, user tlsubject (0018)
+hardware: runner-laptop-24c   # docs/runner-machine.md (32 threads)
+walltime: 10h            # set in the fork's task.toml (0019); paper: 2.5 h on 128 cores
+collider_bench_commit: d8ac8715260a49cf292882e56ab5f93ffec1fc1b   # Ammad-Ashraf/Collider-Bench, branch trust-layer
+container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f
+c5_tolerance: 0.05       # fixed by 0016
+max_bounces: 3

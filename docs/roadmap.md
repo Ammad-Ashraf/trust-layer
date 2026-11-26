@@ -11,7 +11,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 | M3 | Baseline run, label errors | 23 Nov–6 Dec | One baseline transcript read in full; every mistake labelled with a sub-gap code | ✅ 26 Nov |
 | M4 | Build checker v0 | 30 Nov–15 Dec | C1–C5 pass unit tests; the gate blocks a bad ledger in a real test run | ✅ 26 Nov: gate sent a real agent back (R1 ok 6) and ran in a real harness run (R2). R2 also showed the checker passing a fabricated ledger → decision 0017 |
 | M5 | Study A: error injection | 9–22 Dec | Catch rate per sub-gap and false-alarm rate, for 3 tasks | ✅ 27 Nov: 28/28 caught, 0/10 false alarms ([results](../experiments/02-study-a/results/study-a.md)), tag `study-a-v2` |
-| M6 | Study B: 18 agent runs | 16 Dec–5 Jan | 18 scored runs, with and without the checker, each labelled | ⬜ |
+| M6 | Study B: 18 agent runs | 16 Dec–5 Jan | 36 scored runs (Sonnet 4.6 + Haiku 4.5 arm), with and without the checker, each labelled | 🟨 prep: decisions 0005, 0007, 0018, 0019 done; fork done |
 | M7 | Note + public repo | 4–15 Jan | 2–4 page note, public repo, one results table quotable in the motivation letter | ⬜ |
 | — | CERN openlab deadline | **21 Jan 2027** | Application submitted | ⬜ |
 | — | Send results to Collider-Bench authors | 25 Jan 2027 | Email sent; includes every entry in [collider-bench-findings.md](outreach/collider-bench-findings.md) | ⬜ |
@@ -60,10 +60,19 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 - [x] Step 6: agent-folder build script, shims, fairness test on the built folder, post-run tamper check (26 Nov)
 - [x] Step 7 (runner): task R1 in [runner-tasks.md](runner-tasks.md) (container test + `--claude-hook`)
 - [x] Step 8 (runner): task R2 in [runner-tasks.md](runner-tasks.md) (one cheap `simple_ledger` run) → **M4 done**
-- [x] Before Study B: Collider-Bench fork with the agent folder, submodule repinned (0008): `Ammad-Ashraf/Collider-Bench` @ `bc18573`, 27 Nov
+- [x] Before Study B: Collider-Bench fork with the agent folder, submodule repinned (0008): `Ammad-Ashraf/Collider-Bench` @ `bc18573`, 27 Nov; now `d8ac871` with the 10 h walltime (0019)
 - [x] Update `docs/engineering-standards.md`: no `pint` inside the container (0009); `pint` is now a dev dependency
 - [x] M2 prep: confirm task id (`sus-16-034_sim-TChiWZ`), find public sources, write the fill guide; rename `tasks/` folders to full task ids
 - [x] M2: fill `tasks/sus-16-034_sim-TChiWZ/ledger.yaml` by hand, step by step (5.41 events, matches CMS's cut flow); revision story in `story.md`
+
+## Next: M6 Study B ([protocol](../experiments/03-study-b/README.md))
+
+- [x] Decisions: Sonnet 4.6 + Haiku arm (0005, 0007), $0 on Israr's Max on the runner (0018), 10 h limit + pilot + timeout rules (0019)
+- [x] Public fork, submodule pinned to `d8ac871`
+- [ ] Ammad: Israr's OK, then Israr does R5 Part A (`tlsubject` user + his Max login)
+- [ ] Runner R5: login-clash test
+- [ ] Tag the repo (`study-b-v1`), then the 3-run pilot (no-checker Sonnet, one per task)
+- [ ] The remaining 33 runs, one at a time
 
 ## Parking lot (not Phase 1)
 
