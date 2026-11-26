@@ -19,11 +19,10 @@ tasks:
       unit: fb
       masses_gev: {chargino_1: 500, neutralino_2: 500}
       source: "SUSY xsec WG n2x1wino r11, NLO-NLL, row 500 GeV"
-    generator_lo:         # 1b: the generator's leading-order sigma
-      value: 24.1
+    generator_lo:         # 1b: a leading-order sigma
+      value: 23.09
       unit: fb
-      source: "STAND-IN: NLO / 1.25 until runner task R4 returns Prospino's LO value"
-      provisional: true
+      source: "Prospino 2.1 LO, nn, wino 550 / bino 200: N2C1+ 16.8 fb + N2C1- 6.29 fb (runner R4, experiments/02-study-a/runs/20261127-0032_prospino-lo)"
   - task: sus-16-046_sim-T5Wg
     ledger: tasks/sus-16-046_sim-T5Wg/ledger.yaml
     context: integration/task-context/sus-16-046_sim-T5Wg.yaml
@@ -47,7 +46,6 @@ tasks:
       masses_gev: {stop_1: 750}
       source: "SUSY xsec WG stopsbottom r9 (2019 archive), NLO+NLL, row 750 GeV"
     generator_lo:
-      value: 22.7
+      value: 15.9
       unit: fb
-      source: "STAND-IN: NLO / 1.25 until runner task R4 returns Prospino's LO value"
-      provisional: true
+      source: "Prospino 2.1 LO, tb, stop 800 / LSP 400, other sparticles at 5000 GeV (runner R4, experiments/02-study-a/runs/20261127-0032_prospino-lo)"

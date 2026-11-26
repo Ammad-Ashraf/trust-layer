@@ -89,10 +89,21 @@ def test_injections_fail_and_near_misses_pass(config) -> None:  # type: ignore[n
             assert bool(failed) == (c.kind == "injection"), (t.task, c.case_id, failed)
 
 
-def test_stand_in_inputs_are_marked_provisional(config) -> None:  # type: ignore[no-untyped-def]
-    assert config.tasks[0].provisional == ("generator_lo",)
-    assert config.tasks[1].provisional == ()
-    cases, _ = build_cases(config.tasks[0], 0.05)
+def test_config_has_no_stand_in_inputs_left(config) -> None:  # type: ignore[no-untyped-def]
+    assert all(t.provisional == () for t in config.tasks)
+
+
+def test_stand_in_inputs_are_marked_provisional() -> None:
+    raw = {
+        "task": "sus-16-034_sim-TChiWZ",
+        "ledger": "tasks/sus-16-034_sim-TChiWZ/ledger.yaml",
+        "context": "integration/task-context/sus-16-034_sim-TChiWZ.yaml",
+        "neighbour": {"value": 46.3533, "unit": "fb", "source": "x"},
+        "generator_lo": {"value": 24.1, "unit": "fb", "source": "x", "provisional": True},
+    }
+    t = load_task_inputs(raw, ROOT)
+    assert t.provisional == ("generator_lo",)
+    cases, _ = build_cases(t, 0.05)
     assert {c.case_id for c in cases if c.provisional} == {
         "1b-lo-generator",
         "1b-lo-false-label",
