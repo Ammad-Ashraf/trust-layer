@@ -1,0 +1,58 @@
+schema_version: 1
+experiment: 04-gate-test
+slot:
+  id: T01
+  model: claude-haiku-4-5
+  task: sus-16-034_sim-TChiWZ
+  arm: checker
+  rep: 1
+  pilot: false
+task: sus-16-034_sim-TChiWZ
+arm: checker
+model_requested: claude-haiku-4-5
+model_snapshot: claude-haiku-4-5
+claude_code_version: 2.1.326
+auth: token
+api_key_source: none
+mcp_servers: []
+trust_layer_commit: f2b783cd15b4160e5f91fc8e796bbc664b32d0cb
+tag: ''
+collider_bench_commit: 8c810283f85e44de1cc72522c5407cbc9e563967
+container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f
+machine: runner-laptop-24c
+cores: 32
+walltime_limit: 10h
+started_at: '2026-11-26T21:01:27+00:00'
+harness_run_dir: runs/claude_haiku-4-5/sus-16-034_sim-TChiWZ_FunnyCompton_0127223d
+outcome: scored
+exit_code: 0
+wall_clock_hours: 0.158
+usage:
+  api_cost_usd: 1.33586
+  input_tokens: 858
+  output_tokens: 50829
+  cache_read_tokens: 8223510
+  cache_creation_tokens: 129253
+  tokens_total_billed: 180940
+  n_turns: 109
+score:
+  n_filled: 4
+  n_bins: 4
+  delta_norm: 25.876155
+  norm_relative_l2: 28.073903
+  shape_relative_l2: 0.673213
+  shape_jensen_shannon: 0.094935
+  pass: false
+judge: null
+n_gen: null
+notes: ''
+gate:
+  bounces: 1
+  gate_final_event: pass
+  gate_error: false
+  tampered: false
+checker_time:
+  record_quantity_calls: 11
+  record_quantity_seconds: 1.7
+  after_first_bounce_seconds: 100.2
+  checker_seconds: 101.9
