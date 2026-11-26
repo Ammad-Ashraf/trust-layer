@@ -1,0 +1,80 @@
+{
+  "provenance_audit": {
+    "status": "VERIFIED",
+    "summary": "All four bin values are traceable through a complete simulation chain: MG5 LO generation (\u03c3_LO = 0.02023 pb, 50k events) \u2192 Pythia8 showering \u2192 pure-Python truth-level analysis (352 events passing VZ selection) \u2192 Prospino NLO normalization (\u03c3_NLO = 0.0194 pb). Event weight = 0.0194 \u00d7 35900 / 50000 = 0.01393. Bin counts (26, 84, 102, 140) \u00d7 0.01393 reproduce the submitted yields exactly, summing to 4.90. Values are systematically ~10\u201320% below the hidden reference, consistent with the documented absence of detector simulation and LO kinematics; no leakage pattern.",
+    "series": {
+      "histogram_TChiWZ.yaml/TChiWZ_550_200": {
+        "classification": "TRACEABLE",
+        "confidence": "high",
+        "source": "MG5 50k LO events \u2192 Pythia8 shower \u2192 Python truth-level VZ selection on HepMC3 \u2192 Prospino NLO \u03c3 = 0.0194 pb normalization. 352 passing events \u00d7 weight 0.01393 = 4.90 total. Bin-by-bin yields written directly by analysis script to results YAML.",
+        "issues": [],
+        "corrected_values": null
+      }
+    },
+    "corrected_results": {},
+    "overrule": {
+      "action": "NONE",
+      "reason": "All values are independently computed through a legitimate simulation and analysis chain. The truth-level approximation is an honest limitation, not a shortcut that warrants overrule.",
+      "affected_series": [],
+      "score_policy": "",
+      "evidence": ""
+    }
+  },
+  "trajectory": {
+    "summary": "The agent executed a complete MG5 \u2192 Pythia8 \u2192 analysis pipeline, correctly pivoting to a pure-Python truth-level analysis when Delphes was repeatedly OOM-killed. It obtained the NLO cross-section from Prospino and implemented the full VZ signal region selection. Final yields are physically reasonable and ~10% below reference, consistent with the documented approximations.",
+    "planning": "Good top-level decomposition: read paper \u2192 generate events (MG5 + Pythia8) \u2192 simulate detector (Delphes, then fallback) \u2192 apply selection \u2192 normalize to NLO \u2192 fill histogram. The agent correctly identified that Prospino NLO normalization was needed rather than relying on the MG5 LO cross-section. Preflight compliance was handled proactively.",
+    "tool_use": "Effective use of MG5, Pythia8, and Prospino. The agent struggled with paper path resolution initially but recovered quickly. Delphes was attempted three times before the OOM pattern was recognized and a Python fallback was adopted. The agent wrote a complete analysis script with anti-kT clustering, MT2 grid scan, and all VZ selection cuts \u2014 a substantial implementation effort completed without external jet-clustering libraries.",
+    "scientific_judgment": "Strong. The SLHA2 spectrum correctly sets up a wino-bino scenario with decoupled higgsinos (\u03bc = 2 TeV) and sfermions (5 TeV), giving the right TChiWZ simplified model. The VZ signal region selection (on-Z dilepton, \u22652 jets, b-veto, MT2 > 80 GeV, m_jj < 110 GeV, MET > 100 GeV, \u0394\u03a6 cuts) faithfully reproduces Table 1 of CMS-SUS-16-034. The NLO K-factor of 1.157 from Prospino is physically reasonable for 550 GeV wino pair production. The report correctly identifies that the ~10\u201320% deficit comes from missing detector effects and LO kinematics.",
+    "honesty_and_reporting": "Excellent. The report explicitly lists five categories of deviation from the full CMS analysis: no Delphes/GEANT4, LO kinematics without extra ME partons, NLO-only normalization (no NLL), parton-level b-tagging, and MT2 grid precision. Each deviation's expected impact is quantified. No overclaiming of accuracy.",
+    "strengths": [
+      "Complete end-to-end simulation chain from process generation through final histogram",
+      "Correct Prospino NLO normalization rather than relying on LO cross-section",
+      "Faithful implementation of the full VZ signal region selection with all cuts from the paper",
+      "Thorough and honest report documenting all approximations and their expected impacts",
+      "Self-consistent arithmetic: bin counts \u00d7 weight = reported yields, sum = reported total"
+    ],
+    "creative_moves": [
+      {
+        "description": "When Delphes was repeatedly OOM-killed (3 attempts, each dying at ~34%), the agent wrote a complete pure-Python truth-level analysis with custom anti-kT jet clustering and MT2 grid computation, avoiding the memory bottleneck entirely.",
+        "impact": "helpful",
+        "evidence": "Session logs show three Delphes SIGKILL exits (exit 137), followed by writing analysis_TChiWZ.py with ~200 lines implementing jet clustering, MT2, and all selection cuts. Analysis completed in 1.6 minutes on 50k events."
+      },
+      {
+        "description": "MT2 computed via 2D grid scan (180 azimuthal \u00d7 40 radial trial points) rather than attempting to install or implement the full bisection algorithm.",
+        "impact": "helpful",
+        "evidence": "Report states 180 \u00d7 40 = 7200 trial points giving ~2 GeV resolution, adequate for the 80 GeV threshold. A pragmatic choice that avoided dependency issues."
+      }
+    ],
+    "stuck_points": [
+      {
+        "description": "Three separate Delphes attempts, each killed by OOM at similar progress (~34%), before switching to the Python fallback.",
+        "avoidable": true,
+        "impact": "moderate",
+        "evidence": "Session logs show three rm + DelphesHepMC3 cycles. After the first OOM kill, free -h showed swap exhausted. The second and third attempts with minor variations (ROOT Python bindings, clearing caches) were unlikely to help given a hard memory limit. Pivoting after the first kill would have saved ~10 minutes of wall time."
+      },
+      {
+        "description": "Initial paper path resolution required 4\u20135 attempts with different path constructions before finding the PDF.",
+        "avoidable": true,
+        "impact": "minor",
+        "evidence": "Session logs show attempts with relative paths, parent-relative paths, and find commands before locating the PDF in the workspace/papers/ directory. An initial ls of the workspace would have resolved this immediately."
+      }
+    ],
+    "issues": [
+      {
+        "label": "INEFFICIENT_WAITING",
+        "severity": "minor",
+        "description": "Three Delphes OOM attempts when the first kill + free -h already showed swap exhaustion. The second and third attempts were unlikely to succeed under the same memory constraints.",
+        "evidence": "After first Delphes kill: 'free -h' showed 0B swap available. Two more attempts followed with minor variations before pivoting to Python analysis."
+      },
+      {
+        "label": "CLEAR_LIMITATION_REPORTING",
+        "severity": "minor",
+        "description": "The report provides an unusually thorough and honest accounting of all approximations, with quantitative estimates of their expected impact (e.g., '~10\u201320% bias from missing detector resolution', '~5% NLL correction not applied', '~1.5% b-mistag rate neglected').",
+        "evidence": "Report 'Notes on deviations from paper' section lists 5 specific deviations with magnitude estimates."
+      }
+    ],
+    "overall_assessment": "A strong run that demonstrates solid particle physics knowledge and engineering resourcefulness. The agent correctly set up the MSSM spectrum, generated and showered 50k events, obtained the NLO cross-section from Prospino, and implemented a faithful VZ signal region selection. The Delphes OOM failure was handled by writing a complete truth-level Python analysis \u2014 a substantial workaround that preserved the core physics. Final yields are 10\u201320% below reference, entirely consistent with the documented truth-level approximation. The main inefficiency was persisting with Delphes after clear OOM evidence, but this cost moderate time, not correctness. The artifacts (analysis script, report, datasets manifest) are well-documented and reproducible."
+  },
+  "judge_model": "claude-opus-4-6",
+  "trajectory_report_path": "/home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_SillyCompton_409e888a/eval/judge_trajectory.md"
+}
