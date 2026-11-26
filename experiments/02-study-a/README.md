@@ -1,13 +1,13 @@
 # 02-study-a
 
-- **Status:** done 2026-11-26 (code tag `study-a-v1`). Runner task R4 will replace two stand-in LO inputs. That changes the size of 3 cases' errors, not which checks fail.
+- **Status:** done, closed 2026-11-27 (tag `study-a-v2`, all inputs real). The first run on 26 Nov (tag `study-a-v1`) used stand-in LO values for two tasks. Runner task R4 replaced them with Prospino's LO; the catch and false-alarm counts didn't change.
 - **Question:** Does the checker catch known injected errors, and how often does it raise false alarms?
 - **Setup:** Correct hand ledgers from `tasks/` (public sources only), plus broken copies with one 1a–1e mistake each from `trustlayer.inject`. The list was fixed by decision 0016 before the checks existed; the 0017 rows are reported separately. No API or simulation cost.
 - **Tasks:** `sus-16-034_sim-TChiWZ`, `sus-16-046_sim-T5Wg`, `sus-16-051_sim-T2tt_comp` (T2tt_comp rather than T2tt_SRG, see decision 0014).
 - **Inputs:** [`config.yaml`](config.yaml): τ = 5%, and the two public numbers per task that the injections need. Sources are in [`sources.md`](sources.md).
 - **Output:** [`results/study-a.md`](results/study-a.md) (tables, generated) and [`results/cases.yaml`](results/cases.yaml) (one row per case).
 - **Rerun:** `python -m trustlayer.report study-a` (takes seconds; writes `results/`).
-- **Pinned:** the code tag `study-a-v1`. Collider-Bench, the container and the model don't enter: nothing is simulated or run by an agent.
+- **Pinned:** the code tag `study-a-v2`. Collider-Bench, the container and the model don't enter: nothing is simulated or run by an agent.
 
 ## Findings
 
@@ -17,9 +17,16 @@
 4. **C4 is the only check that sees small but real errors.** L = 36.1 instead of 35.9 is only 0.6% off, well under τ. C4 catches it by comparing with the task card.
 5. **τ = 5% sits in a wide safe window** (exploratory sweep, not pre-registered):
    - Honest rounding moves the total by at most 1.1% (ε 0.42461 → 0.42 on T5Wg). That gives 1 false alarm at τ = 1%, none from 2%.
-   - The smallest injected error that only C5 can see is about 20%: bins left at the LO normalization (T2tt_comp, with a stand-in LO). It is missed at τ = 20%.
-   - Every value from 2% to 10% gives 100% caught and 0 false alarms.
+   - The smallest injected error that only C5 can see is 23.5%: bins left at the LO normalization (TChiWZ, Prospino K = 1.19). With the stand-in LO (v1) it was about 20%, and τ = 20% missed one case; with the real LO nothing is missed even at 20%.
+   - Every value from 2% to 20% gives 100% caught and 0 false alarms.
 6. **Two injections don't apply when BR really is 1** (T5Wg and T2tt are simplified models with BR = 1 by definition): "BR = 1 without a reason" and the "BR folded into ε" near-miss. They are listed as not applicable, not counted as catches.
+
+## LO cross sections (runner R4, 27 Nov)
+
+- From Prospino 2.1 in the benchmark's image (`runs/20261127-0032_prospino-lo/`):
+  - stop 800 GeV: LO 15.9 fb, NLO 27.2 fb (K = 1.71);
+  - wino C1N2 550 GeV: LO 23.09 fb, NLO 27.55 fb (K = 1.19).
+- Prospino's NLO is 4.0% and 8.7% below the published NLO+NLL values. That is expected without NLL resummation, and it matters for Study B: an agent that uses Prospino NLO for TChiWZ lands 8.7% below the paper's normalization, which is above τ only if it is compared with the paper. C2 accepts Prospino NLO as a correct source.
 
 ## Notes from filling the hand ledgers
 

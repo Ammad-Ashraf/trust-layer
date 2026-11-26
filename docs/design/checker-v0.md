@@ -198,7 +198,7 @@ So C1 catches only missing or wrong-kind units. A unit that is valid but wrong f
 
 ## 8b. Study A done (2026-11-26)
 
-`trustlayer.inject` builds the §7 cases generically from any complete hand ledger; `trustlayer.report` scores them (`python -m trustlayer.report study-a`). On 3 tasks: 28/28 injections caught, 0/10 false alarms at τ = 5%; 0017 rows 6/6 and 0/3. Cases that don't apply when BR is truly 1 are listed as skipped. Details: `experiments/02-study-a/README.md`.
+`trustlayer.inject` builds the §7 cases generically from any complete hand ledger; `trustlayer.report` scores them (`python -m trustlayer.report study-a`). Closed 27 Nov at tag `study-a-v2` (real Prospino LO inputs from R4). On 3 tasks: 28/28 injections caught, 0/10 false alarms at τ = 5%; 0017 rows 6/6 and 0/3. Cases that don't apply when BR is truly 1 are listed as skipped. Details: `experiments/02-study-a/README.md`.
 
 ## 9. Risks
 

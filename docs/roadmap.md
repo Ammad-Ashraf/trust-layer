@@ -10,7 +10,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 | M2 | Learn the formula by hand | 16–29 Nov | `tasks/sus-16-034_sim-TChiWZ/ledger.yaml` filled by Ammad, with every unit and source, explainable in simple words | ✅ 24 Nov |
 | M3 | Baseline run, label errors | 23 Nov–6 Dec | One baseline transcript read in full; every mistake labelled with a sub-gap code | ✅ 26 Nov |
 | M4 | Build checker v0 | 30 Nov–15 Dec | C1–C5 pass unit tests; the gate blocks a bad ledger in a real test run | ✅ 26 Nov: gate sent a real agent back (R1 ok 6) and ran in a real harness run (R2). R2 also showed the checker passing a fabricated ledger → decision 0017 |
-| M5 | Study A: error injection | 9–22 Dec | Catch rate per sub-gap and false-alarm rate, for 3 tasks | ✅ 26 Nov: 28/28 caught, 0/10 false alarms ([results](../experiments/02-study-a/results/study-a.md)); R4 refreshes 2 stand-in LO inputs |
+| M5 | Study A: error injection | 9–22 Dec | Catch rate per sub-gap and false-alarm rate, for 3 tasks | ✅ 27 Nov: 28/28 caught, 0/10 false alarms ([results](../experiments/02-study-a/results/study-a.md)), tag `study-a-v2` |
 | M6 | Study B: 18 agent runs | 16 Dec–5 Jan | 18 scored runs, with and without the checker, each labelled | ⬜ |
 | M7 | Note + public repo | 4–15 Jan | 2–4 page note, public repo, one results table quotable in the motivation letter | ⬜ |
 | — | CERN openlab deadline | **21 Jan 2027** | Application submitted | ⬜ |

@@ -1,4 +1,4 @@
-version: study-a-v1
+version: study-a-v2
 tau: 0.05
 cases:
 - task: sus-16-034_sim-TChiWZ
@@ -34,8 +34,8 @@ cases:
   - C2
   - C5
   flagged: true
-  bins_over_ledger: 1.250717
-  provisional_input: true
+  bins_over_ledger: 1.305426
+  provisional_input: false
 - task: sus-16-034_sim-TChiWZ
   case: 1b-lo-false-label
   group: '0016'
@@ -46,8 +46,8 @@ cases:
   - C2
   - C5
   flagged: true
-  bins_over_ledger: 1.250717
-  provisional_input: true
+  bins_over_ledger: 1.305426
+  provisional_input: false
 - task: sus-16-034_sim-TChiWZ
   case: 1c-br-removed
   group: '0016'
@@ -105,8 +105,8 @@ cases:
   failing_checks:
   - C5
   flagged: true
-  bins_over_ledger: 0.798306
-  provisional_input: true
+  bins_over_ledger: 0.76485
+  provisional_input: false
 - task: sus-16-034_sim-TChiWZ
   case: 1e-null-bin
   group: '0016'
@@ -395,8 +395,8 @@ cases:
   - C2
   - C5
   flagged: true
-  bins_over_ledger: 1.248176
-  provisional_input: true
+  bins_over_ledger: 1.781987
+  provisional_input: false
 - task: sus-16-051_sim-T2tt_comp
   case: 1b-lo-false-label
   group: '0016'
@@ -407,8 +407,8 @@ cases:
   - C2
   - C5
   flagged: true
-  bins_over_ledger: 1.248176
-  provisional_input: true
+  bins_over_ledger: 1.781987
+  provisional_input: false
 - task: sus-16-051_sim-T2tt_comp
   case: 1c-br-removed
   group: '0016'
@@ -453,8 +453,8 @@ cases:
   failing_checks:
   - C5
   flagged: true
-  bins_over_ledger: 0.801158
-  provisional_input: true
+  bins_over_ledger: 0.561163
+  provisional_input: false
 - task: sus-16-051_sim-T2tt_comp
   case: 1e-null-bin
   group: '0016'
