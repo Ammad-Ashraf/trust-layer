@@ -1,0 +1,51 @@
+schema_version: 1
+experiment: 03-study-b
+slot:
+  id: S03
+  model: claude-sonnet-4-6
+  task: sus-16-051_sim-T2tt_comp
+  arm: baseline
+  rep: 1
+  pilot: true
+task: sus-16-051_sim-T2tt_comp
+arm: baseline
+model_requested: claude-sonnet-4-6
+model_snapshot: claude-sonnet-4-6
+claude_code_version: 2.1.326
+auth: token
+api_key_source: none
+mcp_servers: []
+trust_layer_commit: 335ae1733b5fd3975efafe8680bc3a4c38aa5fa2
+tag: study-b-v1
+collider_bench_commit: 8c810283f85e44de1cc72522c5407cbc9e563967
+container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f
+machine: runner-laptop-24c
+cores: 32
+walltime_limit: 10h
+started_at: '2026-11-26T23:00:41+00:00'
+harness_run_dir: runs/claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_RomanticYang_2b3bae9d
+outcome: scored
+exit_code: 1
+wall_clock_hours: 0.403
+usage:
+  api_cost_usd: 6.98037
+  input_tokens: 163
+  output_tokens: 83418
+  cache_read_tokens: 14948252
+  cache_creation_tokens: 177004
+  tokens_total_billed: 260585
+  n_turns: 161
+score:
+  n_filled: 0
+  n_bins: 4
+  delta_norm: null
+  norm_relative_l2: null
+  shape_relative_l2: null
+  shape_jensen_shannon: null
+  pass: false
+judge:
+  provenance_status: VERIFIED
+  overrule: NONE
+  model: claude-opus-4-6
+n_gen: null
+notes: ''

@@ -1,0 +1,32 @@
+{
+  "agent_id": "RomanticYang_2b3bae9d",
+  "run_dir": "claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_RomanticYang_2b3bae9d",
+  "task_id": "sus-16-051_sim-T2tt_comp",
+  "agent": "simple",
+  "runner": "claude",
+  "model": "claude-sonnet-4-6",
+  "paper_ref": "CMS-SUS-16-051",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-26T23:00:41Z",
+  "ended_at": "2026-11-26T23:24:51Z",
+  "exit_code": 1,
+  "duration_wall_s": 1449.52,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 0,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 6.98037,
+    "input_tokens": 163,
+    "output_tokens": 83418,
+    "cache_read_tokens": 14948252,
+    "cache_creation_tokens": 177004,
+    "tokens_total_billed": 260585,
+    "n_turns": 161
+  }
+}
