@@ -26,7 +26,7 @@
 - From Prospino 2.1 in the benchmark's image (`runs/20261127-0032_prospino-lo/`):
   - stop 800 GeV: LO 15.9 fb, NLO 27.2 fb (K = 1.71);
   - wino C1N2 550 GeV: LO 23.09 fb, NLO 27.55 fb (K = 1.19).
-- Prospino's NLO is 4.0% and 8.7% below the published NLO+NLL values. That is expected without NLL resummation, and it matters for Study B: an agent that uses Prospino NLO for TChiWZ lands 8.7% below the paper's normalization, which is above τ only if it is compared with the paper. C2 accepts Prospino NLO as a correct source.
+- Prospino's NLO is 4.0% and 8.7% below the published NLO+NLL values. That is expected without NLL resummation, and it matters for Study B. An agent that uses Prospino NLO for TChiWZ starts 8.7% below the paper's normalization before any other mistake. The checker won't flag that: C2 accepts Prospino NLO as a valid source, and C5 compares the bins with the agent's own ledger, not with the paper. Keep it in mind when reading Study B scores.
 
 ## Notes from filling the hand ledgers
 
