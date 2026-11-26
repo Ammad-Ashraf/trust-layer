@@ -1,0 +1,61 @@
+schema_version: 1
+experiment: 04-gate-test
+slot:
+  id: T01
+  model: claude-haiku-4-5
+  task: sus-16-034_sim-TChiWZ
+  arm: checker
+  rep: 1
+  pilot: false
+task: sus-16-034_sim-TChiWZ
+arm: checker
+model_requested: claude-haiku-4-5
+model_snapshot: claude-haiku-4-5
+claude_code_version: 2.1.326
+auth: token
+api_key_source: none
+mcp_servers: []
+trust_layer_commit: f01b92efdfa5a721699eea646bf7f69602649df0
+tag: ''
+collider_bench_commit: 8c810283f85e44de1cc72522c5407cbc9e563967
+container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f
+machine: runner-laptop-24c
+cores: 32
+walltime_limit: 10h
+started_at: '2026-11-26T21:12:56+00:00'
+harness_run_dir: runs/claude_haiku-4-5/sus-16-034_sim-TChiWZ_CalmGibbs_0c4ee773
+outcome: scored
+exit_code: 0
+wall_clock_hours: 0.122
+usage:
+  api_cost_usd: 0.896567
+  input_tokens: 570
+  output_tokens: 48878
+  cache_read_tokens: 4642010
+  cache_creation_tokens: 93703
+  tokens_total_billed: 143151
+  n_turns: 73
+score:
+  n_filled: 4
+  n_bins: 4
+  delta_norm: 0.995176
+  norm_relative_l2: 0.996562
+  shape_relative_l2: 0.86366
+  shape_jensen_shannon: 0.182593
+  pass: false
+judge:
+  provenance_status: VERIFIED
+  overrule: NONE
+  model: claude-opus-4-6
+n_gen: null
+notes: ''
+gate:
+  bounces: 1
+  gate_final_event: pass
+  gate_error: false
+  tampered: false
+checker_time:
+  record_quantity_calls: 11
+  record_quantity_seconds: 1.3
+  after_first_bounce_seconds: 20.7
+  checker_seconds: 22.0

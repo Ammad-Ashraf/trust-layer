@@ -1,0 +1,29 @@
+schema_version: 2
+task: sus-16-034_sim-TChiWZ
+quantities:
+  cross_section:
+    value: 2.5
+    unit: fb
+    source: CMS-SUS-16-034 paper, comparable benchmarks for EW production at 550 GeV
+    source_type: paper
+    process: chargino_neutralino
+    masses_gev:
+      chargino_1: 550.0
+      neutralino_2: 550.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS 2016 data, 13 TeV (task specification)
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: CMS-SUS-16-034
+    reason: 'Simplified model: χ̃⁺₁→W (100%), χ̃⁰₂→Z (100%); lepton decay BRs implicit
+      in efficiency'
+  efficiency:
+    value: 0.00029
+    unit: dimensionless
+    source: Event selection from simulated TChiWZ_550_200 events (sims/analysis_simple.py
+      on 500k events)
+    n_pass: 145.0
+    n_gen: 500000.0

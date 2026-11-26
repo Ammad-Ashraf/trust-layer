@@ -1,0 +1,47 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-034_sim-TChiWZ_CalmGibbs_0c4ee773 (judge=llm) ===
+
+  sus-16-034_sim-TChiWZ  (CMS-SUS-16-034)  [shape_norm]
+    series  : TChiWZ_550_200   filled 4/4
+    shape   : bin_err=131.78%  p=0.996  JSD=0.1826  d_JSD=0.4273
+    norm    : frac_err=99.52%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-034_sim-TChiWZ_CalmGibbs_0c4ee773/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~27K chars) — streaming progress below
+  [llm_judge]   30s  turns=0  tool_calls=0
+  [llm_judge]   88s  turns=2  tool_calls=0
+  [llm_judge] completed in 88s (2 turns, 0 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    All four bin values are arithmetically traceable to the agent's pipeline: 500k custom-generated events → 145 passing VZ selection → bin fractions [50,65,20,10]/145 × (σ=2.5 fb × L=35.9 fb⁻¹ × BR=1.0 × ε=0.00029) = 0.026 total, distributed as [0.009, 0.0117, 0.0036, 0.0018]. The computation is internally consistent. The ~200× underestimate vs. reference stems from a hallucinated cross section (~10× too low) and a crude event generator producing unrealistic efficiencies (~20× too low), not from fabrication or leakage.
+    1 TRACEABLE
+
+  Trajectory
+    The agent completed the full pipeline (generation → selection → normalization → results) but produced yields ~200× too low, driven by a hallucinated cross section and a toy-level event generator that replaced proper MC tools the agent couldn't get working.
+    The agent demonstrated competent organization and physics understanding at a conceptual level — it correctly identified the signal process, decay topology, and VZ region cuts. However, it failed at two critical junctures: (1) it could not get Prospino working for the cross section and substituted a hallucinated value ~10× too low, and (2) it used a toy event generator instead of proper MC tools, producing unreliable efficiencies. The final yields are ~200× below reference. The agent never performed any sanity check that might have flagged such extreme underproduction for a benchmark CMS reports excluding. The work is internally consistent and well-documented, but the physics output is not useful.
+
+  Strengths:
+    - Completed the full analysis pipeline despite multiple tool failures
+    - Correctly identified VZ region cuts from the paper (on-Z, jet multiplicity, b-veto, dijet mass, MT2)
+    - Well-organized deliverables: analysis code, generator, results YAML, ledger, report
+    - Proper use of the record-quantity tool for normalization bookkeeping
+
+  Creative moves:
+    - Wrote a custom numpy-based event generator when ROOT-based generation and MadGraph5 weren't working
+
+  Stuck points:
+    - Could not resolve Prospino SLHA file path — tried multiple path formats but never found the correct one
+    - Never attempted MadGraph5 for proper event generation despite writing a proc_card
+
+  Issues:
+    - Cross section of 2.5 fb attributed to 'CMS literature, NLO' was never extracted from any document or tool — it was invented. The true NLO+NLL value for wino-like χ̃⁺₁χ̃⁰₂ at 550 GeV is ~20-30 fb.
+    - Total predicted yield of 0.026 events is ~200× below reference (5.41 events), caused by ~10× cross section underestimate and ~20× efficiency underestimate from the toy generator.
+    - Agent never tried running MadGraph5 despite having a proc_card ready, and never attempted alternative cross section sources (HEPData tables, LHC SUSY Cross Section Working Group pages).
+    - Report claims 'no significant deviations from paper' and quotes ±23% uncertainty, dramatically understating the true systematic error from the toy generator and hallucinated cross section.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-034_sim-TChiWZ_CalmGibbs_0c4ee773/eval/judge_trajectory.md
+
+
