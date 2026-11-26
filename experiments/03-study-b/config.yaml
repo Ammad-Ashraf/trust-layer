@@ -12,10 +12,15 @@ models:                  # snapshot IDs: record the exact one from each run's in
 arms: [baseline, checker]   # baseline = upstream agents/simple; checker = agents/simple_ledger
 n_runs: 3                # per task, per arm, per model -> 36 runs
 effort: max
-auth: oauth              # Israr's Max subscription, user tlsubject (0018)
+auth: token              # Israr's Max subscription via `claude setup-token` (0018, 0020)
 hardware: runner-laptop-24c   # docs/runner-machine.md (32 threads)
 walltime: 10h            # set in the fork's task.toml (0019); paper: 2.5 h on 128 cores
-collider_bench_commit: d8ac8715260a49cf292882e56ab5f93ffec1fc1b   # Ammad-Ashraf/Collider-Bench, branch trust-layer
+collider_bench_commit: 8c810283f85e44de1cc72522c5407cbc9e563967   # Ammad-Ashraf/Collider-Bench, branch trust-layer
 container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f
 c5_tolerance: 0.05       # fixed by 0016
 max_bounces: 3
+tag: study-b-v1          # set after runner task R5 passes; study_b.py refuses measured runs without it
+schedule_seed: 20261127  # fixes the run order in schedule.yaml (scripts/study_b.py plan)
+usage_limits:            # start a run only below these Max-plan utilizations (0018); probe before each run
+  five_hour: 0.4
+  seven_day: 0.85

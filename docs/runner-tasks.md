@@ -17,24 +17,61 @@ Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/run
 
 ---
 
-### R5 · `tlsubject` user and the login-clash test (decisions 0010, 0018): **open**
+### Study B, end to end (decisions 0005, 0007, 0018, 0019, 0020)
 
-**Needs:** Israr's OK, and Part A done by Israr by hand (it needs `sudo` and his Claude login). The runner session never runs `sudo` beyond the one rule Part A adds, and never sees or copies a credential value.
+Everything runs as user `israr`, from the repo root. One script does each run: `scripts/study_b.py`. It checks the setup, waits until the Max plan's usage has room, launches the run, runs the judge and the gate check, files the results in a run folder, scans that folder for secrets, and commits and pushes it. **Don't run Study B by hand, and don't edit code here.** If the script stops with an error, write what it printed into a `report.md` (where the task says), commit, and stop.
 
-**Why:** Study B runs on Israr's Max subscription. The runner session (user `israr`) and the run in the container share one rotating login, so a renewal by the runner session mid-run breaks the run. Running as `tlsubject`, with its own login, gives the run its own token chain. It also gives the subject a clean home with no MCP servers or connectors.
+**Keep the laptop awake:** plugged in, lid open, no suspend. Every long command below is wrapped in `systemd-inhibit` so the laptop doesn't sleep mid-run.
 
-**Part A (by hand, at the laptop, about 20 min plus the image download):** the step-by-step is in [`runner-r5-setup.md`](runner-r5-setup.md). In short: create `tlsubject`, enable linger, add the one sudoers rule (`israr ALL=(tlsubject) NOPASSWD: ALL`), give `tlsubject` read access to `israr`'s checkout, clone it, install Claude Code 2.1.326, pull the image, and log in with Israr's Max account.
+**The login token is a secret.** It lives in `~/.config/trust-layer/claude-oauth-token`. Never `cat`, print, copy or commit it. Check only that it exists, with `test -s`.
 
-**Part B (runner session):** first, in `israr`'s checkout, switch the submodule to the fork. R2's hand-copied `agents/simple_ledger` is in the way, so delete it first: `rm -rf $CB/agents/simple_ledger && git submodule sync && git submodule update --init`, then check `git -C $CB log --oneline -1` shows `d8ac871`. Then as `tlsubject`, always via `sudo -iu tlsubject env XDG_RUNTIME_DIR=/run/user/$(id -u tlsubject) DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u tlsubject)/bus bash -lc '…'`. Podman and `systemd-run --user` need those two variables; the sudoers rule allows only this, never root. Folder: `experiments/04-gate-test/runs/<YYYYMMDD-HHMM>_login-test/`.
-1. Check the clean home: `~tlsubject/.claude.json` has no `mcpServers` entries, and `~tlsubject/.claude/settings.json` is missing or `{}`. Record yes/no; don't commit either file.
-2. Record the login's `expiresAt` only (never the token): `jq .claudeAiOauth.expiresAt ~/.claude/.credentials.json`, for both `tlsubject` and `israr`.
-3. As `tlsubject`, in `~/trust-layer`, after `git pull --ff-only && git submodule sync && git submodule update --init` (expect `d8ac871`) and the venv setup from R2: launch R2's config **detached**: `systemd-run --user --unit tl-login-test bash scripts/run-checker-arm --config experiments/04-gate-test/harness-config.yaml` (Haiku 4.5, about $1 API-equivalent, $0 on the subscription).
-4. While it runs, keep this runner session working normally (that is the clash case). Watch with `journalctl --user -u tl-login-test`.
-5. After it ends: did it finish without a 401 or auth error? Record `expiresAt` again for both users. Note whether `tlsubject`'s `expiresAt` was passed during the run, i.e. whether the renewal path was exercised. Check that the run's init event shows `mcp_servers: []`.
-6. Start a second, short run the same way and stop it after its first turn (`systemd-run --user --unit tl-login-test-2 …`, then `systemctl --user stop tl-login-test-2`). It shows the copied-back login still works.
-7. Copy the run's `report.md` inputs (`run_info.json`, `eval/score.json`, `launch.log`, the init event line) from `tlsubject`'s run folder into the folder above, scan them for secrets (queue rule 5), write `report.md`, commit and push.
+### R5 · Token login and one test run through `study_b.py`: **open**
 
-**Pass:** both runs authenticate, the first finishes, and `israr`'s login still works afterwards.
+**Needs:** step 1 done by a person (Israr, or Ammad with Israr's OK). It is a 2-minute browser login to **Israr's Max account**.
+
+**Step 1 (person, in a terminal on the laptop, as `israr`):**
+```bash
+mkdir -p ~/.config/trust-layer && chmod 700 ~/.config/trust-layer
+claude setup-token            # opens a browser: sign in with Israr's Max account, Authorize. It prints a long token.
+nano ~/.config/trust-layer/claude-oauth-token     # paste the token, Ctrl+O, Enter, Ctrl+X
+chmod 600 ~/.config/trust-layer/claude-oauth-token
+```
+
+**Step 2 (runner session):**
+1. Update: `git checkout main && git pull --ff-only`. R2's hand copy is in the way, so: `rm -rf $CB/agents/simple_ledger && git submodule sync && git submodule update --init`. Then `git -C $CB log --oneline -1` must show `8c81028`.
+2. `test -s ~/.config/trust-layer/claude-oauth-token && echo token present` (don't print the file).
+3. Launch the test run detached (Haiku 4.5, checker arm, TChiWZ, about 10 min, $0 on the subscription):
+   `systemd-run --user --unit tl-smoke --same-dir --setenv=PATH="$PATH" systemd-inhibit --what=sleep:idle --why="Study B smoke" python3 scripts/study_b.py smoke`
+4. While it runs, keep this runner session busy with normal work: read files, run `git status`, check `journalctl --user -u tl-smoke -f`. That is exactly the case that broke the shared login before.
+5. When the unit ends, the script has committed and pushed `experiments/04-gate-test/runs/<stamp>_study-b-smoke/`. Read its `manifest.yaml` and check:
+   - `outcome: scored` (or `timeout`/`crash` with a reason in `launch.log`), **not** `void`;
+   - `mcp_servers: []`;
+   - `gate:` has `tampered: false` and `gate_error: false`;
+   - `checker_time` is filled;
+   - `judge_scores.json` exists.
+6. Check that Israr's own login still works: `claude -p "Reply OK" --model claude-haiku-4-5`.
+7. Write `report.md` in that folder (5–10 lines: the checks above, wall-clock, anything odd), then commit and push.
+
+**Pass:** not void, `mcp_servers: []`, gate not tampered, judge ran, and Israr's own login still works.
+
+### R6 · Study B pilot, 3 runs: **waiting** (Windows tags `study-b-v1` after reviewing R5 and marks this open)
+
+1. `git pull --ff-only && git fetch --tags && git submodule update --init`.
+2. `python3 scripts/study_b.py status`: S01–S03 are the pilot (Sonnet 4.6, no checker, one per task).
+3. `systemd-run --user --unit tl-pilot --same-dir --setenv=PATH="$PATH" systemd-inhibit --what=sleep:idle --why="Study B pilot" python3 scripts/study_b.py next --pilot-only`. Each run takes 0.5–2.5 h (up to 10 h); each commits itself.
+4. When the unit ends, write `experiments/03-study-b/runs/R6-pilot-report.md`: for each slot, its outcome, wall-clock hours and score, from its `manifest.yaml`. Then commit, push, and **stop**. Windows reviews the pilot before R7.
+
+### R7 · Study B, the remaining 33 runs: **waiting** (Windows marks this open after the pilot review)
+
+1. `git pull --ff-only && git submodule update --init`, then `python3 scripts/study_b.py status`.
+2. `systemd-run --user --unit tl-study-b --same-dir --setenv=PATH="$PATH" systemd-inhibit --what=sleep:idle --why="Study B" python3 scripts/study_b.py next`. This runs S04–S36 in the fixed order of `schedule.yaml`, one at a time, about 1–3 weeks in all. Each run commits itself.
+3. Check it now and then with `python3 scripts/study_b.py status` and `journalctl --user -u tl-study-b -n 50`. **Don't** start a second copy while it runs.
+4. If it stops early, look at the last lines of the journal and act:
+   - **A run voided 3 times** (usage limit or login): wait for the usage to reset, then start step 2 again. It resumes where it stopped.
+   - **Laptop rebooted mid-run:** that run's folder has no `manifest.yaml`. Rename it by adding `_void<N>` (the next free N) and write `interrupted by reboot` into a `note.md` inside it. Commit it, then start step 2 again.
+   - **"possible secret"**: stop and report. Commit nothing from that folder.
+   - **Anything else:** write `experiments/03-study-b/runs/R7-report.md` with the error, commit, and stop.
+5. When `status` shows every slot final (scored, timeout or crash), write `experiments/03-study-b/runs/R7-report.md`: counts per outcome per arm and model, plus total wall-clock. Commit and push.
 
 ---
 

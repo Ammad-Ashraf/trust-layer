@@ -1,6 +1,6 @@
 # 0010 — Isolating the test-subject agent's settings
 
-- **Status:** decided
+- **Status:** superseded by [0020](0020-token-login-not-new-user.md) (token login; nothing copied from the host home)
 - **Date:** 2026-11-18
 - **Decide by:** before M3 baseline runs
 

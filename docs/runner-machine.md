@@ -16,4 +16,4 @@ Specs as reported by the runner session on 2026-11-27. Every run manifest pins t
 ## What it means for the studies
 
 - **Development runs** (smoke run, gate tests, Prospino, cheap checker-arm runs): this machine is enough.
-- **Study B:** runs here too ([0018](decisions/0018-study-b-zero-spend.md)), one run at a time, as user `tlsubject`, on Israr's Max subscription. The paper gave each agent 128 cores for 2.5 hours; this laptop has 32 threads. To keep the same total compute, the limit is 10 h instead of 2.5 h ([0019](decisions/0019-study-b-walltime.md)), there's a 3-run pilot first, and timeouts are reported per arm and never rerun.
+- **Study B:** runs here too ([0018](decisions/0018-study-b-zero-spend.md)), one run at a time, on Israr's Max subscription with a token login ([0020](decisions/0020-token-login-not-new-user.md)). The paper gave each agent 128 cores for 2.5 hours; this laptop has 32 threads. To keep the same total compute, the limit is 10 h instead of 2.5 h ([0019](decisions/0019-study-b-walltime.md)), there's a 3-run pilot first, and timeouts are reported per arm and never rerun.

@@ -15,7 +15,7 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0007](0007-haiku-arm.md) | Add a Haiku 4.5 arm | decided |
 | [0008](0008-ledger-agent-folder.md) | Where the `simple-ledger` agent folder lives | decided |
 | [0009](0009-pint-in-container.md) | `pint` inside the container | decided |
-| [0010](0010-subject-isolation.md) | Isolating the test-subject agent's settings | decided |
+| [0010](0010-subject-isolation.md) | Isolating the test-subject agent's settings | superseded by 0020 |
 | [0011](0011-auth-for-measured-runs.md) | Auth for measured runs | decided |
 | [0012](0012-commit-transcripts.md) | Commit run transcripts? | decided |
 | [0013](0013-baseline-failure-mix.md) | Check the baseline failure mix before fixing Study B tasks | superseded by 0014 |
@@ -25,3 +25,4 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0017](0017-verify-sigma-provenance.md) | Should C2 verify where sigma came from, not just its label? | decided |
 | [0018](0018-study-b-zero-spend.md) | Study B spends nothing: Israr's Max subscription, on the runner laptop | decided |
 | [0019](0019-study-b-walltime.md) | Study B time limit: 10 h, a pilot, fixed timeout reporting | decided |
+| [0020](0020-token-login-not-new-user.md) | Study B logs in with a long-lived token, not a second Linux user | decided |

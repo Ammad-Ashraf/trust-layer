@@ -24,7 +24,7 @@ from typing import Any
 
 import yaml
 
-HOME_DIRS = (".claude_home", ".claude_api_home")
+HOME_DIRS = (".claude_home", ".claude_api_home", ".claude_token_home")
 
 
 def _sha(path: Path) -> str:
@@ -82,7 +82,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument(
         "--agent-folder",
         type=Path,
-        default=Path(__file__).resolve().parents[1] / "build" / "agent" / "simple_ledger",
+        default=Path(__file__).resolve().parents[1]
+        / "external"
+        / "collider-bench"
+        / "agents"
+        / "simple_ledger",
     )
     args = p.parse_args(argv)
     fields = check(args.run_dir, args.agent_folder)
