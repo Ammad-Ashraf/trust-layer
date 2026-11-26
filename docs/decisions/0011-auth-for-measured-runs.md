@@ -1,6 +1,6 @@
 # 0011 — Auth for measured runs
 
-- **Status:** decided
+- **Status:** decided; the Study B API key is superseded by [0018](0018-study-b-zero-spend.md) (Study B uses Israr's Max subscription)
 - **Date:** 2026-11-18
 - **Decide by:** with 0005 and 0006
 

@@ -16,4 +16,4 @@ Specs as reported by the runner session on 2026-11-27. Every run manifest pins t
 ## What it means for the studies
 
 - **Development runs** (smoke run, gate tests, Prospino, cheap checker-arm runs): this machine is enough.
-- **Study B:** the Collider-Bench paper gave each agent 128 CPU cores for 2.5 hours. This laptop has 32 threads, a quarter of that. With the same time limit, more runs would end by timeout rather than by error, which is the confound decision 0002 rejects. Study B compute stays as 0002 decided (a rented 128-vCPU machine), unless a new decision changes it.
+- **Study B:** runs here too ([0018](decisions/0018-study-b-zero-spend.md)), one run at a time, as user `tlsubject`, on Israr's Max subscription. The paper gave each agent 128 cores for 2.5 hours; this laptop has 32 threads. Both arms get the same machine, so the comparison stays fair, but we record the timeout rate per arm in case more runs end by timeout.

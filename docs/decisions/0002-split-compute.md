@@ -1,6 +1,6 @@
 # 0002 — Develop small, measure on rented compute
 
-- **Status:** decided
+- **Status:** decided; the Study B rental is superseded by [0018](0018-study-b-zero-spend.md) (Study B runs on the runner laptop)
 - **Date:** 2026-11-13
 
 ## Question

@@ -17,7 +17,32 @@ Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/run
 
 ---
 
-(no open tasks)
+### R5 · `tlsubject` user and the login-clash test (decisions 0010, 0018): **open**
+
+**Needs:** Israr's OK, and Part A done by Israr by hand (it needs `sudo` and his Claude login). The runner session never runs `sudo` beyond the one rule Part A adds, and never sees or copies a credential value.
+
+**Why:** Study B runs on Israr's Max subscription. The runner session (user `israr`) and the run in the container share one rotating login, so a renewal by the runner session mid-run breaks the run. Running as `tlsubject`, with its own login, gives the run its own token chain. It also gives the subject a clean home with no MCP servers or connectors.
+
+**Part A (Israr, by hand, about 15 min):**
+1. `sudo useradd -m -s /bin/bash tlsubject`, then check that `/etc/subuid` and `/etc/subgid` have a `tlsubject` line (rootless Podman needs them).
+2. `sudo loginctl enable-linger tlsubject`.
+3. `echo 'israr ALL=(tlsubject) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/tlsubject`, then `sudo chmod 440 /etc/sudoers.d/tlsubject`. This lets the runner session act as `tlsubject` only, not as root.
+4. `sudo machinectl shell tlsubject@`, and in that shell:
+   - install Claude Code 2.1.326 (same version as `israr`'s);
+   - `git clone --recurse-submodules /home/israr/Documents/Ammad-Particle-Physics/trust-layer ~/trust-layer`;
+   - `podman pull ghcr.io/dfaroughy/lhc-bench@sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f`;
+   - run `claude` once and log in with Israr's Max account (`/login`), then `/exit`. Add no MCP servers, plugins or settings.
+
+**Part B (runner session):** as `tlsubject`, always via `sudo machinectl shell tlsubject@ /bin/bash -lc '…'` (it sets `XDG_RUNTIME_DIR` for Podman; plain `sudo -u` doesn't). Folder: `experiments/04-gate-test/runs/<YYYYMMDD-HHMM>_login-test/`.
+1. Check the clean home: `~tlsubject/.claude.json` has no `mcpServers` entries, and `~tlsubject/.claude/settings.json` is missing or `{}`. Record yes/no; don't commit either file.
+2. Record the login's `expiresAt` only (never the token): `jq .claudeAiOauth.expiresAt ~/.claude/.credentials.json`, for both `tlsubject` and `israr`.
+3. As `tlsubject`, in `~/trust-layer`, after `git pull --ff-only` and the venv setup from R2: launch R2's config **detached**: `systemd-run --user --unit tl-login-test bash scripts/run-checker-arm --config experiments/04-gate-test/harness-config.yaml` (Haiku 4.5, about $1 API-equivalent, $0 on the subscription).
+4. While it runs, keep this runner session working normally (that is the clash case). Watch with `journalctl --user -u tl-login-test`.
+5. After it ends: did it finish without a 401 or auth error? Record `expiresAt` again for both users. Note whether `tlsubject`'s `expiresAt` was passed during the run, i.e. whether the renewal path was exercised. Check that the run's init event shows `mcp_servers: []`.
+6. Start a second, short run the same way and stop it after its first turn (`systemd-run --user --unit tl-login-test-2 …`, then `systemctl --user stop tl-login-test-2`). It shows the copied-back login still works.
+7. Copy the run's `report.md` inputs (`run_info.json`, `eval/score.json`, `launch.log`, the init event line) from `tlsubject`'s run folder into the folder above, scan them for secrets (queue rule 5), write `report.md`, commit and push.
+
+**Pass:** both runs authenticate, the first finishes, and `israr`'s login still works afterwards.
 
 ---
 

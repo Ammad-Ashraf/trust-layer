@@ -1,6 +1,6 @@
 # 0006 — Budget cap
 
-- **Status:** open
+- **Status:** superseded by 0018
 - **Date:** 2026-11-13
 - **Decide by:** with 0005, after the smoke run
 
@@ -19,4 +19,4 @@ One Sonnet 4.6 run at effort max on T5Wg cost $5.68 API-equivalent in 28 min, so
 
 ## Decision (Ammad)
 
-—
+$0, decided 2026-11-27: no API key, no rental, no other spend. See [0018](0018-study-b-zero-spend.md).

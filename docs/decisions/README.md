@@ -11,7 +11,7 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0003](0003-two-machines-one-repo.md) | Two machines, one repo | decided |
 | [0004](0004-repo-layout.md) | Repo layout, Collider-Bench as a submodule, papers not committed | decided |
 | [0005](0005-study-b-model.md) | Which model Study B tests | decided |
-| [0006](0006-budget-cap.md) | Budget cap | open |
+| [0006](0006-budget-cap.md) | Budget cap | superseded by 0018 |
 | [0007](0007-haiku-arm.md) | Add a Haiku 4.5 arm | decided |
 | [0008](0008-ledger-agent-folder.md) | Where the `simple-ledger` agent folder lives | decided |
 | [0009](0009-pint-in-container.md) | `pint` inside the container | decided |
@@ -23,3 +23,4 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0015](0015-frontend-plain-html.md) | Frontend: plain HTML, CSS and JavaScript | decided |
 | [0016](0016-study-a-preregistration.md) | Fix Study A's injections and tolerance before building the checks | decided |
 | [0017](0017-verify-sigma-provenance.md) | Should C2 verify where sigma came from, not just its label? | decided |
+| [0018](0018-study-b-zero-spend.md) | Study B spends nothing: Israr's Max subscription, on the runner laptop | decided |

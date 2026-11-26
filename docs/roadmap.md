@@ -36,7 +36,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 - [x] Scaffold the repo and push it to GitHub (private)
 - [x] Connect to the runner laptop (Claude Code on the runner, driven remotely)
 - [x] Clone the repo with submodules on the runner; pull the Collider-Bench container; record the image digest
-- [ ] Create a separate, spend-limited Anthropic API key for benchmark runs only (smoke run used OAuth; see 0011)
+- [x] ~~Create a spend-limited API key~~: not needed; Study B uses Israr's Max subscription ([0018](decisions/0018-study-b-zero-spend.md))
 - [x] Smoke run → `experiments/00-smoke-run/` (T5Wg, Sonnet 4.6, OAuth; δ_norm 0.98, failed on ε)
 - [x] Map the four attachment points → `integration/attachment-points.md`
 - [ ] Send the two compute emails (supervisor, NCP) — bonus track
@@ -45,7 +45,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 ## Next (from 18 Nov)
 
 - [x] Decide 0008–0013 (Claude, delegated by Ammad on 18 Nov)
-- [ ] Ammad: ask Israr for OK to add a `tlsubject` user on his laptop (0010)
+- [ ] Ammad: ask Israr for OK to add a `tlsubject` user on his laptop (0010). **Now blocks Study B**: it is the login-clash fix (0018) → runner task R5
 - [x] Runner: commit the smoke run's `session.jsonl.gz`, `analysis.py` and `report.md` (0012); check the photon–jet guess (ruled out; the real cause is the gravitino, see M3)
 - [x] M3: smoke-run transcript read in full and labelled → `labels.yaml` + `results/m3-review.md` (0 Gap-1 errors; 3a, 3b, 3c, 3d + 1 uncoded)
 - [x] Windows: build the `simple_ledger` agent folder (0008) → M4 step 6 (26 Nov). Still open: put it in a Collider-Bench fork and repin the submodule, before Study B
