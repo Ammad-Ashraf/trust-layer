@@ -1,4 +1,4 @@
-version: study-b-v1-5-g7c890cc
+version: study-b-v1-10-gdba2ae5
 voids: {}
 runs:
 - folder: S01_sus-16-034-TChiWZ_sonnet-4-6_baseline_1
@@ -39,3 +39,22 @@ runs:
   gap1: 1
   labels: 3
   passed: true
+- folder: S03_sus-16-051-T2tt_comp_sonnet-4-6_baseline_1
+  slot: S03
+  model: claude-sonnet-4-6
+  task: sus-16-051_sim-T2tt_comp
+  arm: baseline
+  rep: 1
+  outcome: scored
+  wall_hours: 0.403
+  delta_norm: null
+  norm_l2: null
+  shape_l2: null
+  judge_status: VERIFIED
+  overrule: NONE
+  bounces: null
+  checker_seconds: null
+  labelled: true
+  gap1: 2
+  labels: 7
+  passed: false
