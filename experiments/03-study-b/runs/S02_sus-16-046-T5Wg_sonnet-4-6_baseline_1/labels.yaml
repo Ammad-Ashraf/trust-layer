@@ -1,2 +1,26 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+summary:
+  counts: {1a: 0, 1b: 1, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 1, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 1, 3d: 0, 3e: 0, 3f: 0}
+  gap1_errors: 1
+  # Agent vs reference ledger:
+  #   sigma: agent 2.68 fb (Prospino 2.1 NLO, CTEQ6)    vs ledger 3.598 fb (WG NLO+NLL)  -> ratio 0.745
+  #   L:     agent 35.9 fb^-1                            vs ledger 35.9 fb^-1             -> match
+  #   BR:    agent 1 (50/50 gluino mix and NLSP decays simulated in sample) vs ledger 1.0 -> match
+  #   eps:   agent 0.4190 (10608/20000 pass, x trigger 0.943 x photon-ID map) vs ledger 0.4246 -> ratio 0.987
+  #   N_gen: agent 20000 (all 20000 showered after the charge fix, normalised by 20000); ledger has no N_gen
+  #   total: agent 40.32 events                          vs ledger 54.85 events           -> ratio 0.735
+  # The whole normalisation deficit (delta_norm 0.265) comes from sigma; eps is within 1.3%.
+labels:
+  - code: 1b
+    where: "transcript line 607-610 (bin/prospino run --order NLO -> nlo 0.00268 pb); used at line 684 (analysis.py SIGMA_NLO_FB = 2.68)"
+    what: "Normalised to Prospino NLO sigma = 2.68 fb although the paper (read at line 45) says the SMS scans use NLO+NLL cross sections; the WG NLO+NLL value is 3.598 fb, so sigma and every bin are about 25% low."
+  - code: 3c
+    where: "transcript line 1124 (report.md 'Deviations from Paper' table and closing paragraph)"
+    what: "Report asserts the Prospino NLO normalisation (K = 2.59) is 'consistent with the NLO+NLL values used in the paper' without checking any NLO+NLL number, and never looks into the MG5 LO 1.46 fb vs Prospino LO 1.03 fb gap."
+  - code: 2c
+    where: "transcript line 1124 (report.md cutflow table)"
+    what: "The per-cut counts in the report's cutflow (7804, 7804, 7742, 7074, 6887) appear in no tool output; they were never computed on the fixed Delphes sample and contradict the final count of 10608, so they look made up."
+    confidence: low
+    note: "Report only: the submitted yields come from analysis.py (10608 events, line 1112) and are not affected. The only cutflow actually run (line 814-815) was on the broken pre-fix sample (12115 -> 988). Code fit (2c vs a reporting error) is the uncertain part, not whether the numbers were computed."
