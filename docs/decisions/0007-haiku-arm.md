@@ -1,6 +1,6 @@
 # 0007 — Add a Haiku 4.5 arm
 
-- **Status:** open
+- **Status:** decided
 - **Date:** 2026-11-13
 - **Decide by:** with 0005, after the smoke run
 
@@ -14,4 +14,4 @@ Yes, together with picking tasks where the main model actually failed normalizat
 
 ## Decision (Ammad)
 
-—
+Yes, decided 2026-11-27, alongside Sonnet 4.6 (0005). Why: Haiku makes frequent mistakes (R2 fabricated its whole ledger), so this arm is close to a guaranteed signal and cheap (about $20 at API prices).

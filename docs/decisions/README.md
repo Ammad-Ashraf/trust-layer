@@ -10,9 +10,9 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0002](0002-split-compute.md) | Develop small, measure on rented compute | decided |
 | [0003](0003-two-machines-one-repo.md) | Two machines, one repo | decided |
 | [0004](0004-repo-layout.md) | Repo layout, Collider-Bench as a submodule, papers not committed | decided |
-| [0005](0005-study-b-model.md) | Which model Study B tests | open |
+| [0005](0005-study-b-model.md) | Which model Study B tests | decided |
 | [0006](0006-budget-cap.md) | Budget cap | open |
-| [0007](0007-haiku-arm.md) | Add a Haiku 4.5 arm | open |
+| [0007](0007-haiku-arm.md) | Add a Haiku 4.5 arm | decided |
 | [0008](0008-ledger-agent-folder.md) | Where the `simple-ledger` agent folder lives | decided |
 | [0009](0009-pint-in-container.md) | `pint` inside the container | decided |
 | [0010](0010-subject-isolation.md) | Isolating the test-subject agent's settings | decided |

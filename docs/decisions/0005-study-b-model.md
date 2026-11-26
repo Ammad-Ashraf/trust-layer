@@ -1,6 +1,6 @@
 # 0005 — Which model Study B tests
 
-- **Status:** open
+- **Status:** decided
 - **Date:** 2026-11-13
 - **Decide by:** after the smoke run, before the baseline weeks (about 1 Dec)
 
@@ -22,4 +22,4 @@ On 11 Nov Ammad leaned Opus 4.7 for Study B and a newer model where no paper com
 
 ## Decision (Ammad)
 
-—
+Sonnet 4.6, decided 2026-11-27. Why: the paper has Sonnet 4.6 numbers, so our no-checker arm can be sanity-checked against them; the paper's tables show Sonnet often gets the counting wrong on all 3 target tasks (total vs shape error 0.30/0.07, 0.61/0.15, 0.69/0.26), so there is room for the checker to help; and it costs about half of Opus 4.7. The baseline is our own no-checker arm (same model, machine and versions); the paper is only the sanity check. With Sonnet chosen, 0014's task swap stands: Study B uses `T2tt_comp`, not `T2tt_SRG`.
