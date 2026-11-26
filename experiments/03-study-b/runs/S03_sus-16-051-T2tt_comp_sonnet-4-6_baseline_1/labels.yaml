@@ -1,2 +1,45 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: true
+early_stop_where: "line 893"
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 1, 1e: 1, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 1, 3b: 0, 3c: 2, 3d: 1, 3e: 1, 3f: 0}
+  gap1_errors: 2
+  # Agent vs reference ledger (no bins were filled; these are the inputs the agent had wired into analysis.py):
+  #   sigma : agent 6.82 fb (XSEC_PB = 0.00682, lines 200/578/646)  vs ledger 28.3338 fb  -> 4.15x too low
+  #           (agent's own Prospino NLO = 27.2 fb at line 614, within 4% of the ledger, was discarded)
+  #   L     : agent 35.9 fb^-1 (35900 pb^-1, used with sigma in pb, units consistent)  vs ledger 35.9 fb^-1  -> OK
+  #   BR    : agent 1 (no BR factor in weight = sigma*L/N_gen)  vs ledger 1.0  -> OK
+  #   eps   : agent never computed (would be N_pass/N_gen; Delphes + analysis never ran)  vs ledger 0.0077666
+  #   N_gen : agent 50000 (data/n_gen.txt, line 656)  vs ledger n/a
+  #   total : agent none (all 4 bins null)  vs ledger 7.9 events; with the agent's sigma the total would be ~4.15x low (~1.9 if eps matched)
+labels:
+  - code: 1d
+    where: "transcript line 200 (Write analysis.py: XSEC_PB = 0.00682), kept at lines 578 and 646"
+    what: "The agent hard-coded sigma = 6.82 fb for an 800 GeV stop pair, citing the SUSY Cross Section WG twiki, but the 800 GeV NLO+NLL row is 28.33 fb; 6.82 fb matches the ~1000 GeV row, so the value is from the wrong mass point and is 4.15x too low."
+    confidence: low
+    note: "The error itself is certain (6.82 vs 28.33 fb). The code is the uncertain part: 6.82 fb is very close to the WG NLO+NLL value at m_stop = 1000 GeV (~6.84 fb), which points to a wrong-row recall (1d). It was written from memory before any tool returned a sigma, with a citation the agent never opened, so 1b (wrong/unverified source) is the alternative reading. Counted once, as 1d."
+  - code: 1e
+    where: "transcript line 614 (Prospino result: nlo 0.0272 pb) -> lines 645-646 (Edit keeps XSEC_PB = 0.00682, comment 'Prospino2 NLO (CTEQ6): 27.2 fb - not used')"
+    what: "The agent computed the right cross section with Prospino (27.2 fb NLO, within 4% of the ledger's 28.33 fb) and then explicitly threw it away in favour of its 6.82 fb number."
+  - code: 3d
+    where: "transcript line 645 (assistant text) / line 646 (Edit)"
+    what: "Faced with a 4x gap between its Prospino NLO value (27.2 fb) and its remembered 6.82 fb, the agent explained it away as a PDF difference (CTEQ6 vs NNPDF3.0), which can shift sigma by ~10%, not by a factor 4, and kept the wrong number."
+  - code: 3a
+    where: "transcript line 162/190/227 (proc card decouples only gluino, n2, x1+, b1) -> line 368 (param_card: stop width 15.3 GeV, BR(t1 -> t n1) = 0.044)"
+    what: "The MG5 spectrum was not a clean T2tt simplified model: n3, n4, x2+, t2 and b2 stayed light, so MG5 gave the stop a 15.3 GeV width and only a 4.4% branching to t + n1, which the agent looked at (line 368) and accepted."
+    confidence: low
+    note: "Little effect on the planned normalization: the decay chain was forced in the generate line, the MG5 sigma (2.7e-5 pb = sigma_LO x BR^2) was not used, and the compaction summary (line 869) shows the agent treated BR = 1, as the ledger does. The residual effect is a broader stop line shape in the kinematics. Recorded as a setup detail the agent filled in wrongly."
+  - code: 3c
+    where: "transcript lines 557-558 (only checked event 0's BTag list and the set {0,1}) -> line 581 (launched 50k shower)"
+    what: "Before starting the 50k-event shower the agent did not run its selection or count b-tagged jets on the 20-event Delphes test, so it missed that b-tagging was broken (found only at line 741, cutflow btag = 0) and had to throw away the first ~30%+ shower and restart at line 889."
+  - code: 3c
+    where: "transcript line 893 (final assistant text, end_turn at line 894; shower task bijr98lya killed at line 896)"
+    what: "The agent put the needed 50k-event re-shower in the background and ended its turn with the results YAML still all null (it even wrote '[Background task notification arrives]' as if the notification had come), so the harness stopped the session, killed the shower and the run produced nothing."
+    note: "Best-fitting 3x code is 3c (sanity checks): the agent did not check that its deliverable existed before ending the turn. Only 0.4 h of the 10 h walltime had been used, so time was not the constraint; it could have waited on the job in the foreground or polled until done. No 3x code is an exact fit for 'ended turn while a needed job was running'."
+  - code: 3e
+    where: "transcript line 578 (final analysis.py process_delphes_file)"
+    what: "The selection silently drops the paper's isolated-track and tau vetoes (and lepton isolation beyond Delphes defaults), although the first version's docstring (line 200) listed the track veto, and nothing records the approximation."
+    confidence: low
+    note: "Never ran, so no effect on this run's score; would slightly raise the signal efficiency if it had."
