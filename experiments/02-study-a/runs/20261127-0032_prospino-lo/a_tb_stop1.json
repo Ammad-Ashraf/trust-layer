@@ -1,0 +1,18 @@
+{
+  "process": "tb",
+  "collider": "lhc",
+  "sqrts_gev": 13000,
+  "order": "NLO",
+  "ipart1": 1,
+  "ipart2": 1,
+  "isq_ng": 1,
+  "xsec_pb": {
+    "lo": 0.0159,
+    "nlo": 0.0272,
+    "k_factor": 1.7095
+  },
+  "slha": "/tmp/claude-1001/-home-israr-Documents-Ammad-Particle-Physics/fd39dd93-4721-42d8-9278-f732cf6591e5/scratchpad/r4/slha/a_tb_stop800_lsp400.slha",
+  "runtime_s": 16.01,
+  "prospino_dat": "/home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/prospino_scratch/tb-a1f0fd054b3e/prospino.dat",
+  "scratch_dir": "/home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/prospino_scratch/tb-a1f0fd054b3e"
+}
