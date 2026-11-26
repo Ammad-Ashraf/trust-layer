@@ -29,7 +29,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 | Gate (Stop hook, bounce cap 3, bounce log) | `src/trustlayer/gate/` | — | ✅ 26 Nov (tested in the container and a real run) |
 | Injector for Study A | `src/trustlayer/inject/` | — | ✅ 26 Nov |
 | Report (results tables) | `src/trustlayer/report/` | — | ✅ 26 Nov (Study A) |
-| Container integration (mount CLI + hook) | `integration/` | — | ✅ 26 Nov: `simple_ledger` + `scripts/run-checker-arm` work on the runner; fork still pending (before Study B) |
+| Container integration (mount CLI + hook) | `integration/` | — | ✅ 26 Nov: `simple_ledger` + `scripts/run-checker-arm` work on the runner; fork done 27 Nov ([`Ammad-Ashraf/Collider-Bench`](https://github.com/Ammad-Ashraf/Collider-Bench), branch `trust-layer`), submodule repinned |
 
 ## This week (13–17 Nov)
 
@@ -48,7 +48,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 - [ ] Ammad: ask Israr for OK to add a `tlsubject` user on his laptop (0010). **Now blocks Study B**: it is the login-clash fix (0018) → runner task R5
 - [x] Runner: commit the smoke run's `session.jsonl.gz`, `analysis.py` and `report.md` (0012); check the photon–jet guess (ruled out; the real cause is the gravitino, see M3)
 - [x] M3: smoke-run transcript read in full and labelled → `labels.yaml` + `results/m3-review.md` (0 Gap-1 errors; 3a, 3b, 3c, 3d + 1 uncoded)
-- [x] Windows: build the `simple_ledger` agent folder (0008) → M4 step 6 (26 Nov). Still open: put it in a Collider-Bench fork and repin the submodule, before Study B
+- [x] Windows: build the `simple_ledger` agent folder (0008) → M4 step 6 (26 Nov). Fork and repin done 27 Nov
 
 ## This week (30 Nov–6 Dec): M4 checker v0, steps from [checker-v0.md](design/checker-v0.md) §8
 
@@ -60,7 +60,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done · ⏸ blocked. Update t
 - [x] Step 6: agent-folder build script, shims, fairness test on the built folder, post-run tamper check (26 Nov)
 - [x] Step 7 (runner): task R1 in [runner-tasks.md](runner-tasks.md) (container test + `--claude-hook`)
 - [x] Step 8 (runner): task R2 in [runner-tasks.md](runner-tasks.md) (one cheap `simple_ledger` run) → **M4 done**
-- [ ] Before Study B: Collider-Bench fork with the agent folder, submodule repinned (0008; creating a public fork needs Ammad's OK)
+- [x] Before Study B: Collider-Bench fork with the agent folder, submodule repinned (0008): `Ammad-Ashraf/Collider-Bench` @ `bc18573`, 27 Nov
 - [x] Update `docs/engineering-standards.md`: no `pint` inside the container (0009); `pint` is now a dev dependency
 - [x] M2 prep: confirm task id (`sus-16-034_sim-TChiWZ`), find public sources, write the fill guide; rename `tasks/` folders to full task ids
 - [x] M2: fill `tasks/sus-16-034_sim-TChiWZ/ledger.yaml` by hand, step by step (5.41 events, matches CMS's cut flow); revision story in `story.md`

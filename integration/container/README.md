@@ -38,6 +38,6 @@ Confirmed 2026-11-26 (runner task R1, ok 6): Claude Code in `-p --dangerously-sk
 
 1. `git pull`, then `python3 scripts/build_agent_folder.py`.
 2. `bash scripts/gate_container_test.sh` (free) and, once, `--claude-hook` (Haiku, a few cents).
-3. For the real test run, copy the built folder into the runner's Collider-Bench checkout: `cp -r build/agent/simple_ledger external/collider-bench/agents/`. This is a dirty submodule, fine for an M4 test but not for measured runs. Then run one cheap task with `bash scripts/run-checker-arm --config <config>`.
+3. The folder comes with the submodule: `git submodule update --init` checks out the fork commit that contains `agents/simple_ledger/`. Then run one task with `bash scripts/run-checker-arm --config <config>`.
 4. After the run: `python3 scripts/postrun_check.py <harness run dir> experiments/<exp>/runs/<run-id>/`. It copies the bounce log and prints `bounces`, `gate_final_event`, `tampered` and `gate_error` for the manifest.
-5. Before Study B: the fork (decision 0008). Push the built folder to a fork commit and repin the submodule, so one commit pins what the agent ran.
+5. **The fork** (decision 0008, done 27 Nov): [`Ammad-Ashraf/Collider-Bench`](https://github.com/Ammad-Ashraf/Collider-Bench), branch `trust-layer` = upstream `2986d8b` plus `agents/simple_ledger/` only. The submodule is pinned to that branch. **After any change to `src/` or `integration/`:** commit it, rebuild into a clone of the fork on the `trust-layer` branch (`--out <clone>/agents/simple_ledger --collider-bench <clone> --into-fork`), set the exec bit on the shims and `run-analysis` (`git add --chmod=+x`, needed on Windows), commit, push, and repin the submodule here. `runtime/BUILD-INFO.yaml` must name a clean trust-layer commit.

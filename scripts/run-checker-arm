@@ -10,7 +10,7 @@
 #
 # Usage, from the trust-layer repo root on the runner:
 #   bash scripts/run-checker-arm --config experiments/04-gate-test/harness-config.yaml
-# Needs agents/simple_ledger in the Collider-Bench checkout (see docs/runner-tasks.md).
+# agents/simple_ledger comes with the submodule (the fork's trust-layer branch, decision 0008).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
@@ -25,7 +25,7 @@ while [[ $# -gt 0 ]]; do
 done
 [[ -n "$CONFIG" ]] || { echo "run-checker-arm: --config is required" >&2; exit 2; }
 [[ -f "$CB/agents/simple_ledger/run.py" ]] || {
-  echo "run-checker-arm: $CB/agents/simple_ledger is missing; build and copy it first" >&2; exit 2; }
+  echo "run-checker-arm: $CB/agents/simple_ledger is missing; run git submodule sync && git submodule update --init" >&2; exit 2; }
 
 cd "$CB"
 if [[ -f "$CB/.venv/bin/activate" ]]; then

@@ -1,3 +1,4 @@
 [submodule "external/collider-bench"]
 	path = external/collider-bench
-	url = https://github.com/dfaroughy/Collider-Bench
+	url = https://github.com/Ammad-Ashraf/Collider-Bench
+	branch = trust-layer
