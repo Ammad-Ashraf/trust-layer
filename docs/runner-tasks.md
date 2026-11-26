@@ -11,6 +11,8 @@ The work queue for the runner: the Linux laptop that runs Collider-Bench. Ammad 
 5. Before committing any transcript or log, scan it for secrets: `sk-ant`, `Bearer`, `oauth`, `refresh_token`, `access_token`, `api_key`, `password`. On a real secret, stop and report; don't commit.
 6. If a step fails, write what failed into `report.md`, commit that, and stop. Don't improvise fixes to our code on this machine.
 
+Machine specs: [`runner-machine.md`](runner-machine.md).
+
 Paths used below: `CB=external/collider-bench`. A harness run folder is `$CB/runs/<runner>_<model>/<task>_<agent-id>/` (written `<RUN>`).
 
 ---

@@ -14,6 +14,7 @@ Read first: [`docs/project-summary.md`](docs/project-summary.md) (the whole proj
 | `docs/decisions/` | One file per decision (options → lean → Ammad's call + why) |
 | `docs/engineering-standards.md` | Coding and engineering rules. **Follow them for all code** |
 | `docs/runner-tasks.md` | The runner's work queue. Every task for Israr's machine is written here (never pasted in chat); the runner reports back via `report.md` in its run folder |
+| `docs/runner-machine.md` | The runner laptop's hardware and software (pinned in run manifests as `runner-laptop-24c`) |
 | `docs/design/` | Design docs; `checker-v0.md` is the M4 build plan and Study A's fixed injection table |
 | `docs/outreach/` | `collider-bench-findings.md`: benchmark problems to report. **Read it before any contact with the Collider-Bench authors; add to it when you find one** |
 | `docs/artifacts/` | Read-only exports of the claude.ai docs (see `docs/INDEX.md`). Never edit |

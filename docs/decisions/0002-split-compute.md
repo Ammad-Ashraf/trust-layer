@@ -22,4 +22,4 @@ Split compute: develop on small machines, rent 128 vCPU only for the 18 measured
 
 ## Decision (Ammad)
 
-Split compute. Development is plain Python on the Windows laptop; dev-phase simulation runs (smoke run, baselines, gate tests) go on the friend's 8-core Linux laptop with tiny N_gen. Study B rents a 128-vCPU EPYC instance for about 20–25 machine-hours (roughly $50–170; verify prices before booking). Fewer cores for Study B is rejected. NCP stays a bonus email, not a dependency.
+Split compute. Development is plain Python on the Windows laptop; dev-phase simulation runs (smoke run, baselines, gate tests) go on the friend's 8-core Linux laptop (correction 2026-11-27: it has 24 cores / 32 threads; full specs in `docs/runner-machine.md`) with tiny N_gen. Study B rents a 128-vCPU EPYC instance for about 20–25 machine-hours (roughly $50–170; verify prices before booking). Fewer cores for Study B is rejected. NCP stays a bonus email, not a dependency.
