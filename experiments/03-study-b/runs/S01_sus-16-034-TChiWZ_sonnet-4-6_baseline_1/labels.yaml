@@ -1,2 +1,30 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 1, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 2, 3d: 0, 3e: 1, 3f: 0}
+  gap1_errors: 1
+  # Agent vs reference ledger:
+  #   sigma: 0.0194 pb = 19.4 fb (Prospino 2.1 NLO, chi1+ chi20 only)   vs 30.1656 fb (WG NLO+NLL, chi1+- chi20)  -> -36%
+  #   L:     35.9e3 pb^-1 = 35.9 fb^-1                                  vs 35.9 fb^-1                              -> OK, units OK
+  #   BR:    not applied as a factor; Pythia decays Z with SM BRs and the selection asks for ee/mumu (BR folded into eps; no double count) -> OK
+  #   eps:   352/50000 = 0.00704 (= BR x eps, truth level)             vs 0.101 x 0.0495 = 0.00500               -> +41%
+  #   N_gen: 50000, used correctly in weight = sigma x L / N_gen = 0.01393
+  #   total: 4.90 vs 5.41; the sigma deficit and the eps excess mostly cancel, so the pass is partly luck.
+labels:
+  - code: 1d
+    where: "transcript line 675 (bin/prospino run --process nn --ipart1 5 --ipart2 2), result line 679; used at line 711 (XS_PB = 0.0194)"
+    what: "Prospino was run for chi1+ chi20 only (ipart1=5 is chi1+, chi1- would be ipart1=7), so sigma = 19.4 fb misses the chi1- chi20 part (about a third of the total) while the generated sample and the target are chi1+- chi20; the code comment even calls it 'chi+1 chi02 + conj.'. Reference: 30.17 fb."
+  - code: 3c
+    where: "transcript lines 711 and 732 (code comment and report table list MG5 LO 0.02023 pb next to Prospino NLO 0.0194 pb)"
+    what: "No sanity check on sigma: the NLO value came out below the agent's own LO value for both charge states (implied K < 1), which should have exposed the missing chi1- chi20 channel, and the report still claims the normalization is consistent with the paper's NLO+NLL."
+  - code: 3e
+    where: "transcript lines 403-410 (5k-event split wrote 1 event, unnoticed) and 531-532 (switch to truth-level Python analysis); report section 3"
+    what: "After Delphes OOM kills the agent dropped detector simulation entirely (no lepton/jet efficiencies or smearing, no isolation), giving BR x eps = 0.0070 vs the reference 0.0050 (+41%); it noted a possible bias but applied no correction and did not retry Delphes on split chunks."
+    confidence: low
+    note: "Forced partly by the environment (OOM). Labelled because the efficiency excess is large and it hides the 1d sigma error by cancellation."
+  - code: 3c
+    where: "transcript line 532 (analysis_TChiWZ.py: bquarks collected from status-1 particles with |pid|==5; is_bjet)"
+    what: "The b-veto can never fire because b quarks are never final-state particles in the HepMC record, and the report wrongly describes it as B-hadron matching; the agent never checked that the veto removed anything."
+    confidence: low
+    note: "Small effect for this signal (few real b jets); code choice between 3c and 3e is uncertain."
