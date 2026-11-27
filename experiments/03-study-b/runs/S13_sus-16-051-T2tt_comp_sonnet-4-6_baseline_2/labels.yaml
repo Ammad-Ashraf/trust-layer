@@ -1,2 +1,62 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# early_stop: the agent's last message (line 1035) came after every background job had finished. Delphes finished
+# at line 947 and line 949 shows an empty background-task list. launch.log has no "stalled ... terminating".
+# The first 50k shower ran past its 600 s timeout and went to the background (line 336). The agent stopped it on
+# purpose (line 365) and started it again in the background at line 527. That run finished at line 835.
+# Line numbers below are line numbers in session.jsonl (1-based, 1036 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 1, 3c: 1, 3d: 1, 3e: 1, 3f: 0}
+  gap1_errors: 0
+  # Agent vs reference ledger:
+  # sigma: 27.2 fb (Prospino NLO, line 567; hard-coded as 0.0272 pb in analysis.py) vs 28.3338 fb (xsec WG NLO+NLL) -> 0.960x
+  #        The agent used NLO, the reference uses NLO+NLL. That is a 4% gap and is not a Gap-1 error.
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1.0 (stop -> t chi10 at 100% through the SLHA; top decays left inside eps) vs 1.0 -> match
+  # eps:   31/50000 = 6.2e-4 (cut flow, line 1019) vs 0.0077666 -> 0.080x (about 12.5x too low)
+  # N_gen: 50000 (MG5, line 274; all 50k showered and run through Delphes) vs n/a in the reference
+  # total: 0.6054 events (0.1758+0.1953+0.0781+0.1562) vs 7.9 -> 0.960 * 0.080 = 0.0766 -> delta_norm 0.923 (matches score.json)
+  # So the efficiency causes nearly all of delta_norm. The counting math is right:
+  # weight = 0.0272 pb * 1000 * 35.9 / 50000 = 0.01953, and 9/10/4/8 raw events times that weight reproduce the
+  # submitted values exactly. The shape is fine (JSD 0.016).
+  # The efficiency is low because of b-tagging. The cut flow (line 1019) goes 2jets 5597 -> 1btag 363, a 6.5% pass
+  # rate for an event with two top quarks, where about 85-90% is expected. shower.py writes only the final-state
+  # (status 1) particles to HepMC (line 310, the write loop), so Delphes finds no b partons. Every jet then gets the
+  # light-flavour mistag rate of about 1% (Delphes card read at line 616) instead of the b-jet efficiency.
+  # Fabrication check: none. Every number comes from a tool run. sigma comes from the Prospino JSON (line 567) and
+  # the yields from the analysis run (line 1019). The comment "= 0.019498 per event" in analysis.py is stale
+  # (the code computes 0.01953), but the code value is the one used.
+  # read-paper: YES, it failed with "file not found". Both relative paths failed (lines 22, 24:
+  # "ERROR: file not found: papers/CMS-SUS-16-051.pdf") although the file exists (line 26). The absolute path
+  # worked (lines 29-32). bin/prospino also resolved the relative --slha path against the collider-bench root
+  # (line 543). These are tool or harness path problems, not agent mistakes.
+  # Procedure: the agent ran `python analysis.py` directly (lines 939, 1016), not `bin/run-analysis` as TOOLS.md
+  # asks. It is not labelled because it had no effect on the result.
+  # Judge: VERIFIED, overrule NONE. I agree. The values come from the agent's own MG5 -> Pythia8 -> Delphes ->
+  # PyROOT chain. I also agree with the judge that the status-1-only HepMC broke b-tagging. One small disagreement:
+  # the judge lists the "uproot -> PyROOT pivot" as a creative move. The empty-keys error was more likely caused by
+  # reading the file while Delphes was still writing it (label 3d).
+gate_bounces: []   # baseline arm, no checker
+labels:
+  - code: 3e
+    where: "line 233 (first shower.py), line 268 (rewrite), line 310 (final shower.py, write loop 'Final-state particles (status 1)'), run at line 527"
+    what: "The shower script writes only the final-state particles to HepMC as a 'simplest valid' shortcut, so Delphes has no b quarks to match jets to and b-tags only at the ~1% mistag rate, making the efficiency about 12.5x too low."
+    confidence: medium
+    note: "The mechanism is solid: the cut flow at line 1019 shows only 363 of 5597 events with at least 1 b-tag (6.5%), and the Delphes card read at line 616 tags by parton flavour. I used 3e (an approximation that broke a downstream step) because no code fits exactly. It could also be read as 3a. This is the root cause of delta_norm 0.92."
+  - code: 3c
+    where: "line 1019 (cut flow 2jets 5597 -> 1btag 363), line 1030 (report.md says b-tag efficiency is about 63%), line 1035 (final answer)"
+    what: "The agent accepted a 6.5% at-least-one-b-tag rate for an event with two top quarks, and a total of only 0.6 expected events, without checking either against the ~63% b-tag efficiency its own report quotes."
+    confidence: high
+    note: "Comparing them would have exposed the factor of about 12. The first preselection step alone should keep about a quarter of the 1017 produced events (ledger self_check), but the agent never computed eps = 31/50000 or sigma x L x eps as a sanity check."
+  - code: 3d
+    where: "line 938 ('Delphes is done', based only on the file listing at line 934), lines 939-946 (uproot finds no keys at 22:42:40-44), line 947 (Delphes task finished at 22:42:46), lines 965 and 1004 (diagnosis)"
+    what: "The agent read the Delphes ROOT file before the background Delphes job had finished, then blamed the missing keys on uproot not knowing Delphes classes and rewrote the analysis in PyROOT."
+    confidence: low
+    note: "The timestamps show the analysis ran before Delphes closed the file. Whether uproot could have read the finished file was not tested. The submitted numbers are not affected, because the final analysis ran on the complete 50000-event file (line 1019)."
+  - code: 3b
+    where: "line 583 (agent says K-factor 1.706 from Prospino), line 1030 (report.md table: K-factor 1.354), line 1035 (final message)"
+    what: "The report gives K = 1.354 by dividing Prospino NLO by the MG5 LO cross-section, which mixes two codes, and contradicts the agent's own Prospino K = 1.706."
+    confidence: low
+    note: "This affects only the documentation. The event weight uses sigma_NLO = 0.0272 pb directly, so the yields are unaffected. The judge flagged it too."
