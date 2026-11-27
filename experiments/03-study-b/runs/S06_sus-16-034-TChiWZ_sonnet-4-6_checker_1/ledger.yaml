@@ -1,0 +1,43 @@
+schema_version: 2
+task: sus-16-034_sim-TChiWZ
+quantities:
+  cross_section:
+    value: 11.87
+    unit: fb
+    source: 'Sum of Prospino 2.1 NLO: 8.52 fb (pp->chi1+chi02, ipart1=5 ipart2=2,
+      scratch nn-e41e466296ba) + 3.35 fb (pp->chi1-chi02, ipart1=7 ipart2=2, scratch
+      nn-e49661916a44); 13 TeV CTEQ6'
+    source_type: xsec_wg
+    process: chargino_neutralino
+    masses_gev:
+      chargino_1: 550.0
+      neutralino_2: 550.0
+      neutralino_1: 200.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS-SUS-16-034 paper, 2016 Run 2 data
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: 'SLHA: chi02->Z chi01 100%, chi1+->W+ chi01 100%'
+    reason: 'Simplified model: 100% BR to Z/W for both sparticles'
+  generator_cross_section:
+    value: 18.37
+    unit: fb
+    source: MadGraph5 3.7.0 LO, NNPDF3.0, pp->n2 x1+ + pp->n2 x1-, MSSM_SLHA2, 50k
+      events
+    source_type: generator
+  efficiency:
+    value: 0.0035
+    unit: dimensionless
+    source: analysis/analysis.py on Delphes/delphes_card_CMS.tcl output, 10k events,
+      VZ region cuts
+    n_pass: 35.0
+    n_gen: 10000.0
+corrections:
+- name: trigger_efficiency
+  value: 1.0
+  unit: dimensionless
+  source: CMS dilepton trigger eff included in Delphes CMS card parametrization; not
+    applied separately

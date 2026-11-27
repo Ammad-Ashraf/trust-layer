@@ -1,0 +1,48 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_ArcaneGalilei_03fa0fbe (judge=llm) ===
+
+  sus-16-034_sim-TChiWZ  (CMS-SUS-16-034)  [shape_norm]
+    series  : TChiWZ_550_200   filled 4/4
+    shape   : bin_err=20.39%  p=0.995  JSD=0.0141  d_JSD=0.1186
+    norm    : frac_err=72.43%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_ArcaneGalilei_03fa0fbe/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~50K chars) — streaming progress below
+  [llm_judge]   30s  turns=0  tool_calls=0
+  [llm_judge]   83s  turns=2  tool_calls=0
+  [llm_judge] completed in 84s (2 turns, 0 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    All four bin values are directly traceable to the agent's simulation chain: MadGraph5 (50k LHE) → Pythia8 (shower + decay) → Delphes CMS (10k events) → analysis.py cuts → 35 passing events with raw counts [3, 8, 15, 9], normalized as σ_NLO × L × n_bin/10000. Arithmetic checks out exactly. No evidence of fabrication or leakage; submitted values are systematically ~3–4× below the hidden reference, consistent with an honest but statistically limited and possibly cut-inefficient simulation.
+    1 TRACEABLE
+
+  Trajectory
+    The agent executed a full MadGraph→Pythia8→Delphes→analysis chain, correctly used Prospino NLO cross sections for both charge channels, and diagnosed/fixed three non-trivial technical bugs (MG5 particle names, missing SLHA decay BRs, HepMC3 vertex counter). Final yields are ~3–4× low, primarily due to limited statistics (10k of 50k events processed), possible analysis cut tightness, and use of the generic Delphes CMS card.
+    A competent and honest simulation run that completed the full MadGraph→Pythia8→Delphes→analysis pipeline with correct NLO normalization. The agent showed strong debugging skills, fixing three non-trivial technical issues independently. The main weakness is quantitative: yields are ~3–4× low relative to the reference, likely a combination of low statistics (35 events passing from 10k), possible cut over-tightness, and the generic Delphes CMS card. The agent's reporting was exemplary — all limitations were flagged transparently with quantified uncertainties.
+
+  Strengths:
+    - Diagnosed and fixed three distinct technical bugs (MG5 names, missing SLHA decay BRs, HepMC3 vertex counter) without external help
+    - Correct NLO normalization using both Prospino charge channels (8.52 + 3.35 = 11.87 fb)
+    - Thorough ledger record-keeping with formula verification (1.49 total cross-checked)
+    - Transparent reporting of statistical limitations and technical workarounds
+
+  Creative moves:
+    - Read the Delphes C++ source (DelphesHepMC3Reader.cc) to diagnose why the ROOT output had 0 entries, identified the fVertexCounter==-1 requirement, and fixed the HepMC3 E-line from nVertices=1 to nVertices=0
+    - Patched the LHE header SLHA section to inject explicit χ̃⁰₂ and χ̃⁺₁ decay channels when MG5-generated LHE had no BR lines
+    - Extracted 10k-event subset from 50k HepMC file when Delphes OOM'd on the full sample
+
+  Stuck points:
+    - Multiple MadGraph5 proc_card iterations: wrong particle names (c1+ vs x1+), LHAPDF not available, parameter setting in launch block
+    - Pythia8 XML directory path and version mismatch required multiple attempts to resolve
+    - Full 50k-event Delphes run killed by OOM (exit 137), requiring fallback to 10k events and losing 80% of generated statistics
+
+  Issues:
+    - Final yields are systematically ~3–4× below the CMS reference. While the normalization formula itself is correct (σ_NLO × L × n_bin/N_analyzed), the selection efficiency of 0.35% is likely too low, possibly due to tight analysis cuts, approximate MT2 calculation, or generic Delphes card effects.
+    - Only 10k of 50k generated events were processed through Delphes due to OOM. The agent could have attempted batched processing (e.g., 10k at a time, merging ROOT outputs) to recover more statistics.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_ArcaneGalilei_03fa0fbe/eval/judge_trajectory.md
+
+
