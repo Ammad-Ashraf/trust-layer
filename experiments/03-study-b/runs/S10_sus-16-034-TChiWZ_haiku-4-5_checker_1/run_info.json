@@ -1,0 +1,32 @@
+{
+  "agent_id": "GroovyGoldstone_2076294f",
+  "run_dir": "claude_haiku-4-5/sus-16-034_sim-TChiWZ_GroovyGoldstone_2076294f",
+  "task_id": "sus-16-034_sim-TChiWZ",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-034",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-27T21:32:31Z",
+  "ended_at": "2026-11-27T21:40:39Z",
+  "exit_code": 0,
+  "duration_wall_s": 487.47,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 1.114685,
+    "input_tokens": 746,
+    "output_tokens": 48948,
+    "cache_read_tokens": 6546955,
+    "cache_creation_tokens": 107252,
+    "tokens_total_billed": 156946,
+    "n_turns": 95
+  }
+}

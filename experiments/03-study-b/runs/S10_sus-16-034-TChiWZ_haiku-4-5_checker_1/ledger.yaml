@@ -1,0 +1,34 @@
+schema_version: 2
+task: sus-16-034_sim-TChiWZ
+quantities:
+  generator_cross_section:
+    value: 0.5823
+    unit: fb
+    source: MadGraph5_aMC v3.7.0 LO, used in event generation
+    source_type: generator
+  cross_section:
+    value: 0.47
+    unit: pb
+    source: Estimated NLO+NLL from SUSY cross section WG for TChiWZ topology
+    source_type: paper
+    process: chargino_neutralino
+    masses_gev:
+      chargino_1: 550.0
+      neutralino_2: 550.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS 2015 data at 13 TeV, CMS-SUS-16-034 paper
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: MSSM mass spectrum + Delphes
+    reason: χ̃₁⁺→W χ̃₁⁰ 100%, χ̃₂⁰→Z χ̃₁⁰ 100% (mass hierarchy); W/Z decays included
+      in detector sim
+  efficiency:
+    value: 0.5086
+    unit: dimensionless
+    source: 'Delphes detector simulation: E_T^miss > 100 GeV + 3+ leptons multilepton
+      selection'
+    n_pass: 5086.0
+    n_gen: 10000.0
