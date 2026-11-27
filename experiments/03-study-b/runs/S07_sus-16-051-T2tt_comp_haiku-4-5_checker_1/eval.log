@@ -1,0 +1,50 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-051_sim-T2tt_comp_NimbleWitten_29ad5d88 (judge=llm) ===
+
+  sus-16-051_sim-T2tt_comp  (CMS-SUS-16-051)  [shape_norm]
+    series  : T2tt_800_400   filled 4/4
+    shape   : bin_err=20.25%  p=0.997  JSD=0.0114  d_JSD=0.1065
+    norm    : frac_err=85.71%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-051_sim-T2tt_comp_NimbleWitten_29ad5d88/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~28K chars) — streaming progress below
+  [llm_judge]   30s  turns=0  tool_calls=0
+  [llm_judge]  113s  turns=2  tool_calls=0
+  [llm_judge] completed in 114s (2 turns, 0 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: QUESTIONABLE
+    Values trace to a computation chain (Prospino cross-section → synthetic event generation → selection → normalization), but the chain has two fundamental flaws: (1) the cross-section of 0.0555 fb for 800 GeV stop pair production is ~260x below the expected NLO+NLL value (~14.5 fb), likely because the agent used the wrong Prospino process code ('sb' = sbottom instead of stop pair); (2) the 'selection efficiency' of 56.7% is derived from hand-tuned synthetic random events, not from actual Monte Carlo simulation, making it physically meaningless. The two errors partially cancel (low σ × high ε) but the result is still ~7x too low.
+    1 PARTIALLY_TRACEABLE
+
+  Trajectory
+    The agent had a sound high-level plan (paper → cross-section → simulation → selection → normalization) but failed at execution: it used the wrong Prospino process for the cross-section, could not create proper ROOT files or run real MC simulation, and fell back to synthetic random events with hand-tuned distributions. The final yield of 1.13 events is ~7x below the reference (~7.9), with errors in cross-section and efficiency partially canceling.
+    The agent demonstrated reasonable high-level planning and correctly identified the physics requirements, but failed critically at execution. Two compounding errors — wrong Prospino process (yielding a cross-section ~260x too low) and synthetic event generation (yielding a meaningless efficiency ~38x too high) — partially canceled to produce results ~7x below the reference. The agent did not perform any sanity checks that would have caught these errors. The fall-back to synthetic events, while pragmatic for unblocking the pipeline, is not a valid physics methodology and cannot produce meaningful results. The submitted values are traceable to the agent's computation but the computation itself is fundamentally unreliable.
+
+  Strengths:
+    - Correctly identified all compressed signal region cuts from Table 3 of CMS-SUS-16-051
+    - Properly used Prospino to calculate a cross-section (even though wrong process was selected)
+    - Recorded quantities in the ledger with sources and reasoning
+    - Applied correct normalization formula (σ × L × BR × ε)
+    - Wrote a complete report documenting methodology and caveats
+
+  Creative moves:
+    - Fell back to synthetic event generation when ROOT file creation and proper MC simulation proved intractable within the tool environment.
+
+  Stuck points:
+    - Could not create a valid ROOT file with uproot — at least 4 failed attempts with different approaches, none successful.
+    - Extensive iteration on datasets.yaml format to pass preflight checks (at least 5 rewrites), ultimately bypassed by running analysis.py directly.
+    - Used Prospino process 'sb' (sbottom pair) instead of the correct stop pair process, yielding a cross-section ~260x too low.
+
+  Issues:
+    - Cross-section from Prospino is ~260x too low (0.0555 fb vs ~14.5 fb for 800 GeV stop pair at 13 TeV), likely because the agent ran sbottom pair production ('sb') instead of stop pair production.
+    - Selection efficiency of 56.7% is derived from synthetic random events (gamma/poisson/uniform distributions), not from physics simulation. This number has no physical meaning and is ~38x higher than a realistic compressed-region efficiency.
+    - Report claims 'The analysis correctly reproduces the compressed signal region selection criteria and produces realistic signal predictions' and that the 56.7% efficiency is 'reasonable for SUSY signal in the compressed region.' Both claims are unsupported given synthetic events and wrong cross-section.
+    - The agent did not attempt to cross-check its cross-section against published SUSY cross-section tables (e.g., the LHC SUSY Cross Section Working Group results), which would have immediately revealed the ~260x discrepancy.
+    - Used Prospino process 'sb' (sbottom) when the task requires stop pair production. The agent earlier saw 'stop_pair' listed as a valid process name for record-quantity but did not map this to the correct Prospino process code.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-051_sim-T2tt_comp_NimbleWitten_29ad5d88/eval/judge_trajectory.md
+
+
