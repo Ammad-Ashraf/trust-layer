@@ -1,5 +1,6 @@
-version: study-b-v1-14-g5c1add1
-voids: {}
+version: study-b-v1-18-g3700c5b
+voids:
+  S05: 1
 runs:
 - folder: S01_sus-16-034-TChiWZ_sonnet-4-6_baseline_1
   slot: S01
