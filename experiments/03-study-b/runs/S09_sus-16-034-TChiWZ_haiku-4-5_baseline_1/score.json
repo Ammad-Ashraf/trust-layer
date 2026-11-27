@@ -1,0 +1,24 @@
+{
+  "task_id": "sus-16-034_sim-TChiWZ",
+  "paper": "CMS-SUS-16-034",
+  "header_name": "TChiWZ_550_200",
+  "n_bins": 4,
+  "n_filled": 4,
+  "score_mode": "shape_norm",
+  "shape": {
+    "mean_abs_frac_error_pct": 37.723,
+    "p_value": 0.995556,
+    "jensen_shannon": 0.017528,
+    "jensen_shannon_dist": 0.132394,
+    "d_bar": 0.11183,
+    "d_max": 0.086568,
+    "dmax_dbar_ratio": 0.774104,
+    "relative_l2": 0.233129
+  },
+  "normalization": {
+    "mean_abs_frac_error_pct": 98.891,
+    "Delta": 0.988909,
+    "rmsle": 0.850071,
+    "relative_l2": 0.989496
+  }
+}

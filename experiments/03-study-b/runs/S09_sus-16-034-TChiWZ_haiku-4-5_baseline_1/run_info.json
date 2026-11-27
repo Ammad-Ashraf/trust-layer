@@ -1,0 +1,32 @@
+{
+  "agent_id": "BubblyPerl_f7dd476f",
+  "run_dir": "claude_haiku-4-5/sus-16-034_sim-TChiWZ_BubblyPerl_f7dd476f",
+  "task_id": "sus-16-034_sim-TChiWZ",
+  "agent": "simple",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-034",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-27T21:23:19Z",
+  "ended_at": "2026-11-27T21:28:18Z",
+  "exit_code": 0,
+  "duration_wall_s": 298.92,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 0.594359,
+    "input_tokens": 449,
+    "output_tokens": 35930,
+    "cache_read_tokens": 2782099,
+    "cache_creation_tokens": 68025,
+    "tokens_total_billed": 104404,
+    "n_turns": 58
+  }
+}
