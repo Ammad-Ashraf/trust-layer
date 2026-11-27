@@ -70,6 +70,14 @@ Pinned context for every entry, unless stated otherwise: Collider-Bench commit `
 - **Suggested fix:** ship a matching xmldoc, or point the docs and the `simulate` tool at the conda copy.
 - **Reported:** not yet.
 
+## F7 · `bin/read-paper` rejects relative paths from the workspace (medium, pushes weaker agents off the paper)
+
+- **Found:** 2026-11-28, Study B S08 (Haiku 4.5, T5Wg). The same error appears in S05 (Sonnet, T5Wg) and S07 (Haiku, T2tt).
+- **What:** `ColliderBench/bin/read-paper` runs `cd "${REPO_ROOT}"` before `python -m ColliderBench.tools.CLI.read_paper "$@"`. The natural call from the workspace, `bin/read-paper papers/CMS-SUS-16-046.pdf`, then fails with `ERROR: file not found: papers/CMS-SUS-16-046.pdf`, even though `ls papers/` shows the file. Only an absolute path works.
+- **Why it matters:** S08 retried five times (transcript lines 32–48), gave up on the paper and went to WebFetch, then fabricated its efficiency and bins. Sonnet worked around it. Like F6, this is an environment failure that has nothing to do with physics, and it hits weaker agents harder. It affects both Study B arms the same way.
+- **Suggested fix:** resolve the path argument against the caller's working directory before the `cd` (e.g. `realpath` the first argument), or don't `cd` at all.
+- **Reported:** not yet.
+
 ---
 
 ## What we'll also offer them
