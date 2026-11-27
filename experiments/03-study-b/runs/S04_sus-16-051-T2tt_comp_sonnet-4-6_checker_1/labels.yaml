@@ -1,2 +1,37 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 1, 3d: 0, 3e: 2, 3f: 0}
+  gap1_errors: 0
+  # Agent vs reference ledger (comment lines): sigma / L / BR / eps / N_gen / total
+  # sigma: 27.2 fb (0.0272 pb, Prospino 2.1 NLO, line 311/324) vs 28.3338 fb (NLO+NLL WG) -> -4.0%, accepted order, no label
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1.0 (T2tt by construction) vs 1.0 -> match
+  # eps:   0.00616 (308/50000, line 787/840) vs 0.0077666 -> -20.7% (selection/simulation, not a counting error)
+  # N_gen: 50000 (MG5 run_02, 800/400 checked at line 600) vs n/a (reference eps comes from the CMS cut-flow table)
+  # total: 6.015 vs 7.90 events -> -23.9%; bins 1.953/1.640/1.016/1.406 vs 2.3/1.7/1.7/2.2
+  # Not labelled (fixed by the agent itself, never reached the result): first MG5 run used the model's
+  # default param card (stop 399.7 GeV, chi10 96.7 GeV; line 369), caught at line 396, regenerated with
+  # 800/400 at line 516-545. Ledger CLI rejected '--process tb' (line 323) and BR=1 without --reason
+  # (line 329); both fixed on the next call.
+  # Judge's "electron |eta|<1.442 is a misread" is wrong: the paper's Table 1 (line 41) gives 1.442 for
+  # electrons, so no label. Judge's "NLO+NLL ~14.6 fb" repeats the agent's error (see 3c below).
+gate_bounces: []   # 0 bounces; the gate's first Stop check passed C1-C5 (C2 matched the run's Prospino NLO 0.0272 pb, C5 bins sum 6.015 = ledger)
+labels:
+  - code: 3c
+    where: "line 930 (post-compaction summary carries it from redacted thinking) / line 973 (report.md Write)"
+    what: "The agent's sanity check of sigma used a wrong reference: it claimed the LHC SUSY WG NLO+NLL value for an 800 GeV stop is ~14.6 fb (it is 28.3 fb) and wrote in the report that Prospino is ~1.9x too high because of CTEQ6L1, a mismatch that does not exist."
+    confidence: medium
+    note: "Did not change the numbers (Prospino 27.2 fb was kept and is within 4% of the reference), but the report tells the reader to scale yields down by ~1.9x, which would be wrong; the LLM judge repeated the error. 14.6 fb is roughly the 900 GeV value. Could also be read as 3d (wrong diagnosis of a mismatch)."
+  - code: 3e
+    where: "line 424 (analysis/analysis.py first written; paper's veto rules read at line 41)"
+    what: "The selection requires exactly one selected lepton (pT>20 GeV) but leaves out the paper's preselection vetoes on a second veto lepton (pT>5 GeV), isolated tracks and hadronic taus, and the report does not list this as a deviation."
+    confidence: low
+    note: "The missing vetoes would raise the efficiency, so they do not explain the 21% efficiency deficit; real effect on this signal is probably small."
+  - code: 3e
+    where: "line 335 (proc_card: generate p p > t1 t1~) / line 973 (report: 'No ISR reweighting applied (small effect...)')"
+    what: "Events were made with no extra hard partons in the matrix element, so the ISR jets needed by the >=5-jet compressed selection come only from the Pythia shower, and the report calls this a small effect without checking."
+    confidence: low
+    note: "Possible part of the eps shortfall (0.00616 vs 0.00777), not shown; Delphes modelling or the stripped HepMC history (line 674) may matter as much. Inferred, not demonstrated."
