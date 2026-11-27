@@ -1,6 +1,7 @@
 schema_version: 1
 reviewer: claude (runner laptop, subagent)
 read: full
+early_stop: false
 summary:
   counts: {1a: 0, 1b: 1, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 1, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 1, 3d: 0, 3e: 0, 3f: 0}
   gap1_errors: 1
