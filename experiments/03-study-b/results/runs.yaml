@@ -1,4 +1,4 @@
-version: study-b-v1-33-g7b25451
+version: study-b-v1-37-gc15c2e9-dirty
 voids:
   S05: 2
 runs:
@@ -133,5 +133,24 @@ runs:
   checker_seconds: 1.0
   labelled: true
   gap1: 2
+  labels: 5
+  passed: false
+- folder: S08_sus-16-046-T5Wg_haiku-4-5_checker_1
+  slot: S08
+  model: claude-haiku-4-5
+  task: sus-16-046_sim-T5Wg
+  arm: checker
+  rep: 1
+  outcome: scored
+  wall_hours: 0.203
+  delta_norm: 0.224795
+  norm_l2: 0.954433
+  shape_l2: 0.989103
+  judge_status: FAILED
+  overrule: INVALIDATE_SERIES
+  bounces: 0
+  checker_seconds: 0.7
+  labelled: true
+  gap1: 1
   labels: 5
   passed: false
