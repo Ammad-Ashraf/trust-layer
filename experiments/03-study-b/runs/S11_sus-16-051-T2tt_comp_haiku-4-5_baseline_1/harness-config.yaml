@@ -1,0 +1,8 @@
+agent: simple
+task: sus-16-051_sim-T2tt_comp
+runner: claude
+auth: token
+model: claude-haiku-4-5
+effort: max
+sandbox: podman
+compute: local
