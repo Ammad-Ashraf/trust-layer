@@ -1,2 +1,71 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false   # the turn ended at line 371 ("Analysis Complete"); the only long job (Prospino, line 119) ran in the foreground
+# Line numbers below are line numbers in session.jsonl (1-based, 372 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 1, 1e: 1, 2a: 0, 2b: 1, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 1, 3d: 0, 3e: 1, 3f: 0}
+  gap1_errors: 2
+  # Agent vs reference ledger:
+  # sigma: 0.0555 fb (Prospino NLO, process 'sb' = light squark-antisquark with all light squarks at 2500 GeV)
+  #        vs 28.3338 fb (xsec WG NLO+NLL, stop pair, 800 GeV) -> 0.00196x (about 510x too small). Unit conversion
+  #        5.55e-05 pb -> 0.0555 fb is right, so this is not 1a.
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1.0 (T2tt definition) vs 1.0 -> match
+  # eps:   0.5668 (2834/5000 synthetic random events) vs 0.0077666 -> about 73x too large
+  # N_gen: 5000 synthetic events from np.random (no MG5/Pythia/Delphes was ever run) vs n/a in the reference
+  # total: 1.129 vs 7.9 events -> 0.00196 * 73.0 = 0.143 -> delta_norm = 1 - 0.143 = 0.857 (matches score.json 0.857089)
+  # So the score is two huge errors that almost cancel: sigma ~510x low (label 1d), eps ~73x high (fake events, label 2b,
+  # plus the in-bin mismatch in label 1e, which inflates the bins by 1.32x). delta_norm 0.86 understates how broken the
+  # normalization is.
+  # Judge QUESTIONABLE (overrule NONE): the values trace to a real computation chain, but sigma came from the wrong
+  # Prospino process and eps from hand-tuned random events, so the chain is physically meaningless; not fabrication of
+  # the submitted numbers. Two judge slips: it calls 'sb' "sbottom pair" (the help text at line 103 says
+  # squark-antisquark) and quotes ~14.5 fb as the correct sigma (reference is 28.3 fb NLO+NLL).
+# gate-bounces.jsonl has one record (21:06:50) with event: pass and all of C1-C5 passed. That is the final gate pass,
+# not a bounce.
+gate_bounces: []
+# What the gate missed (0 bounces, delta_norm 0.86):
+# - cross_section (0.0555 fb, process stop_pair, stop_1=800, neutralino_1=400) is the entry that let the wrong
+#   normalization through. The value comes from a Prospino 'sb' (squark-antisquark) run, but the agent wrote
+#   process: stop_pair in the ledger (line 133).
+#   C1 passed: units are right (pb -> fb done correctly, fb x fb^-1 unit-free).
+#   C2 passed: it only checks that the value matches some Prospino NLO result from this run ("matches a Prospino NLO
+#     result"); gate-bounces.jsonl itself lists that run as process "sb", but C2 never compares the run's process with
+#     the ledger's process field.
+#   C4 passed: it only compares the ledger's self-declared process/masses (stop_pair, 800/400) with the task, and
+#     never looks at which Prospino process actually produced the number. C2 and C4 each see half of the mismatch.
+#     A joint check (the matched Prospino run's process must be tb/stop pair) would have bounced it.
+# - efficiency (0.5668, n_pass 2834, n_gen 5000) is the second entry. It comes from random numbers (line 289), and
+#   2834 includes events below E_T^miss 250 GeV that are in no bin (in-bin count is 2148, line 293).
+#   C3 passed: all four factors are present, BR = 1 has a reason.
+#   C5 passed: the agent rescaled the bins to the ledger product (line 340), so bins sum to 1.129 = ledger 1.129. C5 checks
+#     the arithmetic only; it cannot see that eps is from fake events or that eps does not match the binned events.
+# - Nothing in C1-C5 checks plausibility: sigma 0.0555 fb for an 800 GeV stop (~500x below the standard table) and
+#   eps 0.57 for a one-lepton compressed region would both fail any magnitude check. That is outside checker v0's scope.
+labels:
+  - code: 1d
+    where: "line 68 (sees 'stop-antistop pair' exists), line 76 (Prospino process list incl. tb), line 103 ('sb' help: squark-antisquark pair), lines 110/119 (runs --process sb), line 122 (5.55e-05 pb), line 126 (calls it stop pair), line 133 (records process stop_pair)"
+    what: "The agent ran Prospino's light squark-antisquark process 'sb' (light squarks at 2500 GeV in its SLHA) instead of stop pair 'tb', got 0.0555 fb instead of about 28 fb, and recorded it in the ledger as stop_pair."
+    confidence: high
+    note: "This is the biggest single error (about 510x). The help text the agent read at line 103 says 'squark-antisquark pair', and it had seen the stop-antistop entry at line 68 but never ran help-process tb. The ledger's process field is false provenance for this number."
+  - code: 2b
+    where: "line 289 (writes analysis.py with generate_synthetic_events: np.random.gamma MET, randint jets, 30% lepton, 8% b-tag), line 292 (runs it: 2834/5000); earlier fake Delphes ROOT files at lines 218, 251, 283"
+    what: "After MG5/Pythia/Delphes never ran, the agent replaced the whole simulation chain with a random-number event generator and took its selection efficiency and bin shape as the physics result."
+    confidence: high
+    note: "No MG5 run ever happened (analysis.py's MG5 call was blocked by run-analysis preflight, and the agent then bypassed run-analysis with 'python3 analysis.py' at lines 263/278/292, against TOOLS.md). The report admits 'synthetic events' but claims 'realistic signal predictions' (line 371). The resulting eps 0.5668 is about 73x the reference; bins 2 and 3 are both 428, an artifact. Not also labelled 2c: the made-up efficiency is the output of this fake simulator, the same mistake."
+  - code: 1e
+    where: "line 293 (selected 2834/5000, but only 2148 in the E_T^miss bins), line 310 (records eps = 2834/5000), line 340 (bins scaled as count/2148 x 1.129)"
+    what: "The efficiency in the ledger counts 2834 selected events, but 686 of them have E_T^miss below 250 GeV and fall in no bin; the right in-bin count 2148 was printed but never used, so the bins are inflated by 2834/2148 = 1.32x."
+    confidence: medium
+    note: "The selection in analysis.py has no E_T^miss > 250 GeV cut, so eps should have been 2148/5000 = 0.43. The code fit is debatable (could be read as 3c); it is a ledger-vs-bins mismatch that C5 cannot see because the agent forced the bin sum to the ledger product. Small next to the 1d and 2b errors."
+  - code: 3c
+    where: "line 126 (accepts 0.0555 fb as the stop pair NLO sigma), line 340 (accepts total 1.129 events), line 352 (report: '56.7% efficiency is reasonable'; 'Prospino is reliable')"
+    what: "The agent never checked its sigma (0.0555 fb for an 800 GeV stop, about 500x below the standard table), its efficiency (57% for a one-lepton compressed region) or its total yield (1.1 events) against any reference or expectation."
+    confidence: high
+    note: "A K-factor of 1.83 and a 0.03 fb LO value at 800 GeV were also clues. The agent did no web search or table lookup."
+  - code: 3e
+    where: "line 289 (apply_compressed_selection), report at line 352"
+    what: "The selection drops the preselection cuts (exactly one lepton, M_T > 150 GeV, E_T^miss > 250 GeV, lepton/track vetoes): events with no lepton pass, yet the report says all Table 1 and Table 3 requirements were applied."
+    confidence: low
+    note: "Code choice is uncertain: it is part approximation (3e) and part misreporting. On synthetic events it hardly matters for the score, but it is one reason eps is so high."
