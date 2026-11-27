@@ -1,4 +1,4 @@
-version: study-b-v1-29-gf458a23
+version: study-b-v1-33-g7b25451
 voids:
   S05: 2
 runs:
@@ -112,6 +112,25 @@ runs:
   overrule: NONE
   bounces: 1
   checker_seconds: 147.1
+  labelled: true
+  gap1: 2
+  labels: 5
+  passed: false
+- folder: S07_sus-16-051-T2tt_comp_haiku-4-5_checker_1
+  slot: S07
+  model: claude-haiku-4-5
+  task: sus-16-051_sim-T2tt_comp
+  arm: checker
+  rep: 1
+  outcome: scored
+  wall_hours: 0.115
+  delta_norm: 0.857089
+  norm_l2: 0.857382
+  shape_l2: 0.270349
+  judge_status: QUESTIONABLE
+  overrule: NONE
+  bounces: 0
+  checker_seconds: 1.0
   labelled: true
   gap1: 2
   labels: 5
