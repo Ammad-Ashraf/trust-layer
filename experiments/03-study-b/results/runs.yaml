@@ -1,6 +1,6 @@
-version: study-b-v1-23-gb3a68ad
+version: study-b-v1-29-gf458a23
 voids:
-  S05: 1
+  S05: 2
 runs:
 - folder: S01_sus-16-034-TChiWZ_sonnet-4-6_baseline_1
   slot: S01
@@ -78,6 +78,25 @@ runs:
   gap1: 0
   labels: 3
   passed: true
+- folder: S05_sus-16-046-T5Wg_sonnet-4-6_checker_1
+  slot: S05
+  model: claude-sonnet-4-6
+  task: sus-16-046_sim-T5Wg
+  arm: checker
+  rep: 1
+  outcome: scored
+  wall_hours: 1.16
+  delta_norm: 0.65192
+  norm_l2: 0.62453
+  shape_l2: 0.113877
+  judge_status: VERIFIED
+  overrule: NONE
+  bounces: 1
+  checker_seconds: 293.1
+  labelled: true
+  gap1: 1
+  labels: 4
+  passed: false
 - folder: S06_sus-16-034-TChiWZ_sonnet-4-6_checker_1
   slot: S06
   model: claude-sonnet-4-6
