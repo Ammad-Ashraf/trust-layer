@@ -1,0 +1,61 @@
+schema_version: 1
+experiment: 03-study-b
+slot:
+  id: S05
+  model: claude-sonnet-4-6
+  task: sus-16-046_sim-T5Wg
+  arm: checker
+  rep: 1
+  pilot: false
+task: sus-16-046_sim-T5Wg
+arm: checker
+model_requested: claude-sonnet-4-6
+model_snapshot: claude-sonnet-4-6
+claude_code_version: 2.1.326
+auth: token
+api_key_source: none
+mcp_servers: []
+trust_layer_commit: 2e541879094862eaa979fcdc9234fda167e6699b
+tag: study-b-v1
+collider_bench_commit: 8c810283f85e44de1cc72522c5407cbc9e563967
+container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f
+machine: runner-laptop-24c
+cores: 32
+walltime_limit: 10h
+started_at: '2026-11-27T19:45:44+00:00'
+harness_run_dir: runs/claude_sonnet-4-6/sus-16-046_sim-T5Wg_CrankyDirac_41036d8e
+outcome: scored
+exit_code: 0
+wall_clock_hours: 1.16
+usage:
+  api_cost_usd: 10.818016
+  input_tokens: 202
+  output_tokens: 177269
+  cache_read_tokens: 19021193
+  cache_creation_tokens: 346692
+  tokens_total_billed: 524163
+  n_turns: 215
+score:
+  n_filled: 4
+  n_bins: 4
+  delta_norm: 0.65192
+  norm_relative_l2: 0.62453
+  shape_relative_l2: 0.113877
+  shape_jensen_shannon: 0.011016
+  pass: false
+judge:
+  provenance_status: VERIFIED
+  overrule: NONE
+  model: claude-opus-4-6
+n_gen: null
+notes: ''
+gate:
+  bounces: 1
+  gate_final_event: pass
+  gate_error: false
+  tampered: false
+checker_time:
+  record_quantity_calls: 16
+  record_quantity_seconds: 6.7
+  after_first_bounce_seconds: 286.4
+  checker_seconds: 293.1

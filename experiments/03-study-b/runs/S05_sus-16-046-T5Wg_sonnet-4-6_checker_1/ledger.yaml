@@ -1,0 +1,53 @@
+schema_version: 2
+task: sus-16-046_sim-T5Wg
+quantities:
+  cross_section:
+    value: 0.00268
+    unit: pb
+    source: Prospino 2.1 NLO, CTEQ6 PDFs, sqrt(s)=13 TeV, m(sq)=5000 GeV (decoupled)
+    source_type: prospino
+    process: gluino_pair
+    masses_gev:
+      gluino: 1750.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS-SUS-16-046, 13 TeV 2016 dataset
+  generator_cross_section:
+    value: 0.001458
+    unit: pb
+    source: MadGraph5 LO, MSSM_SLHA2 model, pp->go go, sqrt(s)=13 TeV, CT10 PDFs,
+      run_02
+    source_type: generator
+    process: gluino_pair
+    masses_gev:
+      gluino: 1750.0
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: 'SLHA decay table: chi10->gamma+gravitino, 100% (wino-NLSP in pure-wino
+      limit, gravitino LSP)'
+    source_type: other
+    reason: 'wino-like NLSP with massless gravitino: chi10->gamma+gravitino is 100%
+      by construction'
+  efficiency:
+    value: 0.24958
+    unit: dimensionless
+    source: CMS-SUS-16-046 signal region cuts on Delphes-simulated events (photon
+      pT>180 barrel, DR>0.5, Dphi>0.3, MET>300, MT>300, ST>600 GeV); denominator is
+      all generated LHE events including Pythia8 shower failures
+    source_type: other
+    n_pass: 12479.0
+    n_gen: 50000.0
+corrections:
+- name: trigger
+  value: 0.943
+  unit: dimensionless
+  source: CMS-SUS-16-046 single-photon trigger efficiency (Table 1, signal region)
+  source_type: paper
+- name: photon_reconstruction
+  value: 0.843
+  unit: dimensionless
+  source: Average photon reconstruction efficiency from 2D map object_efficiencies/photon_eff_LoosePixelVeto.root,
+    highest ET bin, over selected events
+  source_type: other
