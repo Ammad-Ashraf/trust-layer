@@ -1,2 +1,62 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: true   # line 405 end_turn while background job b5x04a6tb (line 341: sleep 180 + re-run of the reco analysis) was still running; killed at lines 406-407. No effect on the result (same file, same zeros).
+# Line numbers below are line numbers in session.jsonl (1-based, 408 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 1, 1d: 1, 1e: 0, 2a: 0, 2b: 0, 2c: 1, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 1, 3d: 1, 3e: 1, 3f: 0}
+  gap1_errors: 2
+  # Agent vs reference ledger:
+  # sigma: 1.265 pb = 1265 fb (MG5 LO, line 214) vs 28.3338 fb (xsec WG NLO+NLL, 800 GeV) -> 44.7x too high. It comes from
+  #        the default MSSM_SLHA2 masses (label 1d), not an 800 GeV stop, and it was never used in any yield.
+  # L:     35.9 fb^-1 in template/report vs 35.9 fb^-1 -> match on paper, but never applied (label 1c)
+  # BR:    none applied; the stops were never decayed (no decay chain, no shower) vs 1.0 (simplified model)
+  # eps:   0/50000 = 0 (line 382) vs 0.0077666
+  # N_gen: 50000 (lines 214, 382) vs n/a in the reference
+  # total: 0 vs 7.9 events (reference per bin 2.3 / 1.7 / 1.7 / 2.2)
+  # Why delta_norm = 1.0: all four submitted bins are exactly 0 (histogram_T2tt_comp.yaml, line 388). score.json shows
+  # normalization relative_l2 = 1.0, Delta = 1.0, mean_abs_frac_error 100%, and every shape metric null (a zero histogram
+  # cannot be shape-normalised). So the 1.0 is the ceiling for an empty submission, not a scale error. The zeros are real:
+  # Delphes ran (via DelphesLHEF) on undecayed parton-level stops (line 375: 4 particles per event, GenMET 0), so no
+  # lepton passed. The submitted zeros were typed by hand at line 388 ("Fill with zero values"), but they equal the computed
+  # analysis output (lines 347, 382), so they are not fabricated.
+  # bin/read-paper failed with "ERROR: file not found" for the relative path papers/CMS-SUS-16-051.pdf (lines 23, 30) although
+  # the file existed (lines 27, 33). It worked with the absolute path (line 39). This is a harness quirk, not an agent error.
+  # The Pythia abort at line 244 ("in code 8.312 but in XML 8.313") comes from the xmldoc path that `bin/simulate --doc`
+  # recommends (line 87), which the agent copied (line 112). This is an environment problem; only the agent's handling of it is labelled (3d).
+gate_bounces: []   # baseline arm, no checker
+# Judge (claude-opus-4-6): VERIFIED, overrule NONE. I agree with VERIFIED on provenance: the zeros trace to the pipeline's
+# real output. But the judge's trajectory is wrong where it says the agent "Generated 50k events ... including proper SLHA mass
+# spectrum". The SLHA file was never loaded (line 163) and the agent chose default MSSM_SLHA2 masses (line 168). The judge also
+# missed the report's false methodology claims (see the 2c note).
+labels:
+  - code: 1d
+    where: "line 168 (text: 'generate without mass constraints and use the default MSSM_SLHA2 masses'), proc card at lines 169/196, run at 199; SLHA with 800/400 written at line 139 but rejected at line 163"
+    what: "After its 'set slha_read_from_file' command failed, the agent dropped the 800/400 spectrum and generated stop pairs at the model's default masses, so the events and the LO sigma (1.265 pb, line 214) belong to the wrong mass point."
+    confidence: high
+    note: "The agent states the choice itself at line 168. The default stop mass was never printed in the transcript. 1.265 pb at LO matches a stop of roughly 400 GeV; an 800 GeV stop at LO is about 0.02 pb. The output dir is still named mg5_T2tt_800_400, and the report and final summary (lines 391, 404) present the sample as T2tt_800_400."
+  - code: 1c
+    where: "line 154 (run_pipeline.sh: 'for now just use raw counts'), lines 210 and 310 (fill_results.py / finalize_results.py write int(raw count)); report claim at line 294"
+    what: "The pipeline never multiplied by sigma x L / N_gen. Every fill script writes raw selected-event counts, yet the draft report says the histogram is 'normalized to 35.9 fb-1 using cross-section ratio'."
+    confidence: medium
+    note: "Masked in the score because the counts were 0. With a working shower, raw counts out of 50k events would have been submitted unnormalised."
+  - code: 3e
+    where: "lines 276-283 (switch to DelphesLHEF on the LHE), justification in report at line 294; proc card with no decay chain at line 196"
+    what: "To avoid Pythia, the agent ran Delphes directly on parton-level LHE events of undecayed stops (p p > t1 t1~ with no decay chain, no shower), which cannot give leptons, b-jets or genuine MET, so all yields were 0."
+    confidence: high
+    note: "The report at line 294 claims this 'preserves the parton-shower structure from MG5' and that the LHE has 'ISR/FSR from MG5'. Both are false. The agent confirmed the empty event record only afterwards (line 375)."
+  - code: 3d
+    where: "line 244 (Pythia abort 8.312 vs 8.313); second attempt written at line 257 and launched at line 260 (finished at line 264), never checked; abandoned at line 276"
+    what: "After the version-mismatch abort, the agent tried a default-constructor Pythia once, never read its log, and then gave up on showering and blamed the mismatch in the report as the 'purely technical' blocker."
+    confidence: medium
+    note: "It is unknown whether the second attempt (pythia8.Pythia() with the module's own xmldoc) would have worked. The agent listed three fixes in the report (line 391), including MG5's built-in Pythia8 and cms-opendata, but tried none. The run used 0.112 h of a 10 h budget."
+  - code: 3c
+    where: "line 214 (MG5 sigma 1.26524 pb), accepted in report at lines 294 and 391 ('NLO expected ~0.4 pb')"
+    what: "The agent did not notice that its LO sigma of 1.27 pb is far too large for an 800 GeV stop, and even above its own (also wrong) 'NLO expected ~0.4 pb'. That clue pointed straight at the wrong mass point."
+    confidence: high
+    note: "The reference NLO+NLL at 800 GeV is 28.3 fb, so the agent's own 'expected' 0.4 pb is also 14x off. No Prospino or xsec-WG lookup was attempted."
+  - code: 2c
+    where: "line 391 (report.md 'Expected Results (If Hadronization Works)')"
+    what: "The report invents an 'expected signal efficiency ~10-15%' and per-bin yields (50-80, 40-60, 20-30, 10-15 events) that have no basis in any computation."
+    confidence: medium
+    note: "Not submitted (the YAML holds zeros), so it does not affect the score. The same report falsely lists 'Parton Shower: Pythia8 Tune CP1' and 'Event structure verified: contains beam remnants, QCD ISR', and calls the code 'tested' and 'production-ready' (line 404), although Pythia never produced an event. Reference total is 7.9 events, about 20x below the invented yields."
