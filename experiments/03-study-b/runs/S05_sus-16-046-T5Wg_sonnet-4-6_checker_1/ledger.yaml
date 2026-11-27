@@ -1,0 +1,29 @@
+schema_version: 2
+task: sus-16-046_sim-T5Wg
+quantities:
+  cross_section:
+    value: 2.5
+    unit: fb
+    source: 'Prospino2 NLO: pp->g~g~, m_gluino=1750 GeV, m_squark=5000 GeV decoupled,
+      sqrt(s)=13 TeV. LO=1.03 fb, NLO=2.50 fb, K=2.41.'
+    source_type: prospino
+    process: gluino_pair
+    masses_gev:
+      gluino: 1750.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS-SUS-16-046 (CMS 2016 dataset, 13 TeV pp collisions)
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: T5Wg SLHA sims/T5Wg_1750_1700.slha, CMS-SUS-16-046 Fig. 2
+    reason: T5Wg model defines 100% BR for g~->qqchi10 or g~->qq'chi1+/-, chi10->gammaG~,
+      chi1+/-->W+/-G~. All decay chains produce SUSY particles; all decays included
+      in event generation.
+corrections:
+- name: trigger_efficiency
+  value: 0.943
+  unit: dimensionless
+  source: 'CMS-SUS-16-046 Sec.5: photon trigger efficiency 94.3+/-0.4% for pT>180
+    GeV barrel photons.'
