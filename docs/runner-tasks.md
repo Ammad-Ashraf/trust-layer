@@ -72,7 +72,8 @@ Everything runs as user `israr`, from the repo root. One script does each run: `
    - **Laptop rebooted mid-run:** that run's folder has no `manifest.yaml`. Rename it by adding `_void<N>` (the next free N), write `interrupted by reboot` into a `note.md` inside it, commit it, then start step 2 again.
    - **"possible secret":** stop and report. Commit nothing from that folder.
    - **Anything else:** write `experiments/03-study-b/runs/R7-report.md` with the error, commit, and stop.
-5. When `status` shows every slot final (scored, timeout or crash), write `experiments/03-study-b/runs/R7-report.md`: counts per outcome per arm and model, plus total wall-clock. Commit and push.
+   - **A checker-arm run with `gate: gate_error: true`** in its `manifest.yaml` (check every checker run as it lands): it isn't valid for Study B (rule in `scripts/postrun_check.py`), but `study_b.py` files it as `scored`. Void it by hand like a reboot: `git mv` the folder to `_void<N>`, add a `note.md` with the gate error, commit. The running loop has already passed that slot, so when `next` ends, start step 2 again to rerun it. Known cause: [`runs/GATE-BUG-cwd.md`](../experiments/03-study-b/runs/GATE-BUG-cwd.md) (code fix after Study B).
+5. When `next` ends with "nothing left", run `status`. If any slot is pending again (a voided run), start step 2 again. When `status` shows every slot final (scored, timeout or crash), write `experiments/03-study-b/runs/R7-report.md`: counts per outcome per arm and model, plus total wall-clock. Commit and push.
 
 ### R8 · Label every run and build the results: **open once the first Study B run is committed** (do it while R7 runs)
 
