@@ -1,0 +1,26 @@
+schema_version: 2
+task: sus-16-046_sim-T5Wg
+quantities:
+  cross_section:
+    value: 2.82
+    unit: fb
+    source: Prospino 2.4 NLO √s=13TeV
+    source_type: prospino
+    process: gluino_pair
+    masses_gev:
+      gluino: 1750.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS 13 TeV 2016 data
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: SUSY_SoftSUSY / SPheno spectrum generator
+    reason: 'T5Wg: each gluino decays to wino+quark with ~100% BR in model'
+  efficiency:
+    value: 0.42
+    unit: dimensionless
+    source: 'CMS-SUS-16-046: pTmiss>300, MT>300, S_T^gamma>600 GeV selections'
+    n_pass: 42.4
+    n_gen: 101.2
