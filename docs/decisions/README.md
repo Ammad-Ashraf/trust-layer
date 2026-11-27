@@ -27,3 +27,4 @@ Claude gives the options and a lean; Ammad decides and writes one line on why. S
 | [0019](0019-study-b-walltime.md) | Study B time limit: 10 h, a pilot, fixed timeout reporting | decided |
 | [0020](0020-token-login-not-new-user.md) | Study B logs in with a long-lived token, not a second Linux user | decided |
 | [0021](0021-study-b-runs-on-runner.md) | Study B is run, labelled and tabulated entirely on the runner | decided |
+| [0022](0022-gate-error-void-and-rerun.md) | Study B: a checker run with a gate error is void and rerun; code stays frozen | decided |
