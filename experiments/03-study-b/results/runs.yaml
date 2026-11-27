@@ -1,4 +1,4 @@
-version: study-b-v1-18-g3700c5b
+version: study-b-v1-23-gb3a68ad
 voids:
   S05: 1
 runs:
@@ -78,3 +78,22 @@ runs:
   gap1: 0
   labels: 3
   passed: true
+- folder: S06_sus-16-034-TChiWZ_sonnet-4-6_checker_1
+  slot: S06
+  model: claude-sonnet-4-6
+  task: sus-16-034_sim-TChiWZ
+  arm: checker
+  rep: 1
+  outcome: scored
+  wall_hours: 0.727
+  delta_norm: 0.724325
+  norm_l2: 0.733408
+  shape_l2: 0.299117
+  judge_status: VERIFIED
+  overrule: NONE
+  bounces: 1
+  checker_seconds: 147.1
+  labelled: true
+  gap1: 2
+  labels: 5
+  passed: false
