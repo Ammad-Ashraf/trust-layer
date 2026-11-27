@@ -1,0 +1,9 @@
+# Gate bug: the Stop hook fails when the agent's shell is in a subfolder (for the Windows session)
+
+**Found:** S05 (27 Nov, Sonnet 4.6, checker arm, T5Wg). **Not fixed here:** code is frozen at `study-b-v1` until Study B ends (fairness).
+
+- **What happens:** the gate takes the hook's `cwd` as the workspace (`src/trustlayer/gate/locate.py:65`) and matches the task context on that folder's name (`:41`). Claude Code reports the agent's *current* shell directory as `cwd`. If the agent has `cd`'d into e.g. `workspace/sim/run_pythia8_001` when it stops, the lookup fails → `gate_error` → exit 0, so the agent stops **unchecked**.
+- **Effect on Study B:** in a checker-arm run the gate silently turns off whenever the agent stops from a subfolder. Such runs are void by the pre-set rule (`postrun_check.py`: "not valid for Study B") and rerun. Each void reruns the slot, so the checker arm keeps only runs whose agent stopped from the workspace root. That is a mild selection effect, reported via the void count per arm in `results/study-b.md`.
+- **Also:** `scripts/study_b.py` `classify()` doesn't apply the gate_error → invalid rule. It filed S05 as `scored`, and I voided it by hand (`S05_…_void1/note.md`).
+- **Likely fix (after Study B, or now if Ammad decides to stop and re-tag):** walk up from `cwd` to the folder that holds `ledger.yaml`/`.claude/settings.json` (or the harness workspace root) before matching. Make `classify()` return `void` when `gate.gate_error` is true. Add a test where the hook's cwd is a subfolder.
+- **Ammad's call:** keep going with void-and-rerun (current), or stop R7, fix, re-tag `study-b-v2`, and rerun the checker-arm runs. If gate errors turn out to be common (watch `(N void)` on checker slots in `status`), stopping is better: each slot voids at most 3 times before `next` stops.
