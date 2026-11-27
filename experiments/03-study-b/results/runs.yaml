@@ -1,4 +1,4 @@
-version: study-b-v1-42-gf4c8c5a
+version: study-b-v1-45-ga4770f1
 voids:
   S05: 2
 runs:
@@ -172,4 +172,23 @@ runs:
   labelled: true
   gap1: 1
   labels: 7
+  passed: false
+- folder: S10_sus-16-034-TChiWZ_haiku-4-5_checker_1
+  slot: S10
+  model: claude-haiku-4-5
+  task: sus-16-034_sim-TChiWZ
+  arm: checker
+  rep: 1
+  outcome: scored
+  wall_hours: 0.135
+  delta_norm: 1585.248489
+  norm_l2: 1856.723369
+  shape_l2: 1.069522
+  judge_status: QUESTIONABLE
+  overrule: NONE
+  bounces: 1
+  checker_seconds: 79.9
+  labelled: true
+  gap1: 4
+  labels: 11
   passed: false
