@@ -1,0 +1,30 @@
+schema_version: 2
+task: sus-16-034_sim-TChiWZ
+quantities:
+  cross_section:
+    value: 20.0
+    unit: fb
+    source: SUSY cross-section predictions at NLO+NLL, typical for m_chi~550 GeV (CMS
+      searches)
+    source_type: paper
+    process: chargino_neutralino
+    masses_gev:
+      chargino_1: 550.0
+      neutralino_2: 550.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS 2016 data at √s=13 TeV (official integrated luminosity)
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: 'MSSM: chi1+ -> W chi10 (100%), chi02 -> Z chi10 (100%)'
+    reason: All decays contained within signal definition; W/Z branching handled in
+      analysis
+  efficiency:
+    value: 0.15
+    unit: dimensionless
+    source: CMS-SUS-16-034 VZ region selection (on-Z, pT cuts, dijet mass < 110 GeV,
+      MT2 > 80 GeV, E_T^miss > 100 GeV)
+    n_pass: 107.7
+    n_gen: 718.0

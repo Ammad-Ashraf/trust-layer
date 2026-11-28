@@ -1,0 +1,32 @@
+{
+  "agent_id": "StrangeEhrenfest_45cfaec2",
+  "run_dir": "claude_haiku-4-5/sus-16-034_sim-TChiWZ_StrangeEhrenfest_45cfaec2",
+  "task_id": "sus-16-034_sim-TChiWZ",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-034",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T10:45:49Z",
+  "ended_at": "2026-11-28T10:51:57Z",
+  "exit_code": 0,
+  "duration_wall_s": 367.93,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 0.993157,
+    "input_tokens": 578,
+    "output_tokens": 39786,
+    "cache_read_tokens": 5767668,
+    "cache_creation_tokens": 108441,
+    "tokens_total_billed": 148805,
+    "n_turns": 74
+  }
+}
