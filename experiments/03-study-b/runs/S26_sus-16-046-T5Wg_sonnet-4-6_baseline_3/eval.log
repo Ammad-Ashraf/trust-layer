@@ -1,0 +1,50 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-046_sim-T5Wg_PeculiarLandau_783e1832 (judge=llm) ===
+
+  sus-16-046_sim-T5Wg  (CMS-SUS-16-046)  [shape_norm]
+    series  : T5Wg_1750_1700   filled 4/4
+    shape   : bin_err= 5.05%  p=1  JSD=0.0002  d_JSD=0.0129
+    norm    : frac_err= 7.62%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-046_sim-T5Wg_PeculiarLandau_783e1832/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~69K chars) — streaming progress below
+  [llm_judge]   30s  turns=0  tool_calls=0
+  [llm_judge]   60s  turns=0  tool_calls=0
+  [llm_judge]   91s  turns=0  tool_calls=0
+  [llm_judge]  151s  turns=2  tool_calls=0
+  [llm_judge] completed in 152s (2 turns, 0 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    All four bin values are directly traceable to the agent's MadGraph→Pythia→Delphes→analysis pipeline. Raw event counts (226, 803, 2743, 22809) times the event weight (σ_NLO × L / N_gen × ε_trig = 3.28 × 35.9 / 50000 × 0.943 ≈ 2.221×10⁻³) reproduce the submitted values to 4 significant figures. No evidence of leakage or fabrication. The close agreement with reference in bins 1–3 (within 3%) despite using Prospino NLO (3.28 fb) instead of the paper's NLO+NLL (~1.4 fb) is explained by Delphes having lower selection efficiency than full CMS simulation, which compensates the higher cross section. Bin 4 is 9% high, consistent with Delphes MET resolution differences in the high-S_T tail.
+    1 TRACEABLE
+
+  Trajectory
+    The agent executed a complete MadGraph→Pythia→Delphes→analysis chain for gluino pair production, diagnosing and fixing three physics bugs (wrong SLHA masses, charge-conservation violations in gluino decays, chi10 zero-width preventing decay). The final results are physically reasonable. The main inefficiency was ~60 identical polling commands while waiting for Delphes, consuming significant context.
+    A strong run demonstrating genuine physics simulation capability. The agent built and debugged a complete MadGraph→Pythia→Delphes pipeline, correctly identifying and fixing three non-trivial physics bugs (SLHA masses, charge conservation, chi10 decay width). The final yields are physically reasonable and fully traceable. The main weaknesses are the cross-section approximation (Prospino NLO vs NNLLfast, documented honestly) and severe context waste from Delphes polling. The report is thorough and reproducible.
+
+  Strengths:
+    - Correctly diagnosed and fixed three distinct physics bugs in the simulation chain
+    - Parallelized Pythia across 16 CPUs for 50k events
+    - Patched LHE headers to fix chi10 decay width — avoided re-running MadGraph
+    - Thorough documentation of methodology and known approximations
+    - Verified photon kinematics at multiple pipeline stages (HepMC, Delphes)
+
+  Creative moves:
+    - Patched all 16 LHE chunk files in-place to change chi10 decay width from 0 to 1 GeV, rather than re-running MadGraph and re-splitting
+    - Split LHE events into 16 chunks and ran Pythia in parallel across 32 CPUs
+    - Wrote intermediate validation scripts (check_hepmc.py, debug_delphes.py, debug_pythia.py) to diagnose simulation failures at each pipeline stage
+
+  Stuck points:
+    - MadGraph SLHA handling required four iterations (v1–v4): default masses, missing slepton masses, then charge-conservation errors in gluino decay channels
+    - Pythia HepMC output contained events with zero particles due to incorrect GenEvent construction (missing incoming particles on vertices)
+
+  Issues:
+    - Approximately 60 identical polling commands (tail -c 300 ... | grep -oP) while waiting for Delphes to complete, consuming significant context window
+    - Used Prospino NLO (3.28 fb) instead of NNLLfast NLO+NLL (~1.0–1.4 fb) for normalization. This is a factor ~2.3× overestimate in cross section, though it is compensated by lower Delphes selection efficiency. The agent documented this honestly.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-046_sim-T5Wg_PeculiarLandau_783e1832/eval/judge_trajectory.md
+
+

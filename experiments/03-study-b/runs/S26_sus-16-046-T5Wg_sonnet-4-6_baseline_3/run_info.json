@@ -1,0 +1,32 @@
+{
+  "agent_id": "PeculiarLandau_783e1832",
+  "run_dir": "claude_sonnet-4-6/sus-16-046_sim-T5Wg_PeculiarLandau_783e1832",
+  "task_id": "sus-16-046_sim-T5Wg",
+  "agent": "simple",
+  "runner": "claude",
+  "model": "claude-sonnet-4-6",
+  "paper_ref": "CMS-SUS-16-046",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T05:38:50Z",
+  "ended_at": "2026-11-28T06:37:53Z",
+  "exit_code": 0,
+  "duration_wall_s": 3543.05,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 10.74388,
+    "input_tokens": 284,
+    "output_tokens": 140783,
+    "cache_read_tokens": 22965880,
+    "cache_creation_tokens": 248937,
+    "tokens_total_billed": 390004,
+    "n_turns": 280
+  }
+}
