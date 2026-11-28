@@ -1,0 +1,24 @@
+{
+  "task_id": "sus-16-046_sim-T5Wg",
+  "paper": "CMS-SUS-16-046",
+  "header_name": "T5Wg_1750_1700",
+  "n_bins": 4,
+  "n_filled": 4,
+  "score_mode": "shape_norm",
+  "shape": {
+    "mean_abs_frac_error_pct": 151.923,
+    "p_value": 1e-06,
+    "jensen_shannon": 0.143747,
+    "jensen_shannon_dist": 0.37914,
+    "d_bar": 0.414143,
+    "d_max": 0.408964,
+    "dmax_dbar_ratio": 0.987495,
+    "relative_l2": 0.636942
+  },
+  "normalization": {
+    "mean_abs_frac_error_pct": 2328.441,
+    "Delta": 23.284412,
+    "rmsle": 3.264026,
+    "relative_l2": 17.596365
+  }
+}

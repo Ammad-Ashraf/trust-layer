@@ -1,0 +1,32 @@
+{
+  "agent_id": "BirdyAlvarez_fd6850a1",
+  "run_dir": "claude_haiku-4-5/sus-16-046_sim-T5Wg_BirdyAlvarez_fd6850a1",
+  "task_id": "sus-16-046_sim-T5Wg",
+  "agent": "simple",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-046",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T04:00:36Z",
+  "ended_at": "2026-11-28T04:06:46Z",
+  "exit_code": 0,
+  "duration_wall_s": 369.89,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 0.724596,
+    "input_tokens": 497,
+    "output_tokens": 43050,
+    "cache_read_tokens": 3469714,
+    "cache_creation_tokens": 80939,
+    "tokens_total_billed": 124486,
+    "n_turns": 65
+  }
+}
