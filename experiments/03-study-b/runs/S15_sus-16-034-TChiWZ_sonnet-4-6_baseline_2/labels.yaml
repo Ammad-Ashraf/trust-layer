@@ -1,2 +1,28 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 783 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 1, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 1, 3d: 0, 3e: 0, 3f: 0}
+  gap1_errors: 1
+  # Agent vs reference ledger:
+  # sigma: 18.13 fb (Prospino NLO, 13.0 chi1+chi20 + 5.13 chi1-chi20, lines 434/458/468) vs 30.1656 fb (xsec WG NLO+NLL, wino) -> 0.601x
+  # L:     35.9 fb^-1 (analysis.py LUMI_FB) vs 35.9 fb^-1 -> match
+  # BR:    1.0 (Z and W decays left inside eps; chi20->Z chi10 and chi1->W chi10 set to 100% in the cards) vs 0.101 (Z->ll only).
+  #        A different but consistent convention, no double count.
+  # eps:   242/50000 = 0.00484 (line 742) vs 0.0495 -> BR*eps 0.00484 vs 0.00500 -> 0.97x (match within MC stats, 242 events)
+  # N_gen: 50000 (all showered events passed through Delphes, line 727); pb->fb conversion correct (analysis.py line 77)
+  # total: 3.16 vs 5.41 events -> 0.601 * 0.97 = 0.585 -> delta_norm 0.415 (matches score.json)
+  # So essentially the whole shortfall comes from sigma (label 1d). Shape is good (shape_relative_l2 0.05).
+gate_bounces: []
+labels:
+  - code: 1d
+    where: "line 200 (hand-written SLHA for Prospino: all squarks/sleptons at 2 TeV, near-pure wino NMIX); Prospino runs at lines 430/434 and 454/458; value adopted at lines 468-469 (data/xsec_pb.txt = 0.01813 pb)"
+    what: "The agent computed sigma for its own hand-built MSSM spectrum rather than the TChiWZ simplified-model convention (wino N2C1 with decoupled squarks, NLO+NLL), getting 18.13 fb instead of 30.17 fb (0.60x); this is the whole cause of delta_norm 0.415."
+    confidence: medium
+    note: "Process, masses (550/550) and the pb->fb conversion are all right, and the mixing is near-pure wino (N22=0.999, U=V=1), so the deficit must come from the spectrum. The most likely cause is destructive t-channel squark interference with squarks at only 2 TeV (the WG table assumes them decoupled), plus a few percent from NLO vs NLO+NLL. This mechanism was not verified. MG5 with the same 2 TeV squarks gives a similarly low LO value (13.72 fb, line 580), which fits that reading. Could also be argued as 3a (filling the unspecified spectrum), but the result is a mismatched sigma input, so it is labelled 1d, as in other runs."
+  - code: 3c
+    where: "line 586 (MG5 LO 13.72 fb called a match to Prospino LO 15.57 fb); line 772 (report.md says Prospino NLO vs the paper's NLO+NLL differs by '<~5%'); paper text read at line 41 states NLO+NLL for signal"
+    what: "The agent knew the paper normalises signal to NLO+NLL from the SUSY Cross Section WG, but never looked up or compared with that value (about 30 fb at 550 GeV). It only cross-checked two calculations that share the same spectrum, so it missed a factor-1.7 deficit."
+    confidence: medium
