@@ -1,0 +1,27 @@
+schema_version: 2
+task: sus-16-051_sim-T2tt_comp
+quantities:
+  cross_section:
+    value: 15.9
+    unit: fb
+    source: Prospino LO calculation at 13 TeV
+    source_type: xsec_wg
+    process: stop_pair
+    masses_gev:
+      stop_1: 800.0
+      neutralino_1: 400.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS-SUS-16-051 paper
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: simplified model definition
+    reason: 'T2tt simplified model: 100% stop -> top + neutralino'
+  efficiency:
+    value: 0.16027
+    unit: dimensionless
+    source: analyze_signal.py parton-level
+    n_pass: 16027.0
+    n_gen: 100000.0

@@ -1,0 +1,93 @@
+{
+  "provenance_audit": {
+    "status": "VERIFIED",
+    "summary": "All four bin values are directly traceable to the agent's MadGraph5 event generation (100k LHE events), parton-level selection script (analyze_signal.py), and normalization chain (Prospino LO \u03c3=15.9 fb \u00d7 L=35.9 fb\u207b\u00b9 \u00d7 BR=1.0 \u00d7 \u03b5=0.16027 = 91.5 events). Bin counts [14306, 1335, 276, 110] from the selection script are proportionally scaled to 91.5 total. No leakage concern\u2014submitted values differ from the reference by an order of magnitude.",
+    "series": {
+      "histogram_T2tt_comp.yaml/T2tt_800_400": {
+        "classification": "TRACEABLE",
+        "confidence": "high",
+        "source": "MadGraph5 LHE \u2192 analyze_signal.py parton-level cuts \u2192 bin counts [14306, 1335, 276, 110] out of 16027 passing \u2192 normalized by \u03c3\u00d7L\u00d7BR\u00d7\u03b5 = 91.5 total \u2192 per-bin values [81.7, 7.6, 1.6, 0.6]",
+        "issues": [],
+        "corrected_values": null
+      }
+    },
+    "corrected_results": {},
+    "overrule": {
+      "action": "NONE",
+      "reason": "Values are the legitimate output of the agent's computation pipeline. The severe numerical disagreement with the reference (~12x total, plus wrong shape) stems from using parton-level selection as a proxy for detector-level analysis, not from fabrication or leakage. Scoring handles the physics quality.",
+      "affected_series": [],
+      "score_policy": "",
+      "evidence": ""
+    }
+  },
+  "trajectory": {
+    "summary": "The agent set up a reasonable MadGraph5 generation pipeline and obtained a Prospino cross section, but failed to get Pythia8 showering or Delphes detector simulation working. It fell back to parton-level LHE analysis with crude cut proxies, producing results off by ~12x in total yield and with a completely wrong E_T^miss shape (89% in the first bin vs roughly flat in the reference).",
+    "planning": "Initial plan was sound: read paper \u2192 extract selection criteria \u2192 generate events with MadGraph \u2192 shower with Pythia \u2192 simulate with Delphes \u2192 apply cuts \u2192 normalize. The agent correctly identified the compressed signal region (Table 3) and the required E_T^miss binning. However, when the simulation chain broke down, the fallback plan (parton-level analysis) was adopted without adequate assessment of how severely it would degrade the result.",
+    "tool_use": "Successfully used MadGraph5 to generate 100k events and Prospino to compute the LO cross section. Hit a Pythia8 version mismatch (8.312 vs 8.313 XML) that it could not resolve despite multiple attempts. Delphes was eventually run to produce events.root, but the agent couldn't successfully analyze the ROOT file with uproot (TypeError on entry_range). The agent spent significant context switching between Pythia fixes, Delphes analysis, and the LHE fallback. The paper-reading tool also required multiple attempts before finding the correct invocation path.",
+    "scientific_judgment": "Poor in critical areas. The compressed signal region selection relies on jet multiplicity (NJ \u2265 5), b-tagging, angular correlations between jets and MET, and lepton isolation\u2014none of which can be meaningfully evaluated at parton level. The agent's proxy of '\u22652 high-pT particles' for NJ \u2265 5 is physically meaningless since parton-level events don't have the ISR jets that create the high jet multiplicity in compressed spectra. The report's claim that detector effects would reduce yields by '15-20%' vastly underestimates the impact; the actual reduction is closer to 90%. The E_T^miss shape is dominated by the hard-process kinematics at parton level, missing the ISR-recoil topology that shapes the realistic distribution.",
+    "honesty_and_reporting": "The report acknowledges the parton-level limitation and lists deviations from the paper (LO vs NLO, no detector response). However, the stated 15-20% efficiency reduction estimate is misleading\u2014it dramatically understates the problem. The agent does not flag that its results should be treated as an upper bound with potentially order-of-magnitude uncertainty.",
+    "strengths": [
+      "Successfully generated 100k events with MadGraph5 using correct process (pp \u2192 stop stop*) and mass spectrum",
+      "Properly obtained and recorded the Prospino LO cross section with traceability",
+      "Maintained a complete normalization ledger with all factors documented",
+      "Produced a clear report with methodology and deviations listed",
+      "Persistent in trying multiple approaches when tools failed"
+    ],
+    "creative_moves": [
+      {
+        "description": "Fell back to direct LHE parsing when both Pythia8 and Delphes analysis pipelines failed",
+        "impact": "mixed",
+        "evidence": "Created analyze_signal.py to parse LHE XML directly and apply parton-level cuts. This produced a result rather than nothing, but the result is physically unreliable for this analysis type."
+      }
+    ],
+    "stuck_points": [
+      {
+        "description": "Pythia8 version mismatch (code 8.312 vs XML 8.313) blocked the showering step",
+        "avoidable": true,
+        "impact": "major",
+        "evidence": "The agent tried editing shower.py multiple times but never attempted to check available Pythia versions, set the XML directory explicitly to match, or use MadGraph's built-in Pythia8 interface (which handles version alignment). This single failure cascaded into the parton-level fallback."
+      },
+      {
+        "description": "Failed to analyze the Delphes ROOT file despite it being successfully produced",
+        "avoidable": true,
+        "impact": "major",
+        "evidence": "events.root was generated by Delphes but uproot analysis failed on API issues (entry_range kwarg). The agent could have used ROOT's PyROOT interface or the bin/run-analysis tool more effectively instead of abandoning the detector-level path."
+      },
+      {
+        "description": "Multiple failed attempts to find and read the paper PDF",
+        "avoidable": true,
+        "impact": "minor",
+        "evidence": "Five attempts with different path constructions before finding the correct invocation for bin/read-paper. Eventually succeeded but wasted context."
+      }
+    ],
+    "issues": [
+      {
+        "label": "NORMALIZATION_ERROR",
+        "severity": "critical",
+        "description": "Total yield is 91.5 events vs reference 7.9 events (~12x overestimate). Parton-level selection efficiency of 16% is unrealistically high for a compressed region search that requires NJ \u2265 5, b-tag vetoes, and angular cuts that depend on showered/reconstructed objects.",
+        "evidence": "Bin counts [14306, 1335, 276, 110] from parton-level cuts on 100k events. The NJ \u2265 5 requirement was approximated as '\u22652 high-pT (>50 GeV) particles', which passes far too many events since it doesn't require actual jet formation from showering."
+      },
+      {
+        "label": "OVERCLAIMING",
+        "severity": "moderate",
+        "description": "Report claims detector effects would reduce yields by only 15-20%, when the actual impact is closer to an order of magnitude. This mischaracterizes the reliability of the result.",
+        "evidence": "report.md: 'full detector simulation would reduce event counts by ~15-20% due to reconstruction inefficiencies.' The reference total is 7.9 vs submitted 91.5, suggesting the true detector+selection reduction is ~92%."
+      },
+      {
+        "label": "MISSED_WORKAROUND",
+        "severity": "major",
+        "description": "Did not explore MadGraph's built-in Pythia8 interface (shower=Pythia8 in the run card or launch command), which handles version alignment automatically. Also did not try PyROOT to analyze the successfully-produced Delphes output.",
+        "evidence": "The agent wrote standalone shower.py scripts instead of using MG5's integrated shower. The Delphes events.root file was confirmed to exist (ls showed it) but was abandoned after uproot API errors."
+      },
+      {
+        "label": "SPECIFICATION_MISREAD",
+        "severity": "moderate",
+        "description": "The compressed region NJ \u2265 5 cut was replaced with '\u22652 high-pT particles', which is not a physically meaningful approximation. At parton level for T2tt, the final state has at most 4 hard partons (2 tops \u2192 2 b + 2 W \u2192 up to 6 with hadronic W, but the analysis requires a lepton). The 5th jet in the compressed region comes from ISR, which is absent at LO parton level without matching.",
+        "evidence": "report.md Table under 'Compressed Signal Region': 'NJ \u2265 5: At parton level, proxy applied as \u22652 high-pT (>50 GeV) particles'. This proxy admits essentially all events with the standard t\u2192bW\u2192bl\u03bd decay."
+      }
+    ],
+    "overall_assessment": "The agent demonstrated competent tool setup (MadGraph generation, Prospino cross section, normalization ledger) but was critically hampered by failure to get showering and detector simulation working. The fallback to parton-level analysis produced results that are traceable and honestly computed but physically unreliable\u2014off by ~12x in total yield with a completely wrong shape. The core failure was not exhausting available workarounds for Pythia8/Delphes before resorting to the parton-level path, combined with underestimating how severely the approximation would degrade a compressed-region analysis that fundamentally depends on jet multiplicity from ISR and detector-level reconstruction."
+  },
+  "judge_model": "claude-opus-4-6",
+  "trajectory_report_path": "/home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-051_sim-T2tt_comp_LooneyEnglert_ae855dee/eval/judge_trajectory.md"
+}

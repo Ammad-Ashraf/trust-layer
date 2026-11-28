@@ -1,0 +1,32 @@
+{
+  "agent_id": "LooneyEnglert_ae855dee",
+  "run_dir": "claude_haiku-4-5/sus-16-051_sim-T2tt_comp_LooneyEnglert_ae855dee",
+  "task_id": "sus-16-051_sim-T2tt_comp",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-051",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T03:38:27Z",
+  "ended_at": "2026-11-28T03:46:37Z",
+  "exit_code": 0,
+  "duration_wall_s": 489.54,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 1.308255,
+    "input_tokens": 868,
+    "output_tokens": 52020,
+    "cache_read_tokens": 7929770,
+    "cache_creation_tokens": 127155,
+    "tokens_total_billed": 180043,
+    "n_turns": 110
+  }
+}
