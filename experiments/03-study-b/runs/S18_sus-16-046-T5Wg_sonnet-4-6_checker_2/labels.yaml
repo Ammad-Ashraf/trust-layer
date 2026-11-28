@@ -1,2 +1,44 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 1196 lines; context compaction at line 881).
+summary:
+  counts: {1a: 1, 1b: 0, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 1, 3b: 1, 3c: 1, 3d: 0, 3e: 0, 3f: 0}
+  gap1_errors: 1
+  # Agent vs reference ledger:
+  # sigma: 2.68 fb (Prospino NLO, CTEQ6) vs 3.598 fb (xsec WG NLO+NLL) -> 0.745x
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1.0 vs 1.0 -> match (same convention: photon/W mix left inside eps)
+  # eps:   0.04512 raw (2256/50000) x photon-ID SF 0.878 x trigger 0.943 = 0.0374 vs 0.4246 -> 0.088x (raw eps alone 0.106x)
+  # total: 3.595 vs 54.85 events -> 0.745 * 0.088 = 0.0655 -> delta_norm 0.934 (matches score.json)
+  # So eps is the main cause: about 11x too low, versus about 1.3x from sigma. Most of the eps loss is at the first cut
+  # (MET > 300 GeV passes only 19.8%, line 1124). The likely reason is that the stock Delphes CMS card lets the gravitino
+  # (1000039) deposit calorimeter energy, which kills the MET from two ~850 GeV gravitinos (labels 3a, 3c).
+  # The shape points the same way: the agent's >1300 GeV bin holds 65% of the yield vs 85% in the reference,
+  # so S_T^gamma (which includes MET) is pushed down.
+gate_bounces: []
+# gate-bounces.jsonl has one event, a pass at 03:35:07 (C1-C5 all pass; C2 matched the Prospino NLO run; C5 3.595 = 3.595).
+# The 1a unit slip below was fixed by the agent itself at line 1150, before the gate ran. None of the gate's checks can see
+# a wrong detector setup or a wrong-order sigma that still matches a Prospino run.
+labels:
+  - code: 1a
+    where: "line 287 (record-quantity cross_section --value 2.68e-3 --unit fb); fixed at line 1150"
+    what: "The agent recorded the Prospino result 0.00268 pb with unit fb, so the ledger cross section was 1000x too small."
+    confidence: high
+    note: "Self-fixed. The agent spotted it at line 903 and re-recorded 2.68 fb at line 1150 before the stop gate. The analysis always used 2.68 fb (XSEC_FB = 0.00268*1000 in analysis.py, line 1072), so the submitted yields were never affected."
+  - code: 3a
+    where: "line 790 (cp $DELPHES_DIR/cards/delphes_card_CMS.tcl, used unchanged for the full run at line 811); Pythia-only invisibility at lines 352/354, restated in the summary at line 881"
+    what: "The agent ran Delphes with the stock CMS card, which does not give the gravitino (1000039) EnergyFraction 0 in ECal/HCal, so the gravitinos deposit calorimeter energy. The agent thought that setting 1000039:isVisible = off in Pythia made the gravitino invisible, but Delphes does not read that flag."
+    confidence: medium
+    note: "This is the main cause of delta_norm. The card fact comes from the lead reviewer's check of the container image. The transcript shows the stock card copied and never edited, and the agent only grepped it for photon settings (line 872). Indirect evidence: MET > 300 keeps only 19.8% of events (line 1124), although the signal has two ~850 GeV gravitinos; the reference efficiency is 0.42. I did not rerun the simulation, so the size of the effect is inferred, not measured."
+  - code: 3c
+    where: "line 1124 (cutflow: MET>300 19.84%, final eps 4.51%), accepted at lines 1141/1171; rationalised at line 1195 (and line 881)"
+    what: "The agent accepted a 4.5% signal efficiency with only 19.8% of events passing MET > 300 GeV for a model with two ~850 GeV invisible gravitinos. It never compared MissingET with GenMissingET (branch listed at line 829) and explained the low MET as 'events rely on ISR to produce hard MET'."
+    confidence: medium
+    note: "Because the spectrum is compressed, the quarks are soft, but the wino -> gamma/W + gravitino decay still gives large MET from the gravitinos. ISR is not what produces it. A quick gen-vs-reco MET comparison would have exposed the card problem."
+  - code: 3b
+    where: "paper text at line 35 (signal normalised at NLO+NLL); attempt at line 235 refused (tool supports only LO/NLO); NLO value adopted at line 283; summary at line 881 calls it 'Prospino NLO+NLL'"
+    what: "The paper normalises signals at NLO+NLL. When the tool only offered NLO, the agent used Prospino NLO (2.68 fb, 0.745x the WG NLO+NLL value) without flagging the difference or looking for the WG table."
+    confidence: low
+    note: "It is not 1b, because Prospino NLO is an accepted source under C2. The impact is minor next to eps (about 1.3x of the 15x total). The report's deviations list does not mention it."
