@@ -18,4 +18,4 @@ Code is frozen at `study-b-v1`, so none of these are fixed here. They're things 
     - **Bounces 2 and 3 (C2):** it cycled the σ source from `prospino` to `other` (line 320) and back to `prospino` (line 338).
     - **After bounce 3:** the gate ended `submitted_with_warnings` with C2 still failing, which is the designed bounce cap.
    
-   For the paper: the bounce cap means a persistent agent gets a fabricated result through. The warning is only in `gate-bounces.jsonl`, not in the manifest's `gate:` block. Fix idea: record `submitted_with_warnings` and the still-failing checks in the manifest, and count such runs as gate failures in the results.
+   For the paper: the bounce cap means a persistent agent gets a fabricated result through. The manifest records it (`gate_final_event: submitted_with_warnings`), but the results table doesn't separate these runs from clean passes. Fix idea: list the still-failing checks in the manifest, and report such runs apart from gate passes.
