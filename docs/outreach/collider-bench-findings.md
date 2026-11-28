@@ -25,7 +25,7 @@ Pinned context for every entry, unless stated otherwise: Collider-Bench commit `
   | Delphes reco `MissingET` | 127.6 GeV | 9.2% |
 
   In 2,972 of 3,000 events, a jet with p_T > 100 GeV lies within ΔR < 0.4 of a truth gravitino. The run's signal-region efficiency came out at 0.93% and it failed (δ_norm 0.98).
-- **A workaround that worked:** S26 (Sonnet, T5Wg, baseline) dropped `|pid| == 1000039` from the HepMC before Delphes (transcript line 402) and got ε 0.50 against 0.425 and δ_norm 0.08. So the task can be done, but only by an agent that thinks of it.
+- **A workaround that worked:** S26 (Sonnet, T5Wg, baseline) dropped `|pid| == 1000039` from the HepMC before Delphes (transcript line 402) and got ε 0.50 against 0.425 and δ_norm 0.08. S28 (Sonnet, T5Wg, checker) saw median MET of 93 GeV, found the gap in the card, and added `EnergyFraction {1000039} {0.0}` itself (transcript lines 1140–1155). It got δ_norm 0.005. So the task can be done, but only by an agent that thinks of it (2 of 4 Sonnet T5Wg runs so far).
 - **Suggested fix:** add `add EnergyFraction {1000039} {0.0}` to both the ECal and HCal blocks, and `add PdgCode {1000039}` to `NeutrinoFilter`. Or ship a GMSB-ready card and name it in the cheat-sheet for gravitino tasks.
 - **Open question for them:** how many of the paper's T5Wg/TChiWg failures share this cause? It may also explain part of the per-task spread they report (Sonnet 4.6 on T5Wg: 0.61 ± 0.46).
 - **Reported:** not yet.
