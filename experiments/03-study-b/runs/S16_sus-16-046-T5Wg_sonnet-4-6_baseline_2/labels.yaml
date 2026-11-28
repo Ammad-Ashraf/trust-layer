@@ -1,2 +1,44 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 1049 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 1, 2d: 0, 2e: 0, 3a: 1, 3b: 1, 3c: 1, 3d: 0, 3e: 0, 3f: 0}
+  gap1_errors: 0
+  # Agent vs reference ledger:
+  # sigma: 3.05 fb (Prospino NLO, gluino pair, squarks 10 TeV; line 244) vs 3.598 fb (xsec WG NLO+NLL) -> 0.848x
+  # L:     35.9 fb^-1 (written as 35900 pb^-1 with sigma in pb, units right) vs 35.9 fb^-1 -> match
+  # BR:    1 (50/50 gluino -> qq chi0 / qq' chi+-, chi0 -> gamma G, chi+- -> W G all simulated; lines 447-451) vs 1 -> match
+  # eps:   963/20000 = 0.0482 raw SR, x trig 0.943 x photon SF 0.98 = 0.0445 vs 0.4246 -> 0.105x
+  # N_gen: 20000 (all showered, all through Delphes; lines 992, 1024, 1035)
+  # total: 4.87 vs 54.85 events -> 0.848 * 0.105 = 0.089 -> delta_norm 0.911 (matches score.json)
+  # So the normalization bookkeeping (sigma x L x BR, units, N_gen) is sound, and about 90% of the shortfall is
+  # in epsilon: 41% of events pass preselection (8254/20000) but only 12% of those pass MET > 300 and
+  # MT > 300 (line 1035), while CMS's own cut flow keeps 42% of all events in the SR. The softer
+  # agent shape (65% vs 85% in the >1300 bin) points the same way: too little MET.
+  # Most likely cause (label 3a): the stock delphes_card_CMS.tcl lists neutrinos and neutralinos
+  # (1000022/23/25/35/45) as invisible but not the gravitino 1000039, so the two ~850 GeV gravitinos
+  # deposit in the HCal and the MET mostly disappears. The card was never opened in the transcript,
+  # so this is an inference from the cut counts, not something shown in the log.
+gate_bounces: []
+labels:
+  - code: 3a
+    where: "lines 1002/1019 (Delphes with stock delphes_card_CMS.tcl on HepMC whose final state contains PDG 1000039, see line 529); result at line 1035"
+    what: "The agent ran the stock CMS Delphes card without declaring the gravitino (1000039) invisible, so its energy most likely lands in the calorimeter and the MET collapses; only 963 of 8254 preselected events pass MET/MT > 300 GeV, giving eps 0.045 vs 0.425. This is the main cause of delta_norm."
+    confidence: high
+    note: "Card check by the lead reviewer after labelling: the stock /opt/sim/delphes/cards/delphes_card_CMS.tcl in the container image lists 1000022/23/25/35/45 as EnergyFraction 0 in ECal and HCal but not 1000039, so gravitinos are calorimeter-visible (outreach F8). The agent itself never read the card. It fits the cut counts (41% preselection, 4.8% SR) and the soft S_T shape. Other suspects (photon isolation, the hand-written HepMC with all particles on one vertex, line 920) can't be ruled out from the log."
+  - code: 3c
+    where: "line 1035 (accepts 963/20000 in SR, 4.87 events) and line 1048 (final summary); gen-level MET check at line 492 failed to parse and was never repeated"
+    what: "The agent accepted a 4.8% signal-region efficiency for a compressed T5Wg point with two hard gravitinos without looking at the MET distribution or comparing with the paper's figure that stacks exactly this T5Wg 1750/1700 benchmark on the S_T^gamma plot (paper text in line 40). A 10x deficit went unnoticed."
+    confidence: high
+  - code: 3b
+    where: "line 244 (Prospino NLO result), adopted at line 266 and line 624 (SIGMA_NLO_PB = 3.05e-3)"
+    what: "The agent normalised to Prospino NLO (3.05 fb), but the paper (line 40, 'calculated at NLO and NLO+NLL') uses the NLO+NLL value (3.598 fb), so sigma is 0.85x the reference; the agent never mentions the order difference."
+    confidence: medium
+    note: "Not counted as 1b, because Prospino NLO is an accepted source under the project's 1b/C2 definition. It accounts for about 15% of the shortfall."
+  - code: 2c
+    where: "line 624 (analysis.py, PHOTON_SF = 0.98)"
+    what: "The agent turned the paper's 2% photon-efficiency-SF uncertainty into a made-up central scale factor of 0.98 ('central ~0.98 per paper') and multiplied it into every yield."
+    confidence: low
+    note: "Only a 2% effect. The provided photon_eff_LoosePixelVeto.root map was loaded but never applied (lines 624, 1035); the report admits this."
