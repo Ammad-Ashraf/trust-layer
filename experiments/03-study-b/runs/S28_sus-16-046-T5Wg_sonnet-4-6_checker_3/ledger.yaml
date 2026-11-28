@@ -1,0 +1,45 @@
+schema_version: 2
+task: sus-16-046_sim-T5Wg
+quantities:
+  cross_section:
+    value: 3.05
+    unit: fb
+    uncertainty: 0.46
+    source: Prospino 2.1, NLO, CTEQ6.6, sims/T5Wg_prospino.slha
+    source_type: prospino
+    process: gluino_pair
+    masses_gev:
+      gluino: 1750.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS-SUS-16-046 paper, Section 2
+    source_type: paper
+  generator_cross_section:
+    value: 1.787
+    unit: fb
+    uncertainty: 0.00319
+    source: Pythia8 8.312, sims/generate_T5Wg.py, 50000 events
+    source_type: generator
+    process: gluino_pair
+    masses_gev:
+      gluino: 1750.0
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: 'SLHA decay table: gluino 50% neutral/50% charged, chi0->gamma+G, chi+->W+G'
+    source_type: other
+    reason: All decay modes included in Pythia8 SLHA; combined BR for T5Wg topology
+      is 1.0 by construction
+  efficiency:
+    value: 0.5336
+    unit: dimensionless
+    source: analysis/analysis.py on data/delphes_T5Wg.root, CMS-SUS-16-046 selection
+    n_pass: 26681.0
+    n_gen: 50000.0
+corrections:
+- name: trigger
+  value: 0.943
+  unit: dimensionless
+  source: CMS-SUS-16-046 paper; photon+MET trigger efficiency
+  source_type: paper

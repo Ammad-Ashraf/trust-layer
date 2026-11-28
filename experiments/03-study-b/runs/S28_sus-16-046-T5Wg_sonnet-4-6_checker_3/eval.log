@@ -1,0 +1,47 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-046_sim-T5Wg_AnnoyingNoether_bb8d0709 (judge=llm) ===
+
+  sus-16-046_sim-T5Wg  (CMS-SUS-16-046)  [shape_norm]
+    series  : T5Wg_1750_1700   filled 4/4
+    shape   : bin_err= 7.72%  p=1  JSD=0.0002  d_JSD=0.0129
+    norm    : frac_err= 0.45%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-046_sim-T5Wg_AnnoyingNoether_bb8d0709/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~35K chars) — streaming progress below
+  [llm_judge]   30s  turns=0  tool_calls=0
+  [llm_judge]   80s  turns=2  tool_calls=0
+  [llm_judge] completed in 81s (2 turns, 0 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    Full simulation chain is traceable: Pythia8 (50k events) → Delphes (custom CMS card with gravitino fix) → analysis cuts → NLO normalization. The per-event weight σ_NLO×L×ε_trig/N_gen = 3.05×35.9×0.943/50000 ≈ 0.002065 applied to raw counts (198, 803, 2804, 22876) reproduces the submitted values exactly. No leakage detected — values differ from reference by 2–16%, consistent with independent fast-sim MC.
+    1 TRACEABLE
+
+  Trajectory
+    Strong run with a complete Pythia8→Delphes→analysis chain. The agent identified and fixed a non-obvious Delphes gravitino invisibility bug that was the central physics challenge. Final yields agree with the reference at the 2–16% level across bins, with the shape correctly dominated by the highest S_T^γ bin due to the compressed spectrum.
+    This is a high-quality run. The agent executed a complete and physically sound simulation chain for a non-trivial SUSY signal model, correctly identifying and fixing the central technical challenge (gravitino Delphes card invisibility). The final yields are within 2–16% of the reference across all bins, with the shape correctly reflecting the compressed-spectrum kinematics. Minor time was lost on SLHA format iteration and tool path issues, but these are typical simulation-chain debugging. The normalization is clean and fully traceable. No provenance concerns.
+
+  Strengths:
+    - Identified and fixed the Delphes gravitino invisibility bug — the make-or-break physics issue for this signal model
+    - Proper NLO normalization using Prospino rather than relying on Pythia8 LO cross section
+    - Systematic debugging approach: small test runs, intermediate diagnostics, then full production
+    - Clean SLHA creation with correct decay channels for the T5Wg simplified model
+    - Well-structured report with transparent normalization chain
+
+  Creative moves:
+    - Diagnosed gravitino Delphes card bug by checking MET distributions after first Delphes run showed median MET of 93 GeV instead of expected ~850 GeV, then traced it to the HCal default energy fraction for unlisted PDG codes
+    - Created separate clean SLHA files for Pythia8 and Prospino to work around different parser requirements
+
+  Stuck points:
+    - Multiple iterations on SLHA format: MODSEL 3=1 incorrectly triggered NMSSM mode in Pythia8, causing initialization failures and charge conservation warnings
+    - Background Pythia8 generation was killed by the shell, producing only 3,651 of 50,000 events
+    - Prospino SLHA path resolution required multiple attempts — the wrapper resolved paths relative to the repo root, not the workspace
+
+  Issues:
+    - Agent honestly documents no pile-up overlay, large K-factor, and Delphes card limitation as known simplifications
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-046_sim-T5Wg_AnnoyingNoether_bb8d0709/eval/judge_trajectory.md
+
+
