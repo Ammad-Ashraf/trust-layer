@@ -1,4 +1,4 @@
-version: study-b-v1-106-g302c4af
+version: study-b-v1-109-gdc7b8ac-dirty
 voids:
   S05: 2
 runs:
@@ -511,6 +511,25 @@ runs:
   overrule: NONE
   bounces: 0
   checker_seconds: 2.0
+  labelled: true
+  gap1: 0
+  labels: 2
+  passed: true
+- folder: S28_sus-16-046-T5Wg_sonnet-4-6_checker_3
+  slot: S28
+  model: claude-sonnet-4-6
+  task: sus-16-046_sim-T5Wg
+  arm: checker
+  rep: 3
+  outcome: scored
+  wall_hours: 0.852
+  delta_norm: 0.004529
+  norm_l2: 0.017781
+  shape_l2: 0.014078
+  judge_status: VERIFIED
+  overrule: NONE
+  bounces: 0
+  checker_seconds: 0.9
   labelled: true
   gap1: 0
   labels: 2
