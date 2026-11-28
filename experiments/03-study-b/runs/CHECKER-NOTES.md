@@ -25,3 +25,8 @@ Code is frozen at `study-b-v1`, so none of these are fixed here. They're things 
     - **Bounces:** all three were true catches (C3: ε missing; C5: bins null). The agent argued they'd clear once its shower finished, then ended its turn to "wait for the notification" (line 1100). In `-p` mode that ends the session, so the gate's bounce cap let it go with nothing filled.
     - **For the paper:** with findings 2 and 10, this makes three runs where the ledger can't hold a σ sum and C2 accepts one channel.
     - **Fix idea:** let `record-quantity` add components (e.g. `--component`) and have C2 match the sum.
+15. **Events at the wrong mass point pass C4** (S29, Sonnet, T2tt_comp, baseline; δ_norm 0.82).
+    - **What happened:** MadGraph never applied the agent's 800/400 SLHA, so the events use the default card: χ̃⁰₁ at 96.69 GeV (transcript lines 123, 310) and stop at about 400 GeV (line 711). σ was computed for 800/400. ε is 0.19× the reference, because σ and ε come from different models.
+    - **Same pattern elsewhere:** the labels show it in S19, S23 (both medium or low confidence) and S24 (gluino at the 608 GeV default).
+    - **Why the checker misses it:** C4 compares only the ledger's own `--mass` labels with the task. Nothing ties the masses to the simulated events.
+    - **Fix idea:** have `record-quantity efficiency` name the event file, and let C4 read the masses from its header (LHE/HepMC SLHA block) and compare them with the task.
