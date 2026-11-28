@@ -1,4 +1,4 @@
-version: study-b-v1-72-gdaf24a7-dirty
+version: study-b-v1-76-g963e5c6-dirty
 voids:
   S05: 2
 runs:
@@ -343,4 +343,23 @@ runs:
   labelled: true
   gap1: 1
   labels: 4
+  passed: false
+- folder: S19_sus-16-051-T2tt_comp_haiku-4-5_checker_2
+  slot: S19
+  model: claude-haiku-4-5
+  task: sus-16-051_sim-T2tt_comp
+  arm: checker
+  rep: 2
+  outcome: scored
+  wall_hours: 0.136
+  delta_norm: 10.582278
+  norm_l2: 19.964991
+  shape_l2: 1.390076
+  judge_status: VERIFIED
+  overrule: NONE
+  bounces: 3
+  checker_seconds: 89.9
+  labelled: true
+  gap1: 3
+  labels: 5
   passed: false
