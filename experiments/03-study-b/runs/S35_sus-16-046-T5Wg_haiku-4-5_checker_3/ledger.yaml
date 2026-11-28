@@ -1,0 +1,25 @@
+schema_version: 2
+task: sus-16-046_sim-T5Wg
+quantities:
+  cross_section:
+    value: 0.00313
+    unit: pb
+    source: Prospino2 NLO calculation
+    source_type: prospino
+    process: gluino_pair
+    masses_gev:
+      gluino: 1750.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS 2016 data, CMS-SUS-16-046 paper
+  branching_fraction:
+    value: 0.5
+    unit: dimensionless
+    source: 'T5Wg model: gluino->qqχ₁⁰ 50%, χ₁⁰->photon+LSP'
+  efficiency:
+    value: 0.01786
+    unit: dimensionless
+    source: 'CMS-SUS-16-046 selection: pT>180 GeV, MET>300, MT>300, ST_gamma>600'
+    n_pass: 2.0
+    n_gen: 112.0

@@ -1,0 +1,32 @@
+{
+  "agent_id": "BraveOppenheimer_ead4c3e4",
+  "run_dir": "claude_haiku-4-5/sus-16-046_sim-T5Wg_BraveOppenheimer_ead4c3e4",
+  "task_id": "sus-16-046_sim-T5Wg",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-046",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T11:01:59Z",
+  "ended_at": "2026-11-28T11:08:38Z",
+  "exit_code": 0,
+  "duration_wall_s": 399.43,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 1.051717,
+    "input_tokens": 650,
+    "output_tokens": 42080,
+    "cache_read_tokens": 6166193,
+    "cache_creation_tokens": 112024,
+    "tokens_total_billed": 154754,
+    "n_turns": 83
+  }
+}

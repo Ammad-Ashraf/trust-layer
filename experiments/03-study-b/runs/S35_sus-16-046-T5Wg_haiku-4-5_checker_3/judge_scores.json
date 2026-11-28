@@ -1,0 +1,97 @@
+{
+  "provenance_audit": {
+    "status": "QUESTIONABLE",
+    "summary": "The submitted values [1, 0, 0, 0] are traceable to the agent's calculate_signal_yield_v2.py script, which chains Prospino NLO cross-section (3.13 fb) \u00d7 luminosity (35.9 fb\u207b\u00b9) \u00d7 hand-estimated acceptance (1.5%) \u00d7 guessed bin fractions (60/25/10/5%). The cross-section and luminosity are well-sourced. However, the 1.5% acceptance and the bin-shape distribution are hand-waved guesses, not outputs of any simulation or data-driven estimate. The cut efficiencies used (20% for pT>180, 40% for MET>300) are wildly inappropriate for 1750 GeV gluinos, whose decay products carry ~850 GeV momenta. The bin fractions invert the physical reality: heavy gluino events concentrate at HIGH S_T^\u03b3, not low. Additionally, the K-factor of 2.437 stated in the report does not match any ratio of the agent's own numbers (MG5 LO = 4.773 pb vs Prospino NLO = 0.00313 pb gives 0.00066, not 2.437).",
+    "series": {
+      "histogram_T5Wg.yaml/T5Wg_1750_1700": {
+        "classification": "PARTIALLY_TRACEABLE",
+        "confidence": "high",
+        "source": "calculate_signal_yield_v2.py: \u03c3_NLO (3.13 fb from Prospino) \u00d7 L (35.9 fb\u207b\u00b9) \u00d7 acceptance (1.5% hand-estimate) \u00d7 bin_fractions (60/25/10/5% guesswork) \u2192 [1.01, 0.42, 0.17, 0.08] \u2192 rounded to [1, 0, 0, 0]",
+        "issues": [
+          "Acceptance of 1.5% is a hand-estimate, not computed from simulation. Individual cut efficiencies (pT>180: 20%, MET>300: 40%) are drastically wrong for 1750 GeV gluino kinematics where decay products carry ~850 GeV momenta; true acceptance is ~49%.",
+          "Bin distribution (60/25/10/5%) inverts reality. For 1750 GeV gluinos, the S_T^\u03b3 spectrum is peaked at the highest bin (reference: 85% above 1300 GeV), not the lowest.",
+          "K-factor 2.437 in report.md is fabricated: MG5 LO (4.773 pb) / Prospino NLO (0.00313 pb) = 0.00066, not 2.437.",
+          "Delphes was run on undecayed parton-level gluinos (no Pythia shower), producing physically meaningless reconstructed objects \u2014 no photons, no MET from LSP escapes."
+        ],
+        "corrected_values": null
+      }
+    },
+    "corrected_results": {},
+    "overrule": {
+      "action": "NONE",
+      "reason": "The submitted values are the genuine output of the agent's (flawed) calculation pipeline. The errors stem from bad physics estimates after a legitimate tool failure (Pythia8 version mismatch), not from fabrication, leakage, or forbidden shortcuts. The scoring metric will naturally reflect the poor accuracy. No correction from the agent's own work is recoverable \u2014 the Delphes analysis on undecayed partons produced no usable event-level data.",
+      "affected_series": [],
+      "score_policy": "Score as-submitted; the values reflect the agent's best effort under tool constraints.",
+      "evidence": "Cross-section from Prospino is correct (~3 fb). The 55\u00d7 undercount (1 event vs ~55 reference) is entirely due to the guessed 1.5% acceptance being ~33\u00d7 too low, compounded by the inverted bin shape."
+    }
+  },
+  "trajectory": {
+    "summary": "The agent built a correct generation pipeline (MadGraph + Prospino) but was blocked by a Pythia8 version mismatch and could not complete the shower/decay step. Rather than finding a workaround, it ran Delphes on undecayed parton-level gluinos (producing no useful physics), then hand-estimated acceptance and bin shapes using cut efficiencies appropriate for light particles \u2014 not the 1750 GeV gluinos in the task. The final prediction is 55\u00d7 too low and concentrated in the wrong bins.",
+    "planning": "The agent had a sound four-stage plan: generate events (MG5) \u2192 shower/decay (Pythia8) \u2192 detector simulation (Delphes) \u2192 event selection and histogram filling. It also correctly identified the need for a Prospino NLO cross-section. The plan was well-structured but had no fallback for the shower step failing.",
+    "tool_use": "MadGraph5 was used correctly to generate 50k parton-level gluino-pair events. Prospino was used correctly and returned a physically reasonable NLO cross-section (3.13 fb). The critical failure was the Pythia8 version mismatch (8.312 vs 8.313) \u2014 the agent tried one environment variable workaround, then abandoned the shower entirely. It then ran Delphes directly on undecayed parton-level LHE events, producing a ROOT file with no meaningful physics content (undecayed gluinos produce no photons, no MET from LSPs). The agent did not attempt MadGraph's internal decay capabilities (e.g., process card with explicit decay chains).",
+    "scientific_judgment": "Poor on kinematics, adequate on cross-sections. The agent correctly used Prospino over the suspect MG5 LO cross-section. However, its acceptance estimate reveals a fundamental misunderstanding of heavy-particle kinematics: for 1750 GeV gluinos with 1700 GeV NLSPs, decay products carry ~850 GeV momenta, making cuts like pT>180 GeV and MET>300 GeV nearly 100% efficient \u2014 not 20% and 40% as estimated. The bin distribution guess (60% in lowest bin) inverts reality: heavy gluino events produce very high S_T^\u03b3, with ~85% above 1300 GeV per the reference.",
+    "honesty_and_reporting": "Mixed. The report acknowledges 'SUSY decay chain not fully included' and 'Pythia8 version mismatch', which is honest. However, the report also states a K-factor of 2.437 that is arithmetically inconsistent with the agent's own numbers (actual ratio is 0.00066). The report frames the results with a 'Status: Complete' tone that overstates confidence given the fundamental pipeline gap.",
+    "strengths": [
+      "Correct use of Prospino to obtain a physically reasonable NLO cross-section, overriding the suspect MG5 LO value",
+      "Well-structured code artifacts: analysis script with proper CMS selection cuts, SLHA file, generation pipeline",
+      "Thorough documentation in report.md with clear methodology section",
+      "Proper use of the normalization ledger tool (record-quantity) to document the calculation chain"
+    ],
+    "creative_moves": [
+      {
+        "description": "Attempted to skip Pythia8 and run Delphes directly on parton-level LHE events (DelphesLHEF)",
+        "impact": "harmful",
+        "evidence": "Without shower/decay, the gluinos remain stable in the LHE file. Delphes processes these as massive stable particles \u2014 producing no photons, no jets from gluino decay, and no MET from escaping LSPs. The 50 MB ROOT output is physically meaningless for this analysis."
+      }
+    ],
+    "stuck_points": [
+      {
+        "description": "Pythia8 version mismatch (8.312 in code vs 8.313 in XML) blocked the shower/decay step. The agent tried one environment variable workaround and then abandoned the shower entirely.",
+        "avoidable": true,
+        "impact": "major",
+        "evidence": "The SIMULATE.md documentation (referenced in CLAUDE.md's pitfall table) describes known Pythia issues and fix patterns. The agent could also have used MadGraph's internal decay: 'generate p p > go go, go > j j n2, n2 > a n1' would have produced decayed events at the LHE level without needing Pythia. The SLHA file also has empty DECAY blocks with no branching ratios, which could have been populated."
+      },
+      {
+        "description": "After the pipeline failure, the agent estimated acceptance using generic cut efficiencies that ignore the actual mass scale of the signal.",
+        "avoidable": true,
+        "impact": "major",
+        "evidence": "The agent assumed pT>180 efficiency of 20% and MET>300 efficiency of 40%. For 1750 GeV gluinos with 1700 GeV NLSPs, decay products carry ~850 GeV momenta \u2014 these cuts are nearly saturated (>95%). A simple back-of-envelope calculation using the mass hierarchy would have shown this."
+      }
+    ],
+    "issues": [
+      {
+        "label": "PREMATURE_SURRENDER",
+        "severity": "major",
+        "description": "The agent gave up on Pythia8 after one workaround attempt, without trying MadGraph's internal decay chain syntax, populating the SLHA DECAY blocks with explicit branching ratios, or consulting the SIMULATE.md fix patterns referenced in the pitfall table.",
+        "evidence": "Session shows only one Pythia workaround (env variable PYTHIA8_IGNORE_VERSION_MISMATCH). No attempt to use 'generate p p > go go, go > j j n2' in MG5, or to check SIMULATE.md for the known Pythia 8.312 fix."
+      },
+      {
+        "label": "NORMALIZATION_ERROR",
+        "severity": "critical",
+        "description": "Total signal yield is 55\u00d7 too low (1 event vs ~55 reference). The 1.5% acceptance estimate is ~33\u00d7 below the actual ~49%, because cut efficiencies were estimated for generic light particles, not for 1750 GeV gluinos whose decay products carry ~850 GeV momenta.",
+        "evidence": "calculate_signal_yield_v2.py uses acceptance=0.015. Reference total = 54.85 events from \u03c3L=112.4, giving true acceptance ~49%. The pT>180 cut at 20% and MET>300 at 40% are the main underestimates."
+      },
+      {
+        "label": "NORMALIZATION_ERROR",
+        "severity": "critical",
+        "description": "Bin distribution is inverted. The agent placed 60% of events in the 600-800 GeV bin, but for 1750 GeV gluino production, ~85% of signal events have S_T^\u03b3 > 1300 GeV. The agent's assumption that 'events concentrate at lower S_T^\u03b3 due to threshold-like production' is physically incorrect for this mass point.",
+        "evidence": "calculate_signal_yield_v2.py bin_fractions: 600-800=60%, >1300=5%. Reference: 600-800=0.9%, >1300=84.7%. The high gluino mass means decay products are boosted, producing large S_T^\u03b3."
+      },
+      {
+        "label": "HALLUCINATION",
+        "severity": "moderate",
+        "description": "The report states K-factor = 2.437 (NLO/LO), but the agent's own numbers give MG5 LO = 4.773 pb and Prospino NLO = 0.00313 pb, yielding a ratio of 0.00066. The stated K-factor is fabricated.",
+        "evidence": "report.md: 'K-factor: 2.437 (NLO/LO)'. Actual: 0.00313 pb / 4.773 pb = 0.000656. The enormous MG5/Prospino discrepancy likely reflects an SLHA misconfiguration (1000 GeV squarks enhancing t-channel), not a physical K-factor."
+      },
+      {
+        "label": "TOOL_MISUSE",
+        "severity": "major",
+        "description": "Running Delphes on undecayed parton-level LHE events (containing only stable gluino pairs) produces no meaningful physics \u2014 no photons from NLSP decay, no MET from escaping LSPs, no jets from gluino fragmentation. The resulting ROOT file cannot support any event selection for this analysis.",
+        "evidence": "generate_events.sh runs 'DelphesLHEF ... delphes_output.root unweighted_events.lhe' directly on MG5 output without shower/decay. The LHE events contain only p p \u2192 go go with no decay products."
+      }
+    ],
+    "overall_assessment": "The agent demonstrated competent tool orchestration (MadGraph, Prospino, Delphes, normalization ledger) and produced well-documented artifacts. However, the Pythia8 version mismatch was a single-point failure that the agent did not recover from despite available alternatives (MG5 internal decay, SLHA decay blocks, SIMULATE.md fix patterns). The fallback to hand-estimated acceptance was undermined by poor physics intuition about heavy-particle kinematics \u2014 the cut efficiencies and bin distribution assume soft, threshold-like kinematics when the 1750 GeV mass scale guarantees hard, boosted decay products. The result is a 55\u00d7 underprediction with an inverted spectral shape. The fabricated K-factor in the report further erodes trust in the numerical reasoning."
+  },
+  "judge_model": "claude-opus-4-6",
+  "trajectory_report_path": "/home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-046_sim-T5Wg_BraveOppenheimer_ead4c3e4/eval/judge_trajectory.md"
+}
