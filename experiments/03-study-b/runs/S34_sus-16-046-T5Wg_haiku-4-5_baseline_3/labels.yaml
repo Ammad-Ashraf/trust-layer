@@ -1,2 +1,62 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: true   # gave up at 0.11 h of a 10 h budget: diagnosed "no photons" (line 405), tried none of its own fixes, submitted zeros
+# Line numbers below are line numbers in session.jsonl (1-based, 434 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 1, 1d: 1, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 1, 3b: 0, 3c: 1, 3d: 1, 3e: 1, 3f: 0}
+  gap1_errors: 2
+  # Agent vs reference ledger:
+  # sigma: none. No Prospino call, no xsec WG lookup, the MG5 sigma was never read. The report (line 189, kept in the
+  #        final report) still says "Cross-section: Computed at NLO+NLL accuracy", which is false. Reference 3.598 fb.
+  # L:     35.9 fb^-1 only copied into the YAML metadata, never multiplied into the yields (yields[ibin] += 1, raw
+  #        counts; lines 109/353). Reference 35.9 fb^-1.
+  # BR:    implicitly 1, which matches the reference convention (1.0). But the agent's SLHA decay table (line 82) was
+  #        never loaded, and no decays happened at all.
+  # eps:   0 / 50000 = 0 vs 0.4246. The events are undecayed gluino pairs at the MG5 default mass point
+  #        (m_gluino = 607.7 GeV, not 1750 GeV), run through DelphesLHEF with no parton shower.
+  # total: 0 vs 54.85 events. Every bin is exactly 0.0, so the relative L2 is |0 - ref| / |ref| = 1, and
+  #        delta_norm = 1.0 exactly.
+  # Were events simulated? Only partly. MG5 made 50k parton-level pp -> go go events (LHE, line 194), at the wrong
+  # mass. Pythia8 never produced a HepMC file: the run at line 223 failed, and after the run at 241 no file existed
+  # (line 257). Delphes ran on the raw LHE (lines 274/303; 50000 entries at line 338). There was no shower, no decays and no photons
+  # (line 377: max photon pT 0 in 1000 events). So the zero yield is the honest output of a broken chain, not
+  # fabricated (judge VERIFIED). The agent noticed the zero photons and the missing decays (line 405). It did not notice
+  # the wrong gluino mass, and it blamed the missing decays on Pythia "not applying" them, although Pythia never ran.
+  # Its final message (line 433) still says it "successfully completed" the task and lists a "Pythia8 shower +
+  # hadronization" step, and the report keeps a "Shower: Pythia8 ... Output format: HepMC3" section. Both are
+  # inaccurate; no 2x code fits this exactly, so it is recorded here and under the 3c label.
+gate_bounces: []
+labels:
+  - code: 1d
+    where: "lines 140/146/175 (mg5_input.txt: 'import model MSSM_SLHA2 T5Wg_1750_1700.slha', no param card set); run at line 178; evidence at lines 393 and 396"
+    what: "The agent's SLHA was never loaded into MG5, so the 50k events were generated with the MG5 default param card: m_gluino = 607.7 GeV (and m_chi10 = 96.7 GeV) instead of the 1750/1700 GeV T5Wg point."
+    evidence: "LHE header at line 393: '1000021 6.077137e+02 # mgo'; LHE event at line 396: gluino mass column 0.60771370000E+03."
+    confidence: high
+  - code: 1c
+    where: "lines 109 and 353 (analysis.py fill: 'yields[ibin] += 1'); line 189 (report claims an NLO+NLL sigma)"
+    what: "The analysis writes raw MC counts into the YAML. sigma, L and 1/N_gen are never applied, and no sigma was ever obtained, although the report claims one 'computed at NLO+NLL accuracy'."
+    evidence: "The analysis code has no cross_section or lumi weight. bin/prospino is never called anywhere in the session."
+    confidence: medium
+    note: "This was latent here, because zero passing events gives 0 with any weight. With a working chain it would have submitted unnormalised counts from a 50k-event sample."
+  - code: 3e
+    where: "line 259/260 ('run Delphes directly on the LHE file'), repeated at 274 and 303"
+    what: "After Pythia8 failed, the agent ran DelphesLHEF on the parton-level LHE file. That skipped the shower and every SUSY decay, so the sample could contain no photons at all and a zero yield was certain."
+    evidence: "Line 251: 'prepare a Delphes command that can work with LHE directly as a backup'. The ROOT file at line 316 was made from signal_T5Wg.lhe."
+    confidence: high
+  - code: 3d
+    where: "lines 223-235 and 241-257 (Pythia failures); line 405 (diagnosis)"
+    what: "The agent never read the output of the failed Pythia runs (it only checked the imports, line 234), and it never asked why v2 left no HepMC file. Its root cause, that the decays were 'not applied during shower/hadronization', is wrong: Pythia never ran, the agent itself bypassed it, and the SLHA was never loaded."
+    evidence: "Line 228: the task status is 'failed'. Line 257: 'cannot access signal_T5Wg.hepmc'. Line 405: 'decays should be handled by Pythia8 ... not being applied properly'."
+    confidence: medium
+  - code: 3c
+    where: "lines 375-405 (zero-yield investigation) and line 433 (final message)"
+    what: "The agent looked straight at the LHE param block and event record showing m_gluino = 607.7 GeV and did not notice the wrong mass. It called a 132 GeV mean MET 'reasonable' in a sample with no invisible particles. Then it submitted all-zero yields, which it knew were meaningless, as its prediction and declared the task 'successfully completed'."
+    evidence: "Line 393 shows mgo 6.077e+02, with no comment. The report at line 405 says 'MET distribution appears reasonable'. Line 433: 'I have successfully completed ...'."
+    confidence: medium
+  - code: 3a
+    where: "line 82 (SLHA DECAY blocks)"
+    what: "The hand-written decay table uses 2-body gluino -> chi_20 d_bar and gluino -> chi_1+ d_bar (colour- and charge-violating) instead of the 3-body g~ -> q q' NLSP of T5Wg, and it uses a 1 GeV chi_10 as the 'LSP' in place of the gravitino."
+    evidence: "'0.50000000 2 1000024 -1 # BR(~g -> ~chi_1+ d_bar)'"
+    confidence: low
+    note: "Latent: the SLHA was never loaded (see 1d), so this did not affect the result. A 1000022 LSP is invisible in the stock Delphes card, unlike 1000039, so that part would have helped; the gluino decay modes would not have worked."
