@@ -80,6 +80,16 @@ Pinned context for every entry, unless stated otherwise: Collider-Bench commit `
 
 ---
 
+## F8 · The stock Delphes CMS card doesn't treat the gravitino as invisible (medium, silently breaks GMSB tasks)
+
+- **Found:** 2026-11-28, Study B S16 (Sonnet 4.6, T5Wg, baseline).
+- **What:** the container's `/opt/sim/delphes/cards/delphes_card_CMS.tcl` sets `EnergyFraction 0` in ECal and HCal for the neutralinos (1000022, 1000023, 1000025, 1000035) and 1000045, but not for the gravitino (1000039). In T5Wg the LSP is the gravitino, so with the stock card its energy lands in the calorimeter and the missing energy mostly disappears. S16 got ε 0.045 against the reference 0.425 (only 963 of 8254 preselected events passed the MET/MT cuts) and never noticed why.
+- **Why it matters:** the T5Wg task (SUS-16-046) can't be done right with the default card unless the agent knows to patch it. An agent that does physics sensibly but trusts the provided card fails by about 10×. This is an environment trap, not a normalization error, and it affects both Study B arms the same way.
+- **Suggested fix:** add `add EnergyFraction {1000039} {0.0}` next to the neutralino lines in both calorimeter modules (it is in newer upstream Delphes cards), or mention in the T5Wg task that the gravitino must be made invisible.
+- **Reported:** not yet.
+
+---
+
 ## What we'll also offer them
 
 - Our checker and Study A suite as an optional add-on (the `simple-ledger` agent folder), with results.
