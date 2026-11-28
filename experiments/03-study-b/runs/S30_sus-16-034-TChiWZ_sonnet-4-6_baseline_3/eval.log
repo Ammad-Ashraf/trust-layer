@@ -1,0 +1,50 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_FuzzySalam_da29d75a (judge=llm) ===
+
+  sus-16-034_sim-TChiWZ  (CMS-SUS-16-034)  [shape_norm]
+    series  : TChiWZ_550_200   filled 4/4
+    shape   : bin_err=12.07%  p=0.995  JSD=0.0024  d_JSD=0.0485
+    norm    : frac_err=24.16%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_FuzzySalam_da29d75a/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~47K chars) — streaming progress below
+  [llm_judge]   30s  turns=0  tool_calls=0
+  [llm_judge]   61s  turns=0  tool_calls=0
+  [llm_judge]  133s  turns=2  tool_calls=0
+  [llm_judge] completed in 134s (2 turns, 0 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    All four bin values are directly traceable to the agent's end-to-end simulation chain: MadGraph5 (50k events, σ_LO=0.02028 pb) → Pythia8 (forced SUSY decays) → Delphes 3 (CMS card) → vectorized analysis.py applying all VZ signal-region cuts. The cutflow (50000→43692→881→469→239) is visible in the analysis stdout, and the per-bin counts (27, 61, 74, 77) × weight 0.01717 reproduce the submitted values to full precision. No evidence of reference leakage—the agent systematically undershoots the higher MET bins by 23–32%, consistent with the documented missing NLL correction, trigger efficiency, and Delphes approximations.
+    1 TRACEABLE
+
+  Trajectory
+    The agent completed a full end-to-end SUSY signal simulation (MadGraph→Pythia8→Delphes→analysis) for the CMS-SUS-16-034 VZ signal region, overcoming substantial technical obstacles with MadGraph TTY requirements, SLHA format issues, and Pythia8 version mismatches. The final values systematically undershoot the reference at high MET, consistent with missing NLL normalization and trigger corrections, both of which the agent honestly documented.
+    A strong run that completed the full simulation chain from matrix-element generation through detector simulation and analysis. The agent demonstrated solid physics understanding—particularly in handling the wino-bino coupling zero—and good engineering persistence in overcoming toolchain issues. The systematic yield deficit (23–32% at high MET) is well-explained by documented approximations, primarily the missing NLL cross-section correction and Delphes vs full simulation differences. The first bin agrees within 3%. The run produced clean, well-documented artifacts suitable for follow-up work.
+
+  Strengths:
+    - Complete end-to-end MC simulation chain with proper NLO normalization
+    - Correct identification and handling of the wino-bino coupling zero physics issue
+    - Thorough signal-region implementation with all 11 cuts including MT2(ℓℓ) and m_jj
+    - Honest and detailed documentation of approximations and their expected impact
+    - Clean artifact organization: SLHA files, analysis code, datasets.yaml, report.md all present
+
+  Creative moves:
+    - Separated MadGraph production from Pythia8 forced decays to handle the vanishing χ̃⁰₂→Zχ̃⁰₁ tree-level coupling in the pure wino-bino limit
+    - Built a comprehensive Pythia8 SLHA by programmatically modifying the MG5 default MSSM param card and adding DECAY blocks, after earlier minimal SLHA files caused NaN coupling errors
+
+  Stuck points:
+    - MadGraph5 generate_events required a TTY, causing multiple failed attempts before the agent found a working invocation using Python's subprocess with pty/script workarounds
+    - SLHA file format errors required three iterations: wrong BLOCK DECAY syntax, missing Yukawa/VCKM blocks, and missing GAUGE block for Pythia8
+    - Paper PDF location: agent couldn't find the paper for several attempts before correctly using the read-paper tool with REPO_ROOT
+
+  Issues:
+    - Missing NLL resummation on top of Prospino NLO cross section. The paper uses NLO+NLL cross sections from the LHC SUSY Cross Section Working Group, while the agent uses only NLO. At m=550 GeV, NLL adds ~10–15% to the total cross section, contributing to the systematic yield deficit.
+    - No trigger efficiency correction applied. The paper applies 90–96% trigger efficiency weights, effectively reducing yields by 4–10%. However, since the agent's yields are already low, this correction would have further decreased them—the net effect depends on whether the Delphes efficiency is already lower than the paper's corrected efficiency.
+    - The agent proactively documented all six deviations from the paper methodology with estimated magnitudes, enabling downstream assessment of systematic uncertainties.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_FuzzySalam_da29d75a/eval/judge_trajectory.md
+
+

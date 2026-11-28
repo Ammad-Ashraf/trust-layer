@@ -1,0 +1,92 @@
+{
+  "provenance_audit": {
+    "status": "VERIFIED",
+    "summary": "All four bin values are directly traceable to the agent's end-to-end simulation chain: MadGraph5 (50k events, \u03c3_LO=0.02028 pb) \u2192 Pythia8 (forced SUSY decays) \u2192 Delphes 3 (CMS card) \u2192 vectorized analysis.py applying all VZ signal-region cuts. The cutflow (50000\u219243692\u2192881\u2192469\u2192239) is visible in the analysis stdout, and the per-bin counts (27, 61, 74, 77) \u00d7 weight 0.01717 reproduce the submitted values to full precision. No evidence of reference leakage\u2014the agent systematically undershoots the higher MET bins by 23\u201332%, consistent with the documented missing NLL correction, trigger efficiency, and Delphes approximations.",
+    "series": {
+      "histogram_TChiWZ.yaml/TChiWZ_550_200": {
+        "classification": "TRACEABLE",
+        "confidence": "high",
+        "source": "Full MC chain: MadGraph5 3.7.0 (pp\u2192\u03c7\u0303\u207a\u2081\u03c7\u0303\u2070\u2082, 50k events) \u2192 Pythia8 8.312 (shower + forced decays via SLHA DECAY blocks) \u2192 Delphes 3 (CMS card) \u2192 analysis.py (VZ signal-region cuts). NLO normalization via Prospino 2.1 (K=1.179, \u03c3_NLO_total=0.02391 pb). Weight = 0.02391\u00d735900/50000 = 0.01717. Bin counts 27/61/74/77 \u00d7 weight produce the submitted values.",
+        "issues": [],
+        "corrected_values": null
+      }
+    },
+    "corrected_results": {},
+    "overrule": {
+      "action": "NONE",
+      "reason": "Values are independently computed through a legitimate simulation chain. Systematic undershooting (especially at high MET) is explained by documented approximations: missing NLL resummation (~10\u201315%), missing trigger efficiency correction (~4\u201310%), Delphes vs full GEANT4 simulation, and no charged-track veto. No fabrication or leakage detected.",
+      "affected_series": [],
+      "score_policy": "",
+      "evidence": "Cutflow stdout shows 239 events surviving all cuts. Per-bin event counts (27, 61, 74, 77) are visible in analysis output. 239 \u00d7 0.01717 = 4.103 matches reported total. Submitted values diverge from reference by -24% to +3% across bins, with a clear physical pattern (larger deficit at higher MET), ruling out copying."
+    }
+  },
+  "trajectory": {
+    "summary": "The agent completed a full end-to-end SUSY signal simulation (MadGraph\u2192Pythia8\u2192Delphes\u2192analysis) for the CMS-SUS-16-034 VZ signal region, overcoming substantial technical obstacles with MadGraph TTY requirements, SLHA format issues, and Pythia8 version mismatches. The final values systematically undershoot the reference at high MET, consistent with missing NLL normalization and trigger corrections, both of which the agent honestly documented.",
+    "planning": "Strong initial planning: the agent read the task, identified the full simulation chain, checked available tools, and read the paper before writing any code. It correctly diagnosed the wino-bino coupling zero issue (\u03c7\u0303\u2070\u2082\u2192Z\u03c7\u0303\u2070\u2081 tree-level width vanishes in pure states) early and separated MadGraph production from Pythia8 decays\u2014a non-trivial physics insight that shaped the entire pipeline.",
+    "tool_use": "The agent navigated a complex toolchain (MadGraph5, Pythia8, Delphes, Prospino, uproot, awkward-array, mt2) with considerable persistence. It installed the missing mt2 package, found the correct Pythia8 xmldoc path, and rewrote the analysis to pass the vectorization preflight check. Tool debugging consumed substantial context but ultimately succeeded.",
+    "scientific_judgment": "Good physics reasoning throughout. The agent correctly identified the wino-bino coupling zero requiring production-only MadGraph + Pythia8 decays, used Prospino K-factors rather than relying on LO alone, applied all 11 VZ signal-region cuts, and computed MT2(\u2113\u2113) using a proper library. The documented deviations (no NLL, no trigger efficiency, Delphes vs full sim, no charged-track veto) are accurate and explain the systematic deficit. The K-factor application (MG5 total LO \u00d7 Prospino K) is a standard approximation.",
+    "honesty_and_reporting": "Excellent. The report.md explicitly lists six deviations from the paper's methodology, with physically grounded estimates of their impact. The agent does not overclaim agreement and provides a clear cutflow table. The artifacts are well-organized and would allow another agent to reproduce or extend the work.",
+    "strengths": [
+      "Complete end-to-end MC simulation chain with proper NLO normalization",
+      "Correct identification and handling of the wino-bino coupling zero physics issue",
+      "Thorough signal-region implementation with all 11 cuts including MT2(\u2113\u2113) and m_jj",
+      "Honest and detailed documentation of approximations and their expected impact",
+      "Clean artifact organization: SLHA files, analysis code, datasets.yaml, report.md all present"
+    ],
+    "creative_moves": [
+      {
+        "description": "Separated MadGraph production from Pythia8 forced decays to handle the vanishing \u03c7\u0303\u2070\u2082\u2192Z\u03c7\u0303\u2070\u2081 tree-level coupling in the pure wino-bino limit",
+        "impact": "helpful",
+        "evidence": "Session logs show the agent recognized the coupling issue early: 'in the pure wino-bino limit (N\u2081\u2081=1, N\u2082\u2082=1), both \u03c7\u0303\u207a\u2081\u2192W\u03c7\u0303\u2070\u2081 and \u03c7\u0303\u2070\u2082\u2192Z\u03c7\u0303\u2070\u2081 tree-level vertices vanish.' Created a separate Pythia SLHA with explicit DECAY blocks forcing 100% BR."
+      },
+      {
+        "description": "Built a comprehensive Pythia8 SLHA by programmatically modifying the MG5 default MSSM param card and adding DECAY blocks, after earlier minimal SLHA files caused NaN coupling errors",
+        "impact": "helpful",
+        "evidence": "Multiple iterations on SLHA files: first attempt used wrong BLOCK DECAY format, second was missing SUSY blocks causing NaN couplings, final version built from MG5 default card with mass modifications and explicit DECAY entries."
+      }
+    ],
+    "stuck_points": [
+      {
+        "description": "MadGraph5 generate_events required a TTY, causing multiple failed attempts before the agent found a working invocation using Python's subprocess with pty/script workarounds",
+        "avoidable": false,
+        "impact": "moderate",
+        "evidence": "~15 tool calls spent on MadGraph TTY issue, including examining MadEvent source code, trying various flags (-f, --force), pty wrapping, and script-based fake terminal before finding a working approach."
+      },
+      {
+        "description": "SLHA file format errors required three iterations: wrong BLOCK DECAY syntax, missing Yukawa/VCKM blocks, and missing GAUGE block for Pythia8",
+        "avoidable": true,
+        "impact": "minor",
+        "evidence": "Agent first wrote 'BLOCK DECAY' instead of 'DECAY', then produced a minimal SLHA missing blocks that MG5 and Pythia8 needed. Could have started from the default param card modification approach used in the final iteration."
+      },
+      {
+        "description": "Paper PDF location: agent couldn't find the paper for several attempts before correctly using the read-paper tool with REPO_ROOT",
+        "avoidable": true,
+        "impact": "minor",
+        "evidence": "Three failed read-paper attempts with wrong paths before finding the correct invocation."
+      }
+    ],
+    "issues": [
+      {
+        "label": "NORMALIZATION_ERROR",
+        "severity": "moderate",
+        "description": "Missing NLL resummation on top of Prospino NLO cross section. The paper uses NLO+NLL cross sections from the LHC SUSY Cross Section Working Group, while the agent uses only NLO. At m=550 GeV, NLL adds ~10\u201315% to the total cross section, contributing to the systematic yield deficit.",
+        "evidence": "Report.md deviation #2: 'This analysis uses Prospino 2.1 NLO (no soft-gluon NLL resummation). The NLL correction at 550 GeV would increase the cross section by roughly 10\u201315%.' The agent was aware but Prospino doesn't provide NLL."
+      },
+      {
+        "label": "NORMALIZATION_ERROR",
+        "severity": "minor",
+        "description": "No trigger efficiency correction applied. The paper applies 90\u201396% trigger efficiency weights, effectively reducing yields by 4\u201310%. However, since the agent's yields are already low, this correction would have further decreased them\u2014the net effect depends on whether the Delphes efficiency is already lower than the paper's corrected efficiency.",
+        "evidence": "Report.md deviation #4: 'The paper applies trigger efficiency corrections of 90\u201396%. This analysis does not apply explicit trigger weights (effectively assumes 100% trigger efficiency).'"
+      },
+      {
+        "label": "CLEAR_LIMITATION_REPORTING",
+        "severity": "minor",
+        "description": "The agent proactively documented all six deviations from the paper methodology with estimated magnitudes, enabling downstream assessment of systematic uncertainties.",
+        "evidence": "Report.md 'Deviations from Paper' section lists: Delphes vs GEANT4, NLO vs NLO+NLL, missing charged-track veto, missing trigger efficiency, Delphes vs mini-isolation, and the coupling zero handling."
+      }
+    ],
+    "overall_assessment": "A strong run that completed the full simulation chain from matrix-element generation through detector simulation and analysis. The agent demonstrated solid physics understanding\u2014particularly in handling the wino-bino coupling zero\u2014and good engineering persistence in overcoming toolchain issues. The systematic yield deficit (23\u201332% at high MET) is well-explained by documented approximations, primarily the missing NLL cross-section correction and Delphes vs full simulation differences. The first bin agrees within 3%. The run produced clean, well-documented artifacts suitable for follow-up work."
+  },
+  "judge_model": "claude-opus-4-6",
+  "trajectory_report_path": "/home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_FuzzySalam_da29d75a/eval/judge_trajectory.md"
+}

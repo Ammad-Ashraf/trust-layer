@@ -1,0 +1,51 @@
+schema_version: 1
+experiment: 03-study-b
+slot:
+  id: S30
+  model: claude-sonnet-4-6
+  task: sus-16-034_sim-TChiWZ
+  arm: baseline
+  rep: 3
+  pilot: false
+task: sus-16-034_sim-TChiWZ
+arm: baseline
+model_requested: claude-sonnet-4-6
+model_snapshot: claude-sonnet-4-6
+claude_code_version: 2.1.326
+auth: token
+api_key_source: none
+mcp_servers: []
+trust_layer_commit: 0b0e4ff7d55f00d4ccc585a6c3f6a49afa51bff1
+tag: study-b-v1
+collider_bench_commit: 8c810283f85e44de1cc72522c5407cbc9e563967
+container_digest: sha256:8820ecd3b8cada3d37e5e16214bedc53b07cbc58ea83ef104f1795e3f9b3c01f
+machine: runner-laptop-24c
+cores: 32
+walltime_limit: 10h
+started_at: '2026-11-28T09:29:49+00:00'
+harness_run_dir: runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_FuzzySalam_da29d75a
+outcome: scored
+exit_code: 0
+wall_clock_hours: 0.77
+usage:
+  api_cost_usd: 7.580087
+  input_tokens: 158
+  output_tokens: 121183
+  cache_read_tokens: 13420864
+  cache_creation_tokens: 253932
+  tokens_total_billed: 375273
+  n_turns: 157
+score:
+  n_filled: 4
+  n_bins: 4
+  delta_norm: 0.241589
+  norm_relative_l2: 0.27132
+  shape_relative_l2: 0.087475
+  shape_jensen_shannon: 0.002357
+  pass: true
+judge:
+  provenance_status: VERIFIED
+  overrule: NONE
+  model: claude-opus-4-6
+n_gen: null
+notes: ''
