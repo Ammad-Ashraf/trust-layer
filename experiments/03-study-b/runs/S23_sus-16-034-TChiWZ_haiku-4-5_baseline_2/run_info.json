@@ -1,0 +1,32 @@
+{
+  "agent_id": "CrankyWeisskopf_c91ed8ab",
+  "run_dir": "claude_haiku-4-5/sus-16-034_sim-TChiWZ_CrankyWeisskopf_c91ed8ab",
+  "task_id": "sus-16-034_sim-TChiWZ",
+  "agent": "simple",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-034",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T04:20:08Z",
+  "ended_at": "2026-11-28T04:31:41Z",
+  "exit_code": 0,
+  "duration_wall_s": 692.74,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 0.930822,
+    "input_tokens": 593,
+    "output_tokens": 46637,
+    "cache_read_tokens": 4940703,
+    "cache_creation_tokens": 101487,
+    "tokens_total_billed": 148717,
+    "n_turns": 76
+  }
+}
