@@ -1,2 +1,34 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 1263 lines). Context compaction at line 883.
+summary:
+  counts: {1a: 0, 1b: 1, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 1, 3d: 0, 3e: 0, 3f: 0}
+  gap1_errors: 1
+  # Agent vs reference ledger:
+  # sigma: 23.91 fb = MG5 LO (x1+ n2 + x1- n2) 20.28 fb x Prospino K(x1+ n2 only) 1.175-1.179  vs 30.1656 fb (xsec WG NLO+NLL, wino) -> 0.793x
+  #        Both chargino charges ARE covered (MG5 generated both, line 429; LO 20.28 fb at line 456), but only through the LO generator:
+  #        Prospino was run only for x1+ n2 (19.8 fb NLO, 16.8 fb LO, line 843); the x1- n2 run failed on a relative SLHA path (lines 873-874)
+  #        and was never repeated after the context compaction (line 883).
+  #        The SLHA is right: pure wino chi20 and chi1+ (N22 = 1, U11 = V11 = 1; lines 246/267), pure bino chi10, so Prospino's
+  #        x1+ n2 value (19.8 fb NLO) is consistent with the wino expectation (about 21 fb NLO+NLL for the + charge alone). MG5 used the same card (line 431).
+  #        Rough split of the 0.79x (estimate, not checked): MG5 LO with NNPDF2.3 LO and MG5 default scale is about 0.84x of Prospino's LO
+  #        for both charges (Prospino LO x1+ alone is already 16.8 fb), and Prospino NLO vs the NLO+NLL envelope is about 0.94x.
+  # L:     35.9 fb^-1 (35900 pb^-1, line 1024) vs 35.9 fb^-1 -> match; pb x pb^-1 units correct
+  # BR:    1.0 (W and Z decays done by Pythia, all inside eps) vs 0.101 (Z->ll only); a different but consistent convention, no double count
+  # eps:   239/50000 = 0.00478 (line 1241) vs 0.0495 -> BR*eps 0.00478 vs 0.00500 -> 0.956x
+  # total: 4.103 vs 5.41 events -> 0.793 * 0.956 = 0.758 -> delta_norm 0.242 (matches score.json)
+  # So about 5/6 of the shortfall comes from sigma (label 1b). The remaining 0.956x in BR*eps is within selection/Delphes modelling;
+  # no bookkeeping error was found for it.
+gate_bounces: []
+labels:
+  - code: 1b
+    where: "line 1024 (analysis.py normalization block, sigma = 0.02391 pb), carried to lines 1179/1181 and report line 1257; inputs at line 456 (MG5 LO 0.02028 pb) and line 843 (Prospino x1+ n2 NLO 0.0198, LO 0.0168 pb)"
+    what: "The agent normalized to the MG5 LO cross section for both charges (20.28 fb, NNPDF2.3 LO) times the Prospino K-factor of x1+ n2 alone, giving 23.91 fb instead of an NLO(+NLL) value for x1+ n2 + x1- n2 (about 28 fb Prospino NLO, 30.17 fb WG). This is 0.79x the reference and the main cause of delta_norm."
+    confidence: medium
+    note: "A hybrid: the K-factor is from Prospino, but the base is the LO generator value with a different PDF and scale than Prospino's LO, which is already 16.8 fb for the + charge alone. The direct route (Prospino for x1- n2, ipart1 7) was tried at line 873, failed on a relative --slha path (line 874), and was lost in the context compaction (line 883, whose summary plans to use 0.0198 pb only). Not 1e: the x1- value was never computed. Not 1d: the SLHA mixing is pure wino and gives the right sigma."
+  - code: 3c
+    where: "lines 37/939 (paper: signals normalized at NLO+NLL), line 1024 (sigma adopted), report line 1257 (deviation 2)"
+    what: "The agent never checked 23.91 fb against the standard wino chi1+-chi20 NLO+NLL value (about 30 fb at 550 GeV) or noticed that MG5's 20.28 fb for both charges barely exceeds Prospino's 16.8 fb LO for the + charge alone. Its report even says NLL would add 10-15% but applies nothing."
+    confidence: medium
