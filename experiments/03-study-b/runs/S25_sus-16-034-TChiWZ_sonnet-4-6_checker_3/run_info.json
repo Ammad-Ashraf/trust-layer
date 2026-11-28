@@ -1,0 +1,32 @@
+{
+  "agent_id": "SillyHamilton_c84f57dc",
+  "run_dir": "claude_sonnet-4-6/sus-16-034_sim-TChiWZ_SillyHamilton_c84f57dc",
+  "task_id": "sus-16-034_sim-TChiWZ",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-sonnet-4-6",
+  "paper_ref": "CMS-SUS-16-034",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T04:44:24Z",
+  "ended_at": "2026-11-28T05:37:11Z",
+  "exit_code": 1,
+  "duration_wall_s": 3167.36,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 0,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 5.850292,
+    "input_tokens": 126,
+    "output_tokens": 90753,
+    "cache_read_tokens": 10737997,
+    "cache_creation_tokens": 185412,
+    "tokens_total_billed": 276291,
+    "n_turns": 121
+  }
+}

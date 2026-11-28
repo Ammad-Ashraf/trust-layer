@@ -1,0 +1,24 @@
+schema_version: 2
+task: sus-16-034_sim-TChiWZ
+quantities:
+  cross_section:
+    value: 7.75
+    unit: fb
+    source: Prospino 2.1 NLO, pp->chi1- chi02, ipart1=7, ipart2=2, sqrts=13000 GeV
+    source_type: prospino
+    process: chargino_neutralino
+    masses_gev:
+      chargino_1: 550.0
+      neutralino_2: 550.0
+      neutralino_1: 200.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS-SUS-16-034, 2016 Run 2 data
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: Analysis selection filters the correct final state
+    reason: Generated events include all W and Z decay modes; signal region selects
+      Z->ee/mumu + W->qq via analysis cuts; inclusive normalization via Prospino total
+      xsec
