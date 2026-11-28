@@ -1,0 +1,42 @@
+schema_version: 2
+task: sus-16-046_sim-T5Wg
+quantities:
+  cross_section:
+    value: 2.68
+    unit: fb
+    source: Prospino 2.1 NLO, CTEQ6, sqrts=13 TeV, m(gluino)=1750 GeV, squarks decoupled
+      at 5000 GeV; raw 0.00268 pb converted to 2.68 fb
+    source_type: prospino
+    process: gluino_pair
+    masses_gev:
+      gluino: 1750.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS-SUS-16-046 paper, 2016 dataset
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: 'T5Wg SMS: chi0->gamma+G (100%), chi+->W+G (100%); SUSY production=100%;
+      all final-state channels in simulation'
+    reason: All gluino decay chains terminate with gamma or W from NLSP; no missing
+      channels in SLHA decay table
+  efficiency:
+    value: 0.04512
+    unit: dimensionless
+    source: 'CMS-SUS-16-046 T5Wg analysis: MET>300, MT>300, pT(gamma)>180, |eta|<1.44,
+      STgamma>600'
+    reason: SR efficiency applied to normalize expected yields
+    n_pass: 2256.0
+    n_gen: 50000.0
+corrections:
+- name: photon_id_sf
+  value: 0.8782
+  unit: dimensionless
+  source: 'Average photon ID scale factor (data/Delphes) for selected barrel photons
+    pT>180 GeV: SF=data_eff/0.95; data_eff from photon_eff_LoosePixelVeto.root, highest
+    ET bin [90,500 GeV]: 0.848 (|eta|<0.8), 0.809 (0.8<|eta|<1.44)'
+- name: trigger_efficiency
+  value: 0.943
+  unit: dimensionless
+  source: 'Photon trigger efficiency from CMS-SUS-16-046 paper: epsilongamma = 94.3+/-0.4%'

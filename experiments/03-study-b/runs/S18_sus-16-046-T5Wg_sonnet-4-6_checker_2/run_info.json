@@ -1,0 +1,32 @@
+{
+  "agent_id": "CurioustHooft_97bbffea",
+  "run_dir": "claude_sonnet-4-6/sus-16-046_sim-T5Wg_CurioustHooft_97bbffea",
+  "task_id": "sus-16-046_sim-T5Wg",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-sonnet-4-6",
+  "paper_ref": "CMS-SUS-16-046",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T02:53:55Z",
+  "ended_at": "2026-11-28T03:35:09Z",
+  "exit_code": 0,
+  "duration_wall_s": 2473.37,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 7.733736,
+    "input_tokens": 169,
+    "output_tokens": 114661,
+    "cache_read_tokens": 15158307,
+    "cache_creation_tokens": 217642,
+    "tokens_total_billed": 332472,
+    "n_turns": 167
+  }
+}
