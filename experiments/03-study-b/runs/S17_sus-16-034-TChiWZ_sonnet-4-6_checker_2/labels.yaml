@@ -1,2 +1,47 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 1131 lines). Thinking blocks are redacted in this transcript.
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 1, 1e: 1, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 1, 3d: 1, 3e: 0, 3f: 0}
+  gap1_errors: 2
+  # Agent vs reference ledger:
+  # sigma: 19.8 fb (Prospino NLO, chi1+ chi20 only: ipart1=5, ipart2=2) vs 30.1656 fb (xsec WG NLO+NLL, chi1+chi20 + chi1-chi20) -> 0.656x
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1.0 (all W/Z decays left in eps) vs 0.101 (Z->ll only); a different but consistent convention, no double count
+  # eps:   0.00486 (243/50000) vs 0.0495 -> BR*eps 0.00486 vs 0.00500 -> 0.97x
+  # total: 3.455 vs 5.41 events -> 0.656 * 0.973 = 0.639 -> delta_norm 0.361 (matches score.json)
+  # So almost all of the shortfall comes from sigma: the chi1- chi20 channel (about 1/3 of the total) is missing
+  # (label 1d). A few percent more is NLO vs NLO+NLL. The selection (BR*eps) agrees with CMS within 3%.
+  # Note: the task card (line 6) writes the topology as "pp -> chi1+ chi02", which invites the mistake, but the
+  # agent's own MadGraph events contain both charges (lines 126, 453, 459), so sigma and events do not match.
+gate_bounces:
+  - where: "line 1119 (Stop-hook feedback); gate-bounces.jsonl bounce 1 at 02:51:52"
+    check: C4
+    flagged: "cross_section does not say which neutralino_2 mass it is for; record --mass neutralino_2=<GeV> (task: neutralino_2=550)"
+    catch: true   # a real gap in the record, but bookkeeping only: the Prospino run did use m(chi20)=550 GeV (SLHA, line 78)
+    response: fixed
+    note: "The agent had tried to record both masses at line 101 but used the wrong flag syntax, then dropped neutralino_2 at line 103. After the bounce it read the help (line 1124) and re-recorded the same 19.8 fb with --mass chargino_1=550 --mass neutralino_2=550 (line 1126). Value and source text unchanged, which is right here because the masses were genuinely 550/550. The gate passed at the next stop (02:52:03). No effect on the submitted yields."
+# What the gate missed: sigma covers only chi1+ chi20, though the ledger's own source string says so
+# ("pp->chi1+_chi02", line 103/1126). C4 checks only the process family (chargino_neutralino) and masses, not the charge channels.
+labels:
+  - code: 1d
+    where: "Prospino run line 87 (ipart1=5 chi1+, ipart2=2 chi20; result line 91: nlo 0.0198 pb); recorded line 103 (re-recorded 1126); used for yields at lines 1068/1106"
+    what: "The cross section is for chi1+ chi20 only, while the generated events (and the TChiWZ model) include chi1- chi20 as well, so sigma = 19.8 fb is 0.66x the combined 30.17 fb. This is the main cause of delta_norm 0.361."
+    confidence: high
+    note: "The agent knew the chi- codes existed (Prospino process list, line 57: ipart 7-8 = chi-) and generated both charges in MadGraph (lines 126, 453; channels P1_qq_x1pn2 and P2_qq_x1mn2 at line 459). The task card's 'pp -> chi1+ chi02' wording (line 6) is a mitigating factor."
+  - code: 1e
+    where: "line 1070 (first full analysis, last bin 350-450 capped); found at line 1093, fixed at 1104, re-run 1107"
+    what: "The last E_T^miss bin dropped events above 450 GeV against the task's overflow instruction, so 0.21 events computed by the selection were lost from the yields (sum 3.24 vs ledger 3.455)."
+    confidence: medium
+    note: "Self-fixed before the gate ran, because the agent compared the histogram sum with the ledger formula from `record-quantity show` (line 1081). The ledger helped here. The submitted yields were not affected."
+  - code: 3d
+    where: "line 486 (comparing MG5 LO 20.28 fb at line 477 with Prospino LO 16.8 fb at line 91)"
+    what: "The agent called MG5's LO value 'a match' to Prospino's LO, putting the 20% gap down to PDFs, but MG5 summed both charge channels while Prospino had only chi1+; the comparison was the clue to the missing channel and it was missed."
+    confidence: medium
+    note: "With the chi1- channel (about half the chi1+ rate) added, Prospino LO would be about 25 fb, so MG5 is low rather than high. The agent never noticed the two numbers describe different processes."
+  - code: 3c
+    where: "line 38 (paper says signals are normalised at NLO+NLL); sigma accepted at line 95; only internal cross-check at line 1113"
+    what: "The agent never checked its 19.8 fb against the standard wino chi20 chi1+- NLO+NLL value (about 30 fb at 550 GeV), although the paper it read says signals use NLO+NLL; its only check was that the histogram sum equals its own ledger formula."
+    confidence: medium
