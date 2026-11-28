@@ -1,0 +1,46 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-046_sim-T5Wg_GoofyChandrasekhar_4cac2204 (judge=llm) ===
+
+  sus-16-046_sim-T5Wg  (CMS-SUS-16-046)  [shape_norm]
+    series  : T5Wg_1750_1700   filled 4/4
+    shape   : bin_err=n/a  p=n/a  JSD=n/a  d_JSD=n/a
+    norm    : frac_err=100.00%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-046_sim-T5Wg_GoofyChandrasekhar_4cac2204/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~27K chars) — streaming progress below
+  [llm_judge]   69s  turns=2  tool_calls=0
+  [llm_judge] completed in 70s (2 turns, 0 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    All four submitted zeros are directly traceable to the agent's computation. The agent ran MG5 (50k gluino-pair events), attempted Pythia8 showering but fell back to running DelphesLHEF on the raw LHE file, which contained only bare gluino pairs with no decay products. The analysis script found zero reconstructed photons and correctly reported zero yields. No fabrication or leakage.
+    1 TRACEABLE
+
+  Trajectory
+    The agent built a complete MG5→Pythia8→Delphes→analysis pipeline and correctly implemented the CMS-SUS-16-046 event selection. However, it failed to ensure SUSY decay chains were applied: the LHE file contained only bare gluino pairs, Pythia8 showering either failed or was bypassed, and Delphes was run directly on undecayed LHE events. The agent correctly diagnosed the root cause (no photons because no decays) but submitted zeros rather than fixing the pipeline.
+    The agent demonstrated solid HEP analysis knowledge and built a structurally correct simulation pipeline, but critically failed to ensure SUSY decay chains were applied to the generated events. When Pythia8 showering did not produce usable output, the agent bypassed it by running Delphes directly on undecayed LHE events—guaranteeing zero reconstructed photons and zero signal yields. The agent correctly diagnosed the problem and documented it thoroughly, but did not attempt any of its own suggested fixes, constituting premature surrender on the core physics task. The result is an all-zero histogram against reference yields of 0.49–46.48 events.
+
+  Strengths:
+    - Correct implementation of all CMS-SUS-16-046 event selection cuts (photon pT, eta, MET, MT, STgamma binning)
+    - Proper SLHA file construction with correct mass spectrum for T5Wg_1750_1700
+    - Thorough diagnosis of the decay chain failure with concrete suggested fixes
+    - Honest reporting of zero yields with clear technical explanation
+    - Well-structured artifacts (analysis.py, report.md, SLHA, process cards) that another agent could pick up and fix
+
+  Creative moves:
+    - Fell back to DelphesLHEF when Pythia8 HepMC output was unavailable, keeping the pipeline moving
+
+  Stuck points:
+    - Pythia8 showering failed or did not produce a usable HepMC file. The agent created a v2 shower script but ultimately bypassed Pythia8 entirely by running DelphesLHEF on the raw LHE.
+    - MG5 process definition used bare gluino pair production (p p > go go~) without decay chains. The agent could have used MG5's decay syntax (e.g., 'generate p p > go go~, go > ... ') to include decays at matrix-element level.
+
+  Issues:
+    - Agent correctly diagnosed that gluino decays were missing (no photons in generated sample) but submitted all-zero results rather than fixing the pipeline. It had time and tools to either regenerate with MG5 decay syntax or debug Pythia8 SLHA reading.
+    - When Pythia8 failed to apply SUSY decays, the agent could have: (1) used MG5's built-in decay chain syntax, (2) used MadSpin for the decays, (3) debugged Pythia8's SLHA reading with diagnostic flags, or (4) generated the full process including decays at matrix-element level in MG5.
+    - The agent's report.md is unusually transparent about the failure mode, providing detailed root cause analysis and actionable fixes. This is a positive quality despite the failed physics result.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-046_sim-T5Wg_GoofyChandrasekhar_4cac2204/eval/judge_trajectory.md
+
+

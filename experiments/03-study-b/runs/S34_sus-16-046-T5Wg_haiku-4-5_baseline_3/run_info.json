@@ -1,0 +1,32 @@
+{
+  "agent_id": "GoofyChandrasekhar_4cac2204",
+  "run_dir": "claude_haiku-4-5/sus-16-046_sim-T5Wg_GoofyChandrasekhar_4cac2204",
+  "task_id": "sus-16-046_sim-T5Wg",
+  "agent": "simple",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-046",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T10:53:58Z",
+  "ended_at": "2026-11-28T11:00:30Z",
+  "exit_code": 0,
+  "duration_wall_s": 391.87,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 0.950746,
+    "input_tokens": 633,
+    "output_tokens": 40361,
+    "cache_read_tokens": 5441779,
+    "cache_creation_tokens": 102065,
+    "tokens_total_billed": 143059,
+    "n_turns": 81
+  }
+}
