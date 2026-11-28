@@ -1,2 +1,34 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 1628 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 1, 3d: 0, 3e: 1, 3f: 0}
+  gap1_errors: 0
+  # Agent vs reference ledger:
+  # sigma: 3.28 fb (Prospino 2.1 NLO, gg, squarks at 100 TeV; line 232, adopted line 424) vs 3.598 fb (xsec WG NLO+NLL) -> 0.912x
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1 (50/50 chi10/chi1+- split and NLSP decays simulated, so inside eps) vs 1.0 -> match, same convention
+  # eps:   26581/50000 = 0.532 x photon trigger 0.943 (paper value, line 41) = 0.501 vs 0.4246 -> 1.181x
+  # N_gen: 50000 (all showered and passed through Delphes; line 1468) vs n/a
+  # total: 59.03 vs 54.85 events -> 0.912 * 1.181 = 1.077 -> delta_norm 0.076 (matches score.json)
+  # Per bin: 0.50/1.78/6.09/50.65 vs 0.49/1.78/6.10/46.48; the whole excess is in the >1300 bin.
+  # So the near-correct total is partly luck: sigma 9% low and eps 18% high cancel.
+  # Gravitino: handled correctly. shower.py drops |pid| == 1000039 from the HepMC record before Delphes
+  # (edit at line 402, kept at line 520), so the stock CMS card's missing EnergyFraction-0 entry for 1000039
+  # does not matter and MET comes only from the removed gravitinos. The card itself was not patched (line 1163).
+  # Note: the judge (VERIFIED) repeated the agent's false "NLO+NLL ~1.4 fb, 2.3x overestimate" story and
+  # explained the agreement as "lower Delphes efficiency"; in fact eps is higher and sigma is lower than the reference.
+gate_bounces: []
+labels:
+  - code: 3c
+    where: "line 424 (comment in analysis.py), line 724 (report.md written), unresolved at lines 1617/1627"
+    what: "The agent claimed the paper's NLO+NLL gluino cross section is about 1.4 fb and that its Prospino NLO 3.28 fb overestimates the yield by 2.3x, but the true NLO+NLL value is 3.60 fb (resummation raises it). It then submitted without resolving a 2.3x tension it believed was real."
+    confidence: medium
+    note: "The 1.4 fb has no source in the transcript; no tool was run for it. The value never entered the yields (sigma = 3.28 fb was used), so this is not a Gap 1 error. It did mislead the judge. Using NLO (3.28 fb) instead of the paper's NLO+NLL (seen at line 41) leaves sigma 9% low; the checker's C2 accepts Prospino NLO, so no 1b. An earlier placeholder 1.61 fb 'NLO+NLL' from memory (line 217) was replaced by the Prospino value at line 424 before use."
+  - code: 3e
+    where: "line 1163 (stock delphes_card_CMS.tcl), line 724 (report: no ISR reweighting), result at line 1468"
+    what: "The agent used the stock Delphes CMS photon efficiency and isolation and skipped the ISR reweighting the paper applies to strong production. Its efficiency came out 0.501 vs the reference 0.425 (1.18x), all in the >1300 GeV bin, and this cancels the 9% sigma shortfall."
+    confidence: low
+    note: "The approximation is documented in the report and an 18% Delphes-vs-full-sim gap may be within normal spread. It is labelled because it hides the sigma deficit: the total looks right partly by luck."
