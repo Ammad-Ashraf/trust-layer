@@ -1,4 +1,4 @@
-version: study-b-v1-86-gea6584f-dirty
+version: study-b-v1-91-g728d66d
 voids:
   S05: 2
 runs:
@@ -419,4 +419,23 @@ runs:
   labelled: true
   gap1: 4
   labels: 8
+  passed: false
+- folder: S23_sus-16-034-TChiWZ_haiku-4-5_baseline_2
+  slot: S23
+  model: claude-haiku-4-5
+  task: sus-16-034_sim-TChiWZ
+  arm: baseline
+  rep: 2
+  outcome: scored
+  wall_hours: 0.192
+  delta_norm: 368.685767
+  norm_l2: 364.881767
+  shape_l2: 0.722896
+  judge_status: FAILED
+  overrule: INVALIDATE_SERIES
+  bounces: null
+  checker_seconds: null
+  labelled: true
+  gap1: 2
+  labels: 6
   passed: false
