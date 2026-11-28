@@ -1,2 +1,45 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 1233 lines; one auto-compaction at line 1068).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 1, 3c: 0, 3d: 0, 3e: 1, 3f: 0}
+  gap1_errors: 0
+  # Agent vs reference ledger:
+  # sigma: 3.05 fb (Prospino 2.1 NLO, gg, squarks 10 TeV) vs 3.598 fb (xsec WG NLO+NLL) -> 0.848x.
+  #        (vs the 3.392 fb implied by the CMS cut flow's first row: 0.899x)
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1.0 vs 1.0 -> match (same convention: photon/W mix left inside eps)
+  # eps:   0.5336 x trigger 0.943 = 0.5032 vs 0.4246 (cut-flow 54.85 / sigma*L) -> 1.185x
+  #        (vs 0.4504 if CMS's implied 3.392 fb is used as sigma: 1.117x). Trigger 94.3% is genuinely from the
+  #        paper (line 32), so it is a real factor, not an invention.
+  # N_gen: 50000 (full sample through Delphes)
+  # total: 55.10 vs 54.85 events -> 0.848 * 1.185 = 1.004 -> delta_norm 0.0045 (matches score.json)
+  # Per bin: 0.41/0.49 = 0.83, 1.66/1.78 = 0.93, 5.79/6.10 = 0.95, 47.24/46.48 = 1.02.
+  # Verdict: the near-perfect total is partly compensating. sigma is ~15% low (NLO instead of the paper's NLO+NLL)
+  # and eps is ~18% high (fast-sim, no pile-up, no object efficiencies applied); the two cancel to 0.4%.
+  # Neither is a bookkeeping (Gap 1) error: every factor was carried through correctly and the ledger formula
+  # (line 1215) equals the submitted sum. Both deviations are within the 27% sigma uncertainty.
+  # Gravitino: handled correctly. First full Delphes pass with the stock card (line 875) gave eps 4.7% and median
+  # MET 93 GeV (line 992). The agent first added 1000039 to NeutrinoFilter (line 1077; affects GenMissingET only),
+  # then found the real cause, HCal default EnergyFraction {0} {1.0} (lines 1140-1151), and added
+  # EnergyFraction {1000039} {0.0} to HCal (line 1152) and ECal (line 1155). Re-run: median MET 868 GeV (line 1174),
+  # eps 0.5336 (line 1187). The stock-card result was never submitted.
+  # Minor, not labelled: the cross_section uncertainty 0.46 fb (line 1210) has no source (Prospino gives none);
+  # it does not enter the yield.
+gate_bounces: []
+# gate-bounces.jsonl holds only the final 'pass' event (08:32:19): C1-C5 all passed, C2 matched the Prospino NLO run.
+# No Stop-hook feedback appears in the transcript. The gate could not see the sigma order (NLO vs NLO+NLL) issue,
+# since C2 accepts any Prospino NLO match.
+labels:
+  - code: 3b
+    where: "line 32 (paper: SMS cross sections at NLO+NLL); line 771 (tries --order NLO+NLL, rejected at 772); lines 773/827 (falls back to NLO, 3.05 fb at 830/853); report at line 1226"
+    what: "The agent knew the paper normalizes SMS signals at NLO+NLL and tried to get it, but when Prospino only offered NLO it silently used NLO, which is about 15% below the NLO+NLL 3.60 fb, and the report claims K=2.26 'is consistent with published SMS cross section tables' without checking."
+    confidence: low
+    note: "Prospino NLO is an accepted source under the checker (C2) and in the 1b definition, so this is a convention choice, not a Gap 1 error. The 15% sigma shortfall is what the high eps cancels."
+  - code: 3e
+    where: "line 992 (H/E = 0 for every photon, accepted); analysis written at line 621; object_efficiencies/ listed at lines 12/281 but never opened; no pile-up (report line 1226)"
+    what: "The agent took Delphes' idealised photon response at face value (H/E always 0, no ID/isolation or object efficiencies, no pile-up), giving a selection efficiency of 0.503 (with trigger) that is about 18% above the reference 0.425."
+    confidence: low
+    note: "The cause of the eps excess was not proven; it could also be generator/tune differences (Pythia8 direct vs MG5 LO + CUETP8M1). The agent did list 'no pile-up' as a known simplification. Labelled because the excess is what hides the sigma shortfall."
