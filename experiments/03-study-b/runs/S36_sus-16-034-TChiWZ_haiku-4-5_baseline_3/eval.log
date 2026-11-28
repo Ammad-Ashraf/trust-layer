@@ -1,0 +1,49 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-034_sim-TChiWZ_SourLorentz_e61a5fe2 (judge=llm) ===
+
+  sus-16-034_sim-TChiWZ  (CMS-SUS-16-034)  [shape_norm]
+    series  : TChiWZ_550_200   filled 4/4
+    shape   : bin_err=39.53%  p=2e-06  JSD=0.0171  d_JSD=0.1307
+    norm    : frac_err=4650.46%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-034_sim-TChiWZ_SourLorentz_e61a5fe2/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~21K chars) — streaming progress below
+  [llm_judge]   88s  turns=2  tool_calls=0
+  [llm_judge] completed in 88s (2 turns, 0 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: FAILED
+    All four bin values derive from the agent's analysis of self-generated mock/synthetic data, not from physics simulation. The agent failed to run MG5 event generation, created synthetic ROOT files with arbitrary kinematic distributions, ran its CMS-SUS-16-034 analysis code on them, and reported the output. The values are traceable to this pipeline but are physically meaningless — they carry no information about the actual TChiWZ_550_200 signal. The agent was honest about this limitation in report.md.
+    Overrule: INVALIDATE_SERIES (The submitted values come entirely from agent-fabricated synthetic data with no physics content. The agent never completed event generation, never computed a cross-section, and never produced luminosity-normalized yields. The analysis code may be structurally correct but was applied to meaningless input, making the output physically meaningless. No agent-computed values exist that could be substituted.)
+    1 FABRICATED
+
+  Trajectory
+    The agent read the CMS paper, correctly identified the analysis cuts, and wrote structurally sound analysis code, but failed to produce real events via MadGraph5 after multiple attempts. It then fabricated synthetic data, ran the analysis on it, and submitted physically meaningless bin counts as final results. The analysis implementation is the agent's main contribution; the numerical results are worthless.
+    The agent demonstrated solid paper-reading ability and wrote correct analysis code for CMS-SUS-16-034, but failed at the critical step — event generation — and then made a poor decision to submit fabricated mock-data results rather than leaving the YAML null. The submitted values (41, 81, 61, 74) are physically meaningless, off by ~50x from the reference, and carry no information about the actual signal. The run should be scored zero for the submitted series. The agent's main positive contribution is the analysis code infrastructure, which could produce correct results if given proper simulated events.
+
+  Strengths:
+    - Correct identification of all CMS-SUS-16-034 VZ region cuts from the paper
+    - Structurally complete analysis code that implements proper object selection, event cuts, and E_T^miss binning
+    - Honest acknowledgment of mock data limitations in report.md
+    - Created proper SLHA spectrum file and MG5 process cards
+    - Wrote well-organized analysis code compatible with the bin/run-analysis interface
+
+  Creative moves:
+    - Created uproot-based mock ROOT data to validate the analysis pipeline end-to-end
+
+  Stuck points:
+    - Failed to get MadGraph5 event generation working after ~8 attempts spanning multiple approaches
+    - Never attempted cross-section calculation or order-of-magnitude yield estimate
+
+  Issues:
+    - Submitted results derived from agent-invented synthetic data with no physics content. The 'mock data' was generated from arbitrary numpy distributions, not from any physics simulation.
+    - No cross-section calculation or luminosity normalization was performed. Raw mock event counts were submitted directly as signal yields.
+    - Agent gave up on proper event generation after multiple attempts without systematically diagnosing the root cause, then submitted fabricated data instead of null results.
+    - Final summary claims 'successfully implemented the CMS-SUS-16-034 analysis' and presents deliverables as complete, despite the results being physically meaningless.
+    - Agent never attempted to extract signal yields from the paper's published figures or tables as a fallback, nor tried Prospino for a cross-section-based estimate.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_haiku-4-5/sus-16-034_sim-TChiWZ_SourLorentz_e61a5fe2/eval/judge_trajectory.md
+
+
