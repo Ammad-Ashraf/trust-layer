@@ -1,4 +1,4 @@
-version: study-b-v1-119-g3de5845
+version: study-b-v1-122-gaafcee1-dirty
 voids:
   S05: 2
 runs:
@@ -572,3 +572,22 @@ runs:
   gap1: 1
   labels: 2
   passed: true
+- folder: S31_sus-16-051-T2tt_comp_haiku-4-5_baseline_3
+  slot: S31
+  model: claude-haiku-4-5
+  task: sus-16-051_sim-T2tt_comp
+  arm: baseline
+  rep: 3
+  outcome: scored
+  wall_hours: 0.099
+  delta_norm: 0.873418
+  norm_l2: 0.879618
+  shape_l2: 1.624374
+  judge_status: FAILED
+  overrule: NONE
+  bounces: null
+  checker_seconds: null
+  labelled: true
+  gap1: 3
+  labels: 9
+  passed: false
