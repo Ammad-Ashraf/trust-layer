@@ -27,6 +27,6 @@ Code is frozen at `study-b-v1`, so none of these are fixed here. They're things 
     - **Fix idea:** let `record-quantity` add components (e.g. `--component`) and have C2 match the sum.
 15. **Events at the wrong mass point pass C4** (seen clearest in S29, Sonnet, T2tt_comp, baseline arm, so no checker ran, δ_norm 0.82; S24 is a checker-arm case that did pass C4).
     - **What happened:** MadGraph never applied the agent's 800/400 SLHA, so the events use the default card: χ̃⁰₁ at 96.69 GeV (transcript lines 123, 310) and stop at about 400 GeV (line 711). σ was computed for 800/400. ε is 0.19× the reference, because σ and ε come from different models.
-    - **Same pattern elsewhere:** the labels show it in S19, S23 (both medium or low confidence) and S24 (gluino at the 608 GeV default).
+    - **Same pattern elsewhere:** the labels show it in S19, S23 (both medium or low confidence), S24 (gluino at the 608 GeV default) and S31 (Haiku, baseline: `set slha ./T2tt_800_400.slha` at transcript line 95 didn't load the card; the LHE stops are 398/403 GeV at line 255).
     - **Why the checker misses it:** C4 compares only the ledger's own `--mass` labels with the task. Nothing ties the masses to the simulated events.
     - **Fix idea:** have `record-quantity efficiency` name the event file, and let C4 read the masses from its header (LHE/HepMC SLHA block) and compare them with the task.
