@@ -1,2 +1,52 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 1264 lines; context compaction at line 973).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 1, 3a: 0, 3b: 1, 3c: 1, 3d: 0, 3e: 2, 3f: 0}
+  gap1_errors: 0
+  # Agent vs reference ledger:
+  # sigma: 27.2 fb (Prospino 2.1 NLO, tb, m_stop1=800) vs 28.3338 fb (xsec WG NLO+NLL) -> 0.960x (NLO vs NLO+NLL; acceptable source)
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1.0 (T2tt definition, top decays inside eps) vs 1.0 -> match, same convention
+  # eps:   0.00552 (276/49995, Delphes) vs 0.0077666 (CMS Additional Table 1) -> 0.711x
+  # N_gen: 49995 (Delphes processed 9999 of each 10k chunk); consistent denominator, negligible effect
+  # total: 5.391 vs 7.9 events -> 0.960 * 0.711 = 0.682 -> delta_norm 0.318 (matches score.json)
+  # Per bin agent/ref: 1.60/2.3, 1.50/1.7, 0.92/1.7, 1.37/2.2 (0.70, 0.88, 0.54, 0.62).
+  # So the shortfall is almost all in efficiency (about -29%); sigma contributes only -4%.
+  # No bookkeeping (Gap 1) error: sigma x L x eps is carried through exactly (lines 1192, 1244).
+  # Likely causes of the low eps: LO pp > t1 t1~ with no matrix-element ISR jets, in a selection that needs
+  # NJ>=5 and a non-b leading jet (label 3e below), plus generic Delphes b-tag/lepton efficiencies.
+  # The missing lepton/track/tau vetoes (second 3e) push eps the other way, so the simulation deficit is
+  # if anything larger than 0.71x.
+gate_bounces: []
+# gate-bounces.jsonl holds one record (2026-11-28T00:34:31), event "pass", C1-C5 all passed: no bounce.
+# C2 matched sigma to the Prospino tb run; C5 found bins sum 5.391 vs ledger 5.39.
+# The gate has no check that could catch an efficiency that is 0.71x low.
+labels:
+  - code: 3e
+    where: "lines 112/125 (proc card 'generate p p > t1 t1~', no extra partons); paper text read at line 45 says MG5 LO with MLM matching; limitation stated in report at line 1258"
+    what: "The agent generated stop pairs with no matrix-element ISR jets and left all ISR to the Pythia shower, though the paper (read at line 45) uses MLM-matched samples and the compressed selection needs NJ>=5 and a non-b-tagged leading jet. This is the most likely cause of the 0.71x efficiency and so of delta_norm."
+    confidence: medium
+    note: "The agent named this limitation in report.md but did not try p p > t1 t1~ + j(j) with matching. Delphes b-tag and lepton efficiencies may also contribute; not separable from the transcript."
+  - code: 3e
+    where: "lines 45/47 (Table 1 read: veto lepton, veto track); analysis.py written at line 388, rewritten at line 638; final selection in run folder analysis.py"
+    what: "The preselection has no veto-lepton, isolated-track or tau veto from Table 1, and report.md (line 1258) does not mention this deviation."
+    confidence: medium
+    note: "Dropping vetoes raises efficiency, so it does not explain the deficit; it hides part of it."
+  - code: 3c
+    where: "line 785 ('expected ~2%') vs final 0.552% at lines 1192/1244, accepted at line 1245"
+    what: "The agent said the efficiency should be about 2% while debugging, then accepted a final 0.55% without checking it against that expectation or any outside number."
+    confidence: low
+    note: "Its ~2% guess was itself too high (reference 0.78%), but the final value went unchecked."
+  - code: 2e
+    where: "line 1192 (prints 'Updated results/...'), line 1206 (YAML still holds 0.1758/0.1563/0.1172/0.0977 from the broken-b-tag run), fixed at lines 1230-1238"
+    what: "The YAML writer only replaced 'null', so the rerun left stale yields from the broken pipeline in the results file while reporting it as updated."
+    confidence: high
+    note: "Self-caught and fixed before submission. The submitted yields are the correct 276-event values (line 1262)."
+  - code: 3b
+    where: "line 206 (shower.py 'Tune:pp = 14  # CMS UE tune CP1'); repeated in report.md at line 1258"
+    what: "Pythia8 Tune:pp=14 is Monash 2013, not CMS CP1, and CMS 2016 signal samples used CUETP8M1, so the report gives the wrong shower tune."
+    confidence: low
+    note: "Documentation and convention error. The tune affects ISR somewhat, but its effect on the yield was not measured."
