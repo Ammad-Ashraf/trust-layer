@@ -1,0 +1,32 @@
+{
+  "agent_id": "QuantumBhabha_b9377568",
+  "run_dir": "claude_haiku-4-5/sus-16-051_sim-T2tt_comp_QuantumBhabha_b9377568",
+  "task_id": "sus-16-051_sim-T2tt_comp",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-051",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T10:29:55Z",
+  "ended_at": "2026-11-28T10:41:11Z",
+  "exit_code": 0,
+  "duration_wall_s": 675.65,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 1.391253,
+    "input_tokens": 747,
+    "output_tokens": 78190,
+    "cache_read_tokens": 7083140,
+    "cache_creation_tokens": 145621,
+    "tokens_total_billed": 224558,
+    "n_turns": 95
+  }
+}

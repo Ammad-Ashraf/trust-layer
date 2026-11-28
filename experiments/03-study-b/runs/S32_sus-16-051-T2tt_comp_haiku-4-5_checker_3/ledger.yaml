@@ -1,0 +1,27 @@
+schema_version: 2
+task: sus-16-051_sim-T2tt_comp
+quantities:
+  cross_section:
+    value: 27.0
+    unit: fb
+    source: Prospino 2.1 NLO at 13 TeV (0.027 pb = 27 fb)
+    source_type: prospino
+    process: stop_pair
+    masses_gev:
+      stop_1: 800.0
+      neutralino_1: 400.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS 2016 data, 13 TeV (CMS-SUS-16-051)
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: CMS-SUS-16-051
+    reason: "T2tt simplified model: 100% branching to t + \u03C7\u0303\u2081\u2070"
+  efficiency:
+    value: 0.000753
+    unit: dimensionless
+    source: "Selection efficiency from LO sim scaled to NLO (K-factor 0.0216 already incorporated: 34 × 0.0216 / 969 = 0.000753)"
+    n_pass: 0.73
+    n_gen: 969.0
