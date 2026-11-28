@@ -1,2 +1,55 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: true   # gave up on real simulation after ~4 min (line 234) with a 10 h budget; the MG5 job (gen2) was still building processes (line 230) and was killed at session end (lines 277-278)
+# Line numbers below are line numbers in session.jsonl (1-based, 279 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 1, 1d: 0, 1e: 0, 2a: 0, 2b: 1, 2c: 1, 2d: 0, 2e: 0, 3a: 1, 3b: 0, 3c: 2, 3d: 0, 3e: 0, 3f: 0}
+  gap1_errors: 1
+  # Agent vs reference ledger:
+  # sigma: none used. Prospino never run. report.md claims "~1-2 fb (NLO+NLL)" (line 263), but nothing computed it and it never
+  #        enters the yields. Reference 3.598 fb (xsec WG NLO+NLL).
+  # L:     LUMINOSITY_FB = 35.9 is defined in analysis_final.py (line 235) but never multiplied in. Reference 35.9 fb^-1.
+  # BR:    none (implicitly 1). Reference 1.0.
+  # eps:   1624/2000 = 0.812 claimed. Only 1332/2000 = 0.666 lands in the bins. Reference 0.4246.
+  # N_gen: 2000 numpy toy events (not MC). Submitted yields are raw toy counts, so N_toy = 2000 takes the place of sigma x L.
+  # total: 1332 vs 54.85 events -> 24.3x (delta_norm 23.28, matches score.json).
+  # Breakdown: (sigma x L) stand-in 2000 vs 129.18 -> 15.5x (the missing normalization, label 1c);
+  #            eps 0.666 vs 0.4246 -> 1.57x (made-up toy kinematics, labels 2b/2c). 15.5 x 1.57 = 24.3.
+  # Per bin: 5/122/621/584 vs 0.49/1.78/6.10/46.48. The shape is inverted too: the toy peaks at 1000-1300 GeV, the reference above 1300 GeV.
+  # Setup note (not an agent error): bin/read-paper failed on the relative path papers/CMS-SUS-16-046.pdf (lines 18-19, 27-28)
+  # because the wrapper cd's to REPO_ROOT before running (line 39, script line 18). The agent worked around it by calling
+  # python -m ColliderBench.tools.CLI.read_paper from the workspace (line 58).
+  # Judge notes: FAILED / INVALIDATE_SERIES because the series is FABRICATED (numpy toy generator). Three things the judge got wrong:
+  # it calls the agent's T5Wg topology correct (it isn't, see 3a); it gives sigma(1750) as ~0.02 pb (the true value is 0.0036 pb);
+  # and it says every MG5 attempt failed, but gen2 was still running when the agent abandoned it.
+gate_bounces: []
+labels:
+  - code: 2b
+    where: "line 234 (decision), line 235 (writes analysis_final.py), line 256-257 (run), line 260 (YAML written)"
+    what: "After the MG5 attempts the agent wrote a numpy toy generator (photon pT ~ gamma(5,100)+300, MET ~ gamma(5,80)+150, uniform phi, Poisson jets) and submitted its histogrammed output as the prediction. No MG5, Pythia or Delphes event reached the analysis."
+    confidence: high
+    note: "report.md (line 263) still describes an MG5 -> Pythia8 -> Delphes chain with '20,000 events generated', says 'Table 1 cuts replicated exactly' and calls the analysis 'production-ready'. Only one line among the deviations says 'Synthetic event sample for demonstration'. The final message (line 275) claims 'High fidelity: Realistic event distributions'."
+  - code: 1c
+    where: "line 235 (analysis_final.py: LUMINOSITY_FB defined, never used; save_results writes np.histogram counts), line 257"
+    what: "The submitted yields are raw counts of 2000 toy events. No sigma x L / N_gen normalization is applied anywhere, so N_toy = 2000 stands in for sigma x L = 129 events (15.5x). This is the main cause of the 24x."
+    confidence: high
+  - code: 2c
+    where: "line 257 (cut flow 81.2%), line 263 (report: 'Cut efficiency: ~81% ... is reasonable'; '94.3% photon trigger efficiency applied')"
+    what: "The 81% selection efficiency comes straight from the hand-tuned toy distributions, and the report defends it as physically reasonable (reference 42%). The report also says a 94.3% trigger efficiency was applied, but no such factor exists in the code."
+    confidence: low
+    note: "This overlaps with 2b, because the efficiency is a by-product of the fake simulator. It is kept separate because the report presents the number as a validated result and invents a trigger factor."
+  - code: 3c
+    where: "line 263 (report: 'Cross section: ~1-2 fb' and 'effective cross section of ~37 fb after all selection cuts')"
+    what: "The report gives sigma ~1-2 fb and also a post-cut effective sigma of ~37 fb, which would need eps > 1. The agent never compared 1332 events against sigma x L (~36-72 events even with its own sigma)."
+    confidence: high
+  - code: 3c
+    where: "line 257 (prints 'Total selected: 1624' and then 'Total: 1332'); template instruction at line 50"
+    what: "np.histogram with an upper edge of 1600 GeV dropped the 292 selected events above 1600 GeV, although the template says the last bin must hold ALL events above 1300 GeV. The 1624 vs 1332 mismatch was printed and not noticed."
+    confidence: medium
+    note: "It is a bookkeeping loss between the selected count and the submission, so 1e is also a possible code. It is labelled 3c because the sample is fake, so no 'right value' was ever computed."
+  - code: 3a
+    where: "line 96 (SLHA: chi_10 = 0 GeV, chi_20/chi_1+ = 1700), line 99 / 199 (MG5: go > q q n1, go > q q' x1+), report at lines 191/263"
+    what: "The agent set up T5Wg wrongly as gluino -> q q + massless LSP or -> q q' chargino -> W + LSP, skipping the 1700 GeV NLSP -> photon/W + gravitino step. That process has no photon from the decay chain."
+    confidence: low
+    note: "It had no effect on the submitted numbers, because MG5 output was never used. It would have mattered if the simulation had run."
