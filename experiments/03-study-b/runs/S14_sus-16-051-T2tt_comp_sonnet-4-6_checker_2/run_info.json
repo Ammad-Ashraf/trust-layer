@@ -1,0 +1,32 @@
+{
+  "agent_id": "MintyAdler_e25fb131",
+  "run_dir": "claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_MintyAdler_e25fb131",
+  "task_id": "sus-16-051_sim-T2tt_comp",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-sonnet-4-6",
+  "paper_ref": "CMS-SUS-16-051",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-27T22:55:23Z",
+  "ended_at": "2026-11-28T00:34:34Z",
+  "exit_code": 0,
+  "duration_wall_s": 5950.35,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 7.016416,
+    "input_tokens": 169,
+    "output_tokens": 97486,
+    "cache_read_tokens": 13660688,
+    "cache_creation_tokens": 210372,
+    "tokens_total_billed": 308027,
+    "n_turns": 170
+  }
+}

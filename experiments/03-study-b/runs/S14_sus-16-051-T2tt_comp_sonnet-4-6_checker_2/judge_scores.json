@@ -1,0 +1,91 @@
+{
+  "provenance_audit": {
+    "status": "VERIFIED",
+    "summary": "All four bin yields are directly traceable to the agent's MadGraph5\u2192Pythia8\u2192Delphes\u2192analysis pipeline. The normalization \u03c3(NLO)\u00d7L\u00d7(N_pass/N_gen) = 27.2 fb \u00d7 35.9 fb\u207b\u00b9 \u00d7 (raw/49995) reproduces the submitted values to <0.01% precision. Raw counts (82, 77, 47, 70) come from the analysis.py selection applied to Delphes ROOT output. The NLO cross section (27.2 fb) was obtained from Prospino. No evidence of leakage \u2014 submitted values are 30\u201358% below the hidden reference, consistent with LO+shower ISR modeling and Delphes fast-sim limitations.",
+    "series": {
+      "histogram_T2tt_comp.yaml/T2tt_800_400": {
+        "classification": "TRACEABLE",
+        "confidence": "high",
+        "source": "Full simulation chain: MadGraph5 LO (50k events) \u2192 Pythia8 shower \u2192 Delphes CMS card (5\u00d710k chunks) \u2192 analysis.py selection (preselection + compressed Table 3 cuts) \u2192 normalization with Prospino NLO \u03c3=27.2 fb and L=35.9 fb\u207b\u00b9. Raw counts 82/77/47/70 from stdout, yields match \u03c3\u00d7L\u00d7(N/N_gen) exactly.",
+        "issues": [],
+        "corrected_values": null
+      }
+    },
+    "corrected_results": {},
+    "overrule": {
+      "action": "NONE",
+      "reason": "Values are the product of a legitimate, end-to-end simulation chain. The systematic underestimate relative to reference is expected from LO generation without MLM matching and Delphes fast-sim.",
+      "affected_series": [],
+      "score_policy": "",
+      "evidence": ""
+    }
+  },
+  "trajectory": {
+    "summary": "The agent executed the full MadGraph5\u2192Pythia8\u2192Delphes\u2192analysis chain for the CMS-SUS-16-051 compressed T2tt signal region. It encountered and resolved three substantive physics bugs (HepMC beam-particle status codes, neutralino visibility to Delphes, missing parton info for b-tagging) through principled debugging. Final yields are ~30\u201358% below reference, primarily due to LO-only ISR modeling in the compressed regime.",
+    "planning": "Good top-down decomposition: paper reading \u2192 Prospino cross section \u2192 MadGraph5 generation \u2192 Pythia8 showering \u2192 Delphes detector sim \u2192 analysis selection \u2192 normalization. The agent correctly identified the CMS-SUS-16-051 compressed signal region requirements (Table 3) and planned the full chain before starting. It also recorded quantities (cross section, luminosity, branching fraction) in the ledger as it went.",
+    "tool_use": "Generally competent. The agent navigated read-paper path issues, the bin/run-analysis harness requirements (datasets.yaml format, analysis.py referencing it), and Prospino CLI flags through iterative exploration. It solved the Delphes OOM by splitting HepMC into 10k-event chunks. Some time was spent on false starts with the launch scripts and conda paths, but nothing egregious.",
+    "scientific_judgment": "Strong on three key physics points: (1) correctly identified that neutralinos must be excluded from HepMC output so Delphes computes MET from momentum imbalance rather than treating \u03c7\u0303\u2081\u2070 as a neutral hadron; (2) correctly diagnosed that zero b-tagged jets meant parton-level flavor info was missing for Delphes JetFlavorAssociation, and fixed by writing primary b/c quarks with HepMC status=3; (3) correctly noted in the report that LO generation with shower-only ISR is a major limitation for the compressed selection (Njet\u22655, leading jet not b-tagged), which requires ISR recoil. The agent did not attempt MLM matching or other ISR improvements, which would have been difficult but could have improved results significantly.",
+    "honesty_and_reporting": "The report is thorough and honest. It explicitly lists generator-level (LO only), b-tagging (parametrized efficiency), fast-sim, and sample-size limitations. The 'Possible Issues' section correctly flags ISR sensitivity and the lack of MG5+MLM matching as the dominant systematic concern for the compressed region. No overclaiming.",
+    "strengths": [
+      "Full end-to-end simulation chain from scratch \u2014 MadGraph5, Pythia8, Delphes, custom analysis",
+      "Correct physics debugging of three non-trivial issues (beam status, neutralino visibility, parton b-tagging)",
+      "Proper NLO cross-section normalization via Prospino rather than using the LO MadGraph value",
+      "Honest and detailed reporting of known limitations",
+      "Good recovery from Delphes OOM via chunked processing"
+    ],
+    "creative_moves": [
+      {
+        "description": "Excluded \u03c7\u0303\u2081\u2070 (PID 1000022) from HepMC output entirely so Delphes reconstructs MET purely from visible-particle momentum imbalance, rather than trying to configure Delphes to treat it as invisible.",
+        "impact": "helpful",
+        "evidence": "Session shows MET>250 jumped from ~low% to ~60% of events after this fix, consistent with a 800/400 GeV mass splitting."
+      },
+      {
+        "description": "Wrote primary b/c quarks with HepMC status=3 to provide parton info for Delphes JetFlavorAssociation, enabling b-tagging.",
+        "impact": "helpful",
+        "evidence": "B-tagged jet fraction went from ~0% to ~30%, and events with \u22651 b-tag went from ~4% to ~87%."
+      },
+      {
+        "description": "Split 50k-event HepMC file into 5\u00d710k chunks to avoid Delphes OOM kill.",
+        "impact": "helpful",
+        "evidence": "All 5 chunks processed successfully after the split, producing ~33KB ROOT files each."
+      }
+    ],
+    "stuck_points": [
+      {
+        "description": "Multiple iterations debugging the read-paper tool path \u2014 the agent tried several path variations before realizing the tool needed the ColliderBench Python module invocation.",
+        "avoidable": true,
+        "impact": "minor",
+        "evidence": "Five failed read-paper attempts before finding the correct module path."
+      },
+      {
+        "description": "The YAML results file update logic initially tried to replace 'null' placeholders that had already been overwritten by a previous (broken) run, requiring manual edit.",
+        "avoidable": true,
+        "impact": "minor",
+        "evidence": "Agent had to manually edit histogram_T2tt_comp.yaml after analysis.py's regex-based replacement failed on non-null values."
+      }
+    ],
+    "issues": [
+      {
+        "label": "NORMALIZATION_ERROR",
+        "severity": "moderate",
+        "description": "LO matrix element generation with ISR produced only by Pythia8 shower significantly underestimates event yields in the compressed selection region, which requires high ISR jet multiplicity (Njet\u22655). CMS uses MLM-matched samples with explicit ISR jets for this topology. The agent acknowledged this limitation but did not attempt matching.",
+        "evidence": "Submitted total yield 5.39 vs reference 7.9 (32% low). The compressed selection's Njet\u22655 and leading-jet-not-b-tagged requirements are strongly ISR-dependent. The agent's report explicitly flags this: 'ISR radiation comes entirely from Pythia8's initial-state shower. CMS often uses dedicated MG5+MLM matched samples.'"
+      },
+      {
+        "label": "INCOMPLETE_SEARCH",
+        "severity": "minor",
+        "description": "The agent did not explore whether MadGraph5 could generate additional ISR jets at matrix-element level (e.g., p p > t1 t1~ j, p p > t1 t1~ j j) with MLM matching, which would have been the standard CMS approach for the compressed region.",
+        "evidence": "The proc_card uses only 'generate p p > t1 t1~' without additional jet radiation. MLM matching setup was not attempted."
+      },
+      {
+        "label": "CLEAR_LIMITATION_REPORTING",
+        "severity": "minor",
+        "description": "The agent's report transparently identifies all major systematic limitations and correctly flags ISR modeling as the dominant concern. This is a positive finding.",
+        "evidence": "Report 'Key systematic considerations' and 'Possible Issues' sections enumerate LO-only generation, Delphes parametrized b-tagging, fast-sim limitations, and ISR sensitivity."
+      }
+    ],
+    "overall_assessment": "A competent and honest run. The agent built the full simulation chain from scratch, resolved three non-trivial physics bugs through principled debugging, and produced traceable results with correct normalization. The ~30\u201358% deficit relative to reference is dominated by the LO-only ISR treatment in a selection region that requires high jet multiplicity from initial-state radiation \u2014 a known limitation the agent correctly identified but did not attempt to mitigate via MLM matching. The final artifacts (analysis.py, report.md, datasets.yaml, ledger.yaml) are well-organized and would allow another agent to continue or improve the analysis."
+  },
+  "judge_model": "claude-opus-4-6",
+  "trajectory_report_path": "/home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_MintyAdler_e25fb131/eval/judge_trajectory.md"
+}

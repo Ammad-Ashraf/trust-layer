@@ -1,0 +1,7 @@
+task: sus-16-051_sim-T2tt_comp
+runner: claude
+auth: token
+model: claude-sonnet-4-6
+effort: max
+sandbox: podman
+compute: local

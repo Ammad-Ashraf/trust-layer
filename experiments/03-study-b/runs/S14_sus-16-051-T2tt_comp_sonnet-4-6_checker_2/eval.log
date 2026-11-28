@@ -1,0 +1,49 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_MintyAdler_e25fb131 (judge=llm) ===
+
+  sus-16-051_sim-T2tt_comp  (CMS-SUS-16-051)  [shape_norm]
+    series  : T2tt_800_400   filled 4/4
+    shape   : bin_err=15.37%  p=0.986  JSD=0.0053  d_JSD=0.0729
+    norm    : frac_err=31.76%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_MintyAdler_e25fb131/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~44K chars) — streaming progress below
+  [llm_judge]   31s  turns=0  tool_calls=0
+  [llm_judge]  102s  turns=4  tool_calls=1
+  [llm_judge] completed in 102s (4 turns, 1 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    All four bin yields are directly traceable to the agent's MadGraph5→Pythia8→Delphes→analysis pipeline. The normalization σ(NLO)×L×(N_pass/N_gen) = 27.2 fb × 35.9 fb⁻¹ × (raw/49995) reproduces the submitted values to <0.01% precision. Raw counts (82, 77, 47, 70) come from the analysis.py selection applied to Delphes ROOT output. The NLO cross section (27.2 fb) was obtained from Prospino. No evidence of leakage — submitted values are 30–58% below the hidden reference, consistent with LO+shower ISR modeling and Delphes fast-sim limitations.
+    1 TRACEABLE
+
+  Trajectory
+    The agent executed the full MadGraph5→Pythia8→Delphes→analysis chain for the CMS-SUS-16-051 compressed T2tt signal region. It encountered and resolved three substantive physics bugs (HepMC beam-particle status codes, neutralino visibility to Delphes, missing parton info for b-tagging) through principled debugging. Final yields are ~30–58% below reference, primarily due to LO-only ISR modeling in the compressed regime.
+    A competent and honest run. The agent built the full simulation chain from scratch, resolved three non-trivial physics bugs through principled debugging, and produced traceable results with correct normalization. The ~30–58% deficit relative to reference is dominated by the LO-only ISR treatment in a selection region that requires high jet multiplicity from initial-state radiation — a known limitation the agent correctly identified but did not attempt to mitigate via MLM matching. The final artifacts (analysis.py, report.md, datasets.yaml, ledger.yaml) are well-organized and would allow another agent to continue or improve the analysis.
+
+  Strengths:
+    - Full end-to-end simulation chain from scratch — MadGraph5, Pythia8, Delphes, custom analysis
+    - Correct physics debugging of three non-trivial issues (beam status, neutralino visibility, parton b-tagging)
+    - Proper NLO cross-section normalization via Prospino rather than using the LO MadGraph value
+    - Honest and detailed reporting of known limitations
+    - Good recovery from Delphes OOM via chunked processing
+
+  Creative moves:
+    - Excluded χ̃₁⁰ (PID 1000022) from HepMC output entirely so Delphes reconstructs MET purely from visible-particle momentum imbalance, rather than trying to configure Delphes to treat it as invisible.
+    - Wrote primary b/c quarks with HepMC status=3 to provide parton info for Delphes JetFlavorAssociation, enabling b-tagging.
+    - Split 50k-event HepMC file into 5×10k chunks to avoid Delphes OOM kill.
+
+  Stuck points:
+    - Multiple iterations debugging the read-paper tool path — the agent tried several path variations before realizing the tool needed the ColliderBench Python module invocation.
+    - The YAML results file update logic initially tried to replace 'null' placeholders that had already been overwritten by a previous (broken) run, requiring manual edit.
+
+  Issues:
+    - LO matrix element generation with ISR produced only by Pythia8 shower significantly underestimates event yields in the compressed selection region, which requires high ISR jet multiplicity (Njet≥5). CMS uses MLM-matched samples with explicit ISR jets for this topology. The agent acknowledged this limitation but did not attempt matching.
+    - The agent did not explore whether MadGraph5 could generate additional ISR jets at matrix-element level (e.g., p p > t1 t1~ j, p p > t1 t1~ j j) with MLM matching, which would have been the standard CMS approach for the compressed region.
+    - The agent's report transparently identifies all major systematic limitations and correctly flags ISR modeling as the dominant concern. This is a positive finding.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_MintyAdler_e25fb131/eval/judge_trajectory.md
+
+
