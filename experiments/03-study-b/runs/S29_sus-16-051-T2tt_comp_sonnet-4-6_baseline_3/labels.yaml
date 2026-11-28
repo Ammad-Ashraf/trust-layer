@@ -1,2 +1,43 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 860 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 1, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 2, 3d: 1, 3e: 0, 3f: 0}
+  gap1_errors: 1
+  # Agent vs reference ledger:
+  # sigma: 27.2 fb (Prospino NLO tb, stop 800 GeV, line 470) vs 28.3338 fb (xsec WG NLO+NLL) -> 0.96x (fine; NLO vs NLO+NLL)
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1.0 (stop -> t chi10; top decays left in eps) vs 1.0 -> match
+  # eps:   74/50000 = 0.00148 (line 832) vs 0.0077666 -> 0.19x
+  # N_gen: 50000 (all 5 Delphes chunks used); n/a in the reference
+  # total: 1.445 vs 7.9 events -> 0.96 * 0.19 = 0.183 -> delta_norm 0.817 (matches score.json)
+  # So almost all of the shortfall is in eps (about 5.2x low), and the cause is the wrong mass point in the
+  # generated events (label 1d): MG5 ran with its default MSSM_SLHA2 card (stop ~400 GeV, chi10 96.7 GeV),
+  # not the agent's 800/400 SLHA. That also explains the steeply falling MET shape vs the flat reference.
+  # sigma itself was computed for the right mass point, so sigma and eps come from different models.
+  # Side notes (not labelled): the report (line 854) quotes the xsec WG NLO+NLL value as ~0.0244 pb; the
+  # real value is 0.0283 pb. It was not used. The judge's "electron |eta|<1.442 is a misread" is wrong:
+  # Table 1 of the paper (line 45) gives |eta| < 1.442 for selected electrons, so the agent followed the paper.
+gate_bounces: []
+labels:
+  - code: 1d
+    where: "line 110 (proc card with set param_card sims/T2tt_800_400.slha), line 132/135 (MG5 run); evidence at lines 121/123 (default card Msu3 399.7, Mneu1 96.69), 310 and 393 (chi10 mass 96.688 in the showered events), 711/713 (stop m = 400.6/405.8 GeV); yields from these events at line 832"
+    what: "The agent's 800/400 SLHA was never applied in MadGraph, so all 50k events are stop ~400 GeV -> top + chi10 96.7 GeV (the MSSM_SLHA2 default card) and not T2tt_800_400. The efficiency (0.19x the reference) comes from the wrong mass point, and this is the main cause of delta_norm 0.817."
+    confidence: high
+    note: "Why the param_card command did not take effect is not visible in the transcript (MG5 output at line 135 shows no error). The LHE/HepMC masses match the default restrict_default.dat values exactly. The MG5 LO 0.04462 pb is consistent with sigma(400 GeV stop) x BR(t1 -> t n1)^2 under the default card."
+  - code: 3c
+    where: "lines 711/713 (prints stop m=400.6 GeV and chi10 m=96.7 GeV); also line 310 (HepMC shows chi10 mass 96.688)"
+    what: "The agent printed the generated stop and neutralino masses while debugging b-tagging, but never compared them to 800/400, and the report (line 854) states m(stop)=800, m(chi10)=400 without having checked."
+    confidence: high
+  - code: 3d
+    where: "line 135/142 (MG5 LO 0.04462 pb) vs line 470 (Prospino LO 0.0159 pb for the same nominal point); report at line 854"
+    what: "The two LO cross sections differ by 2.8x, which points straight at the wrong mass point, but the agent never compared them; the report just lists the MG5 value as 'NNPDF3.0 LO'."
+    confidence: medium
+    note: "PDF differences can explain maybe 10-30%, not a factor of 2.8."
+  - code: 3c
+    where: "line 846/847 ('Cutflow looks physically reasonable'), report line 854 and final message line 859"
+    what: "The agent accepted a 0.15% efficiency (1.45 events) as 'physically expected' because delta-m = 400 GeV is far from m_top. It did no independent check, for example of the sample's mass spectrum or its MET distribution (median MET 163 GeV, line 625), that would have found the wrong mass point."
+    confidence: low
+    note: "This overlaps with the 3c above (same missed check at a different moment). The paper PDF may not contain a signal cut flow for this point, so a direct comparison may not have been possible; the reference uses the CMS Additional Table 1."
