@@ -1,0 +1,24 @@
+{
+  "task_id": "sus-16-051_sim-T2tt_comp",
+  "paper": "CMS-SUS-16-051",
+  "header_name": "T2tt_800_400",
+  "n_bins": 4,
+  "n_filled": 4,
+  "score_mode": "shape_norm",
+  "shape": {
+    "mean_abs_frac_error_pct": 16.411,
+    "p_value": 0.981834,
+    "jensen_shannon": 0.005949,
+    "jensen_shannon_dist": 0.077129,
+    "d_bar": 0.074978,
+    "d_max": 0.058162,
+    "dmax_dbar_ratio": 0.775721,
+    "relative_l2": 0.167622
+  },
+  "normalization": {
+    "mean_abs_frac_error_pct": 28.557,
+    "Delta": 0.28557,
+    "rmsle": 0.240144,
+    "relative_l2": 0.309464
+  }
+}

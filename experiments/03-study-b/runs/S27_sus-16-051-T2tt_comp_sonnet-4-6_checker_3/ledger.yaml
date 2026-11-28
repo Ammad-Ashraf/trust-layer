@@ -1,0 +1,29 @@
+schema_version: 2
+task: sus-16-051_sim-T2tt_comp
+quantities:
+  cross_section:
+    value: 0.0272
+    unit: pb
+    source: Prospino 2.1, CTEQ6L1 PDFs, tb process, stop_pair, m(stop)=800 GeV
+    source_type: prospino
+    process: stop_pair
+    masses_gev:
+      stop_1: 800.0
+      neutralino_1: 400.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS-SUS-16-051 paper, 2016 dataset
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: T2tt simplified model
+    reason: 'T2tt simplified model: stop decays 100% to t + chi10, no other decay
+      modes'
+  efficiency:
+    value: 0.00578
+    unit: dimensionless
+    source: 'analysis.py: CMS-SUS-16-051 compressed selection on 50k Delphes events'
+    source_type: other
+    n_pass: 289.0
+    n_gen: 50000.0

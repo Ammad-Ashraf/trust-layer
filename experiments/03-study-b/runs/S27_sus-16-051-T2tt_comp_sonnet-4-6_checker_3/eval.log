@@ -1,0 +1,46 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_BoringWeisskopf_ab957458 (judge=llm) ===
+
+  sus-16-051_sim-T2tt_comp  (CMS-SUS-16-051)  [shape_norm]
+    series  : T2tt_800_400   filled 4/4
+    shape   : bin_err=16.41%  p=0.982  JSD=0.0059  d_JSD=0.0771
+    norm    : frac_err=28.56%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_BoringWeisskopf_ab957458/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~47K chars) — streaming progress below
+  [llm_judge]   30s  turns=0  tool_calls=0
+  [llm_judge]  110s  turns=4  tool_calls=1
+  [llm_judge] completed in 111s (4 turns, 1 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    All four bin values are arithmetically traceable to 50k Delphes events processed through a full MG5→Pythia8→Delphes→analysis.py chain. EVENT_WEIGHT = σ_NLO × L / N_gen = 27.2 fb × 35.9 fb⁻¹ / 50000 = 0.0195296. Raw counts (89, 79, 46, 75) × weight reproduce the submitted values to 4 decimal places. The ledger cross-check (σ·L·BR·ε = 5.64) matches the histogram sum. No leakage: submitted total 5.64 differs from reference total 7.9 by ~29%, and the bin shape is monotonically peaked at low MET vs the reference's U-shape.
+    1 TRACEABLE
+
+  Trajectory
+    The agent completed a full end-to-end LO+PS+Delphes simulation of T2tt (stop 800, neutralino 400) with CMS-SUS-16-051 compressed selection. It encountered and resolved five technical obstacles — MG5 mass misconfiguration, Pythia version mismatch, HepMC3 vertex format, Delphes OOM, and critically the missing parton history for b-tagging. Final yields are ~29% below reference, consistent with LO+fast-sim limitations.
+    A strong, methodical run that completed the full simulation chain from scratch with no shortcuts. The agent demonstrated excellent debugging skills — the parton-history b-tagging fix was the pivotal insight that rescued the entire analysis. Scientific reasoning was sound throughout: cross-checking masses against cross sections, verifying b-tag fractions against expectations, and maintaining ledger consistency. The ~29% yield deficit is attributable to known fast-sim and LO limitations, not to errors in the agent's methodology. Artifacts are clean and reproducible.
+
+  Strengths:
+    - Completed a full end-to-end simulation chain without shortcuts — no digitized values, no borrowed efficiencies
+    - Diagnosed and fixed the parton-history b-tagging issue, which required deep understanding of how Delphes jet flavor association works
+    - Strong internal consistency: ledger σ·L·BR·ε matches histogram sum to 4 significant figures
+    - Clean, reproducible artifacts: analysis.py, datasets.yaml, SLHA file, shower driver, and report all present
+
+  Creative moves:
+    - Including hard-process b/c/t quarks (Pythia status -22/-23) as status=3 particles in HepMC3 to enable Delphes b-jet identification
+    - Splitting HepMC3 file into 5×10k chunks to avoid Delphes OOM kills
+
+  Stuck points:
+    - MG5 ignored the SLHA file and used default param_card with m(stop)=400 GeV instead of 800 GeV
+    - Multiple iterations on HepMC3 format before Delphes could process events (vertex IDs, particle status codes)
+
+  Issues:
+    - Using Prospino NLO (27.2 fb) rather than NLO+NLL cross sections from the LHC SUSY Cross Section Working Group, which the paper uses. NLO+NLL for 800 GeV stops is typically ~30-35 fb, so yields are ~15-20% low from this alone.
+    - No attempt to apply data-driven b-tag scale factors or ISR reweighting, which would improve agreement with the full CMS analysis. These are documented limitations but not explored.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-051_sim-T2tt_comp_BoringWeisskopf_ab957458/eval/judge_trajectory.md
+
+
