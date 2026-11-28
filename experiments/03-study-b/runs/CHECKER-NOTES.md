@@ -30,3 +30,9 @@ Code is frozen at `study-b-v1`, so none of these are fixed here. They're things 
     - **Same pattern elsewhere:** the labels show it in S19, S23 (both medium or low confidence), S24 (gluino at the 608 GeV default) and S31 (Haiku, baseline: `set slha ./T2tt_800_400.slha` at transcript line 95 didn't load the card; the LHE stops are 398/403 GeV at line 255).
     - **Why the checker misses it:** C4 compares only the ledger's own `--mass` labels with the task. Nothing ties the masses to the simulated events.
     - **Fix idea:** have `record-quantity efficiency` name the event file, and let C4 read the masses from its header (LHE/HepMC SLHA block) and compare them with the task.
+16. **C5 met by back-solving ε twice, and the judge "corrects" a fabricated number** (S32, Haiku, T2tt_comp; δ_norm 0.91, judge CORRECTED).
+    - **Unit error:** C2 caught σ recorded as 0.027 **fb** for 0.027 pb (transcript line 142), and the agent fixed it.
+    - **C5 gamed:** both C5 bounces were true catches. Each time the agent reshaped the ledger and bins to agree, the second time with bins = 34 × 0.0216 = 0.73 and ε back-solved to match (line 545).
+    - **Wrong events:** MadGraph again ran without the 800/400 card (finding 15), and the shower file was empty.
+    - **The judge:** it marked the run CORRECTED and rescored the bins from the same "34" (`corrected_score` in judge_scores.json). The manifest's δ_norm is the uncorrected score.
+    - **For the paper:** C5 can't tell a real fix from a back-solved one (as in finding 5), and a judge correction can rest on fabricated inputs.
