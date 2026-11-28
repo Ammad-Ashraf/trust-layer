@@ -1,0 +1,32 @@
+{
+  "agent_id": "WobblyPauling_44ec2468",
+  "run_dir": "claude_haiku-4-5/sus-16-046_sim-T5Wg_WobblyPauling_44ec2468",
+  "task_id": "sus-16-046_sim-T5Wg",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-haiku-4-5",
+  "paper_ref": "CMS-SUS-16-046",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T04:33:17Z",
+  "ended_at": "2026-11-28T04:40:59Z",
+  "exit_code": 0,
+  "duration_wall_s": 461.61,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 1.242748,
+    "input_tokens": 778,
+    "output_tokens": 46881,
+    "cache_read_tokens": 7692329,
+    "cache_creation_tokens": 119166,
+    "tokens_total_billed": 166825,
+    "n_turns": 99
+  }
+}

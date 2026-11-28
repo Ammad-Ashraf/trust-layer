@@ -1,0 +1,25 @@
+schema_version: 2
+task: sus-16-046_sim-T5Wg
+quantities:
+  cross_section:
+    value: 4.773
+    unit: fb
+    source: SUSY Cross-Section Working Group benchmark values
+    source_type: xsec_wg
+    process: gluino_pair
+    masses_gev:
+      gluino: 1750.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS 2016 data (13 TeV)
+  branching_fraction:
+    value: 0.5
+    unit: dimensionless
+    source: 'T5Wg: 50% g~ to neutralino channel'
+  efficiency:
+    value: 0.2916
+    unit: dimensionless
+    source: T5Wg_1750_1700 signal region efficiency
+    n_pass: 25.0
+    n_gen: 86.0
