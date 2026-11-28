@@ -1,2 +1,57 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: true
+# Line numbers below are line numbers in session.jsonl (1-based, 1132 lines).
+# Why early_stop: the agent ended its turn at line 1100 with the Pythia8 shower (task bgm9ymc3d, 50k events)
+# still running and a background wait task (b1vodf8ki) pending. In -p mode, ending a turn ends the session.
+# The gate bounced it 3 times (lines 1101, 1115, 1120). Each time the agent checked progress (18k -> 20k -> 22k
+# events) and ended its turn again (lines 1114, 1119, 1129: "Waiting for the b1vodf8ki notification"). After the
+# 3rd bounce the gate let it through (submitted_with_warnings) and both background tasks were stopped (lines 1131-1132).
+# The usage limit was not hit. Wall clock was 0.88 h of the 10 h limit. The shower was going at about 5k events/min
+# (lines 1065-1118), so the pipeline would have finished well within the limit. Delphes and the analysis never ran
+# on the full sample, the ledger has no efficiency, and all 4 bins are null.
+# The judge's reading ("the shower took longer than the remaining session time") is wrong: time was not the limit.
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 0, 1e: 1, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 0, 3d: 0, 3e: 0, 3f: 0}
+  gap1_errors: 1
+  # What the agent recorded so far vs the reference ledger:
+  # sigma: ledger holds 7.75 fb (chi1- chi20 only, Prospino NLO) vs 30.1656 fb (xsec WG NLO+NLL, chi1+chi20 + chi1-chi20) -> 0.257x.
+  #        The agent's intended sigma was 19.8 + 7.75 = 27.55 fb (line 180, hard-coded in analysis.py at line 494), 0.913x the
+  #        reference. That gap is the usual Prospino NLO vs NLO+NLL difference, not a mistake, since the tool only offers LO/NLO.
+  #        Its SLHA (line 132) is pure wino chi20/chi1+- (N22 = 1, U11 = V11 = 1), so there was no mixing problem in sigma.
+  #        The 7.75 fb in the ledger comes from a recording mistake (label 1e below).
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match (source cited loosely as "CMS-SUS-16-034, 2016 Run 2 data", not the abstract).
+  # BR:    1.0 (all W/Z decays generated inclusively, selection does the rest) vs 0.101 (Z -> ll only). This is a different
+  #        but consistent convention (Pythia decays W/Z inclusively, and the efficiency would have held the Z -> ll share), so no 1c.
+  # eps:   never recorded (Delphes/analysis never ran on the full sample). The reference is 0.0495 (with BR = 0.101), i.e.
+  #        BR*eps = 0.0050. So nothing can be compared.
+  # Not labelled: MG5 events come from MG5's default MSSM_SLHA2 card with only masses and decays patched (fix_param_card.py,
+  #        line 484). NMIX/UMIX/VMIX stay at the defaults. The MG5 LO sigma of 18.15 fb (line 500) vs Prospino LO 16.8 + 6.29 = 23.1 fb
+  #        was never compared in the live transcript. Only the compaction summary (line 1076) calls it "consistent ... different PDFs".
+  #        That could only affect kinematics, not normalization, and was not checked, so it is not labelled.
+gate_bounces:
+  - where: "line 1101 (Stop-hook feedback); gate-bounces.jsonl bounce 1 at 05:36:29"
+    flagged: "C3: efficiency missing; C5: bins 1-4 still null (C1, C2, C4 passed)"
+    true_catch: true   # the record really was incomplete; it is a flag that the work is unfinished, not a bookkeeping error
+    response: argued
+    note: "No change. At line 1114 the agent said both failures 'will be resolved once the full pipeline runs' and ended its turn."
+  - where: "line 1115; bounce 2 at 05:36:41"
+    flagged: "C3: efficiency missing; C5: bins 1-4 still null"
+    true_catch: true
+    response: argued
+    note: "Checked the shower (22k/50k, line 1118). At line 1119 it said 'The checker failures are expected at this stage' and ended its turn."
+  - where: "line 1120; bounce 3 at 05:36:46, then submitted_with_warnings at 05:36:55"
+    flagged: "C3: efficiency missing; C5: bins 1-4 still null"
+    true_catch: true
+    response: argued
+    note: "At line 1129: 'The checker issues cannot be resolved until the full pipeline completes ... Waiting for the b1vodf8ki notification.' It ended its turn, the gate released it, and the session ended."
+# What the gate missed: C2 passed the ledger's cross_section of 7.75 fb because it 'matches a Prospino NLO result from this run'
+# (the chi1- chi20 run), and C4 only checks the process name and masses. Neither notices that sigma covers only one of the two charge
+# channels (0.26x the reference). C5 would probably have caught it once the bins were filled (27.55-normalized yields vs a 7.75-based ledger product).
+labels:
+  - code: 1e
+    where: "line 909 (two record-quantity cross_section calls); right total at line 180 and in analysis.py at line 494; agent's belief at line 1076"
+    what: "The agent recorded the chi1+ chi20 (19.8 fb) and chi1- chi20 (7.75 fb) cross sections as two separate cross_section entries. The second overwrote the first, so the ledger's sigma is 7.75 fb instead of the 27.55 fb total it computed and used in the analysis."
+    confidence: medium
+    note: "The ledger file confirms that only 7.75 fb survives. The agent never ran 'record-quantity show', and its compaction summary (line 1076) wrongly lists both entries as being in the ledger. It could also count as 1d (sigma for only one charge channel of the process). I chose 1e because the right total was computed and used in the analysis but never reached the record. The yields were never produced, so this never affected the submission."
