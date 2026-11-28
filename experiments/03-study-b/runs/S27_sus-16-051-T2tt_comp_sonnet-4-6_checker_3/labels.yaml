@@ -1,2 +1,30 @@
 schema_version: 1
-labels: []
+reviewer: claude (runner laptop, subagent)
+read: full
+early_stop: false
+# Line numbers below are line numbers in session.jsonl (1-based, 883 lines).
+summary:
+  counts: {1a: 0, 1b: 0, 1c: 0, 1d: 0, 1e: 0, 2a: 0, 2b: 0, 2c: 0, 2d: 0, 2e: 0, 3a: 0, 3b: 0, 3c: 0, 3d: 0, 3e: 2, 3f: 0}
+  gap1_errors: 0
+  # Agent vs reference ledger:
+  # sigma: 27.2 fb (Prospino 2.1 NLO, tb, m(stop)=800, lines 102-111) vs 28.3338 fb (xsec WG NLO+NLL) -> 0.960x.
+  #        Prospino NLO is an accepted source (C2 passed); the agent listed NLO vs NLO+NLL as a deviation (line 871). Not a 1b.
+  # L:     35.9 fb^-1 vs 35.9 fb^-1 -> match
+  # BR:    1.0 with reason (T2tt, top decays left in eps, line 118) vs 1.0 -> match, same convention
+  # eps:   0.00578 (289/50000, lines 848, 861) vs 0.0077666 -> 0.744x
+  # total: 5.644 vs 7.9 events -> 0.960 * 0.744 = 0.714 -> delta_norm 0.286 (matches score.json)
+  # So the shortfall is almost all efficiency (about 26%); sigma adds about 4%. MC statistics on 289 events are about 6%,
+  # so the eps deficit is not statistical. The bookkeeping (pb->fb, sigma*L/N_gen weight, ledger formula = histogram sum) is correct.
+  # Minor: report.md (line 871) says MG5 v3.5.4, but the run used v3.7.0 (lines 47, 577). No gap code.
+gate_bounces: []   # gate-bounces.jsonl holds a single pass event (07:39:00, C1-C5 all passed); 0 bounces
+labels:
+  - code: 3e
+    where: "line 121 (proc_card: generate p p > t1 t1~, no extra partons); paper read at line 32 (signal made with MG5 LO + MLM matching, ISR reweighting); final eps at line 848; not listed in the deviations at line 871"
+    what: "The agent generated bare stop pairs with no extra-parton matching, so the hard ISR that the compressed region selects (NJ >= 5, leading jet not b-tagged) comes only from the Pythia shower; this is a likely main reason eps is 0.74x the reference."
+    confidence: low
+    note: "Not tested in the run. Delphes b-tag and lepton efficiencies and the missing CMS ISR reweighting (factors 0.92-0.51, which would lower yields) also move eps, so the share due to the missing matching can't be fixed from the transcript."
+  - code: 3e
+    where: "line 604 (analysis.py rewrite; docstring says 'Veto on 2nd lepton'); Table 1 read at line 34"
+    what: "The preselection only requires exactly one lepton above 20 GeV; the paper's veto lepton (pT > 5 GeV), isolated-track veto and tau veto are not applied and not listed as deviations."
+    confidence: low
+    note: "This pushes eps up, not down, so it does not explain the deficit; its size is likely small for this signal."
