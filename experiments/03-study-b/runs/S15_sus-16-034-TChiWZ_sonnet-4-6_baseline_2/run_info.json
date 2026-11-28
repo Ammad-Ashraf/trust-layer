@@ -1,0 +1,32 @@
+{
+  "agent_id": "SlowKibble_61fd68e8",
+  "run_dir": "claude_sonnet-4-6/sus-16-034_sim-TChiWZ_SlowKibble_61fd68e8",
+  "task_id": "sus-16-034_sim-TChiWZ",
+  "agent": "simple",
+  "runner": "claude",
+  "model": "claude-sonnet-4-6",
+  "paper_ref": "CMS-SUS-16-034",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T00:36:36Z",
+  "ended_at": "2026-11-28T01:08:32Z",
+  "exit_code": 0,
+  "duration_wall_s": 1915.79,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 5.003788,
+    "input_tokens": 94,
+    "output_tokens": 83641,
+    "cache_read_tokens": 9437184,
+    "cache_creation_tokens": 152956,
+    "tokens_total_billed": 236691,
+    "n_turns": 105
+  }
+}

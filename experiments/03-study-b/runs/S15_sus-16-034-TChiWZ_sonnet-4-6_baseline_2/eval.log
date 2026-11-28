@@ -1,0 +1,51 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_SlowKibble_61fd68e8 (judge=llm) ===
+
+  sus-16-034_sim-TChiWZ  (CMS-SUS-16-034)  [shape_norm]
+    series  : TChiWZ_550_200   filled 4/4
+    shape   : bin_err= 7.10%  p=0.996  JSD=0.0007  d_JSD=0.0256
+    norm    : frac_err=41.53%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_SlowKibble_61fd68e8/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~34K chars) — streaming progress below
+  [llm_judge]   30s  turns=0  tool_calls=0
+  [llm_judge]   60s  turns=6  tool_calls=4
+  [llm_judge]   90s  turns=15  tool_calls=11
+  [llm_judge]  121s  turns=19  tool_calls=14
+  [llm_judge]  185s  turns=21  tool_calls=14
+  [llm_judge] completed in 186s (21 turns, 14 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    All four bin values are directly traceable to a complete simulation chain: MadGraph5 LO generation (50k events, 0.01372 pb), Prospino NLO normalization (0.01813 pb total), Pythia8 shower, Delphes CMS fast-sim, and a vectorized analysis implementing VZ region cuts. The analysis was run reproducibly (twice, same output). Session logs show bin-by-bin stdout matching the submitted YAML exactly. No evidence of fabrication, leakage, or manual alteration. The systematic deficit vs reference (~60% of published values) is explained by a too-narrow Z mass window (86-96 GeV vs standard 76-106 GeV) and Delphes fast-sim approximations.
+    1 TRACEABLE
+
+  Trajectory
+    The agent executed a complete, well-structured simulation chain (MG5→Prospino→Pythia8→Delphes→analysis) for TChiWZ_550_200 signal prediction. It recovered well from two significant technical obstacles (MG5 param card misconfiguration and pyhepmc segfault). The main physics shortcoming is a too-narrow Z mass window (±5 GeV instead of ±15 GeV), which likely costs ~30-40% of signal yield. Total yield is ~60% of reference.
+    A strong agent run that executed a complete, legitimate simulation pipeline from scratch. The agent demonstrated good technical resilience, recovering from both the MG5 param card misconfiguration and the pyhepmc segfault without losing significant time. The main shortcoming is a too-narrow Z mass window (86-96 GeV vs 76-106 GeV), which is a physics specification error that likely explains a substantial portion of the ~40% yield deficit. The remaining deficit is attributable to known fast-sim vs full-sim differences. All submitted values are fully traceable to the agent's computation, the report is well-documented, and the analysis is reproducible.
+
+  Strengths:
+    - Complete end-to-end simulation chain from scratch — not a shortcut or extraction approach
+    - Proper NLO normalization via Prospino with both charge channels computed separately
+    - Good recovery from MG5 param card failure (detected wrong masses from cross-section discrepancy, re-generated with corrected card)
+    - Good recovery from pyhepmc segfault by switching to manual GenEvent construction
+    - Reproducible analysis (ran twice, identical output)
+    ... (1 more)
+
+  Creative moves:
+    - Detected the MG5 param card failure by noticing the LO cross section (0.9045 pb) was far too high for 550 GeV sparticles, then traced it to MG5 ignoring the SLHA and using default masses. Fixed by copying the restrict_default.dat template and modifying masses in-place.
+    - When pyhepmc from_hepevt segfaulted on events with ~1800 particles, the agent wrote a minimal pythia_to_hepmc_simple function that constructs GenEvents with only beam (status 4) and final-state (status 1) particles, sufficient for Delphes input.
+
+  Stuck points:
+    - Spent ~10 tool calls exploring the pyhepmc API (from_hepevt, GenEvent construction, io.WriterAscii) before finding a working approach for HepMC3 output from Pythia8.
+    - Initial MG5 param card approach used 'set param_card' commands which were silently ignored, leading to generation with wrong masses. Required a full re-generation of 50k events.
+
+  Issues:
+    - The Z mass window was set to 86-96 GeV (±5 GeV around m_Z) instead of the standard CMS on-Z selection of |m_ℓℓ - m_Z| < 15 GeV (76.2-106.2 GeV). This narrower window loses Z→ℓℓ events in the Breit-Wigner tails and detector-smeared tails, likely accounting for a significant fraction of the ~40% yield deficit relative to the reference.
+    - The analysis uses NLO (Prospino 2.1) rather than NLO+NLL cross sections used by CMS. The report acknowledges this as a ~5% effect. Additionally, the Delphes fast-sim with no pileup systematically differs from the CMS full simulation, contributing to the overall ~40% deficit.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_SlowKibble_61fd68e8/eval/judge_trajectory.md
+
+

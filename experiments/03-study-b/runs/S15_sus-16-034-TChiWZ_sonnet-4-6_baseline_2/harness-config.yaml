@@ -1,0 +1,8 @@
+agent: simple
+task: sus-16-034_sim-TChiWZ
+runner: claude
+auth: token
+model: claude-sonnet-4-6
+effort: max
+sandbox: podman
+compute: local
