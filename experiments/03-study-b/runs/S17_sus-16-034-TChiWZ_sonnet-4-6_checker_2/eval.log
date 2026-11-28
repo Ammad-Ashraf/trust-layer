@@ -1,0 +1,47 @@
+=== Evaluating /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_GroovyPopov_20d26ecc (judge=llm) ===
+
+  sus-16-034_sim-TChiWZ  (CMS-SUS-16-034)  [shape_norm]
+    series  : TChiWZ_550_200   filled 4/4
+    shape   : bin_err=16.36%  p=0.995  JSD=0.0045  d_JSD=0.0668
+    norm    : frac_err=36.14%
+    saved   : /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_GroovyPopov_20d26ecc/eval/score.json
+  [llm_judge] invoking claude-opus-4-6 (prompt ~38K chars) — streaming progress below
+  [llm_judge]   30s  turns=0  tool_calls=0
+  [llm_judge]   88s  turns=2  tool_calls=0
+  [llm_judge] completed in 89s (2 turns, 0 tool calls)
+
+  LLM Judge Evaluation
+  Judge model: claude-opus-4-6
+  ============================================================
+
+  Provenance Audit
+    Status: VERIFIED
+    All four bin values are directly traceable through a complete MadGraph→Pythia8→Delphes→analysis pipeline. The agent ran 50k events, applied VZ SR cuts in analysis_VZ.py (243 events pass), and normalized with Prospino NLO σ=19.8 fb. The normalization cross-check (σ×L×ε = 19.8×35.9×0.00486 = 3.455) matches the histogram sum. Values are systematically ~40–60% below the hidden reference, consistent with Delphes approximations and simplified cuts — no leakage pattern.
+    1 TRACEABLE
+
+  Trajectory
+    The agent executed a complete recast pipeline (SLHA→MadGraph→Pythia8→Delphes→ROOT analysis) for TChiWZ 550/200, correctly diagnosing and resolving a non-trivial physics issue (vanishing bino-wino-Z coupling) and multiple toolchain format problems. Final yield is 3.455 events vs 5.41 reference — systematically low but physically reasonable given Delphes approximations.
+    A competent recast with a complete and traceable simulation pipeline. The agent's strongest moment was diagnosing the bino-wino-Z coupling problem — a subtle MSSM physics issue that many agents would miss or mishandle. The systematic yield deficit (~36% below reference) is plausibly explained by the combination of Delphes detector approximation, the narrower-than-specified on-Z window, no pileup modeling, and simplified trigger treatment. The toolchain debugging (MadGraph iterations, HepMC format) consumed significant context but was ultimately resolved. The final artifacts are well-documented and reproducible.
+
+  Strengths:
+    - Correctly diagnosed the vanishing bino-wino-Z coupling and adapted the generation strategy
+    - Self-consistent normalization: σ×L×ε = histogram sum verified
+    - Fixed the overflow bin bug (MET>350 capped at 450) before final submission
+    - Parallelized work: wrote analysis code while Delphes ran in background
+    - Thorough report documenting methodology and known approximations
+
+  Creative moves:
+    - Switching from MadGraph explicit decays to production-only generation + Pythia SLHA decay tables to work around the vanishing tree-level bino-wino-Z coupling
+    - Using a 1000-event test batch to debug the HepMC format issue before running full Delphes
+
+  Stuck points:
+    - Four iterations of the MadGraph process card (v1–v4) due to SLHA import issues, default mass conflicts, and mixing matrix problems
+    - HepMC3 vs HepMC2 format confusion caused Delphes to produce empty ROOT files
+
+  Issues:
+    - The on-Z mass window (86–96 GeV, width 10 GeV) is narrower than the typical CMS dilepton mass window for on-Z selections. CMS-SUS-16-034 specifies |m_ll − m_Z| < 15 GeV (i.e., 76.3–106.3 GeV). This tighter window would reduce signal acceptance.
+    - Multiple Delphes runs were attempted and killed before the agent ran it in the background, wasting ~4 minutes of wall time.
+
+  Full trajectory report: /home/israr/Documents/Ammad-Particle-Physics/trust-layer/external/collider-bench/runs/claude_sonnet-4-6/sus-16-034_sim-TChiWZ_GroovyPopov_20d26ecc/eval/judge_trajectory.md
+
+

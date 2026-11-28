@@ -1,0 +1,30 @@
+schema_version: 2
+task: sus-16-034_sim-TChiWZ
+quantities:
+  cross_section:
+    value: 19.8
+    unit: fb
+    source: Prospino 2.1 NLO, pp->chi1+_chi02, m(chi1+)=m(chi02)=550 GeV, m(chi01)=200
+      GeV
+    source_type: prospino
+    process: chargino_neutralino
+    masses_gev:
+      chargino_1: 550.0
+      neutralino_2: 550.0
+  luminosity:
+    value: 35.9
+    unit: fb^-1
+    source: CMS-SUS-16-034, 2016 data, 35.9 fb^-1 at 13 TeV
+  branching_fraction:
+    value: 1.0
+    unit: dimensionless
+    source: 'SLHA decay table: chi02->Z+chi01=100%, chi1+->W+chi01=100%; W and Z leptonic
+      BRs handled via Pythia showering'
+    reason: Inclusive production; W/Z decays handled by Pythia8 and selection acceptance
+      captures leptonic fraction
+  efficiency:
+    value: 0.00486
+    unit: dimensionless
+    source: analysis/analysis_VZ.py
+    n_pass: 243.0
+    n_gen: 50000.0

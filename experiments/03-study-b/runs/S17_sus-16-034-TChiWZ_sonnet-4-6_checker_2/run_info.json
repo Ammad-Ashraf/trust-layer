@@ -1,0 +1,32 @@
+{
+  "agent_id": "GroovyPopov_20d26ecc",
+  "run_dir": "claude_sonnet-4-6/sus-16-034_sim-TChiWZ_GroovyPopov_20d26ecc",
+  "task_id": "sus-16-034_sim-TChiWZ",
+  "agent": "simple_ledger",
+  "runner": "claude",
+  "model": "claude-sonnet-4-6",
+  "paper_ref": "CMS-SUS-16-034",
+  "effort": "max",
+  "max_thinking_tokens": 31999,
+  "sandbox": "podman",
+  "started_at": "2026-11-28T02:06:22Z",
+  "ended_at": "2026-11-28T02:52:05Z",
+  "exit_code": 0,
+  "duration_wall_s": 2743.69,
+  "final_score": {
+    "shape": null,
+    "normalization": null,
+    "combined": null,
+    "n_filled": 4,
+    "n_bins": 4
+  },
+  "usage": {
+    "api_cost_usd": 5.670665,
+    "input_tokens": 119,
+    "output_tokens": 94327,
+    "cache_read_tokens": 9882008,
+    "cache_creation_tokens": 184662,
+    "tokens_total_billed": 279108,
+    "n_turns": 120
+  }
+}
